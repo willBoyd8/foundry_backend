@@ -10,7 +10,7 @@ pipeline {
             steps {
                 sh 'poetry install'
                 sh """
-                    poetry run pytest --cov python_example_repo \
+                    poetry run pytest --cov foundry_backend \
                                       --cov-report term-missing \
                                       --cov-report xml \
                                       --cov-config .coveragerc \
