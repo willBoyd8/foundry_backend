@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: python3
+    image: docker.abwlabs.com/jenkins-python-builder:0.5.0
+    command:
+    - cat
+    tty: true
