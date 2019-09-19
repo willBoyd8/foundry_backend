@@ -53,6 +53,10 @@ default:
 
 development:
   DEBUG: true
+  DATABASES:
+    default:
+      ENGINE: django.db.backends.sqlite3
+      NAME: db.sqlite3
 
 production:
   server: prodserver.com
@@ -69,9 +73,6 @@ testing:
   server: stagingserver.com
   username: testing user
   foo: bar testing
-
-customenv:
-  server: customserver.com
 
 global:
   foo: It overrides every other env
