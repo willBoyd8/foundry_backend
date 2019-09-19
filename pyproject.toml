@@ -2,7 +2,7 @@
 name = "foundry_backend"
 version = "0.1.0"
 description = "The backend component of Foundry MLS"
-authors = ["Will Boyd <will.boyd@abwlabs.com>"]
+authors = ["The Foundry MLS Team <foundry@abwlabs.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.5"

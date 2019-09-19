@@ -51,20 +51,19 @@ pipeline {
                 branch 'master'
             }
             steps {
-                withCredentials([usernamePassword(credentialsId: 'AutomationUser', passwordVariable: 'password', usernameVariable: 'username')]) {
-                    container("python3") {
-
+                container("python3") {
+                    withCredentials([usernamePassword(credentialsId: 'AutomationUser', passwordVariable: 'password', usernameVariable: 'username')]) {
                         sh "poetry config repositories.deployment $TARGET_PYPI_REPOSITORY"
                         sh "poetry publish --repository deployment --username $username --password $password"
                     }
-                    container('kaniko') {
-                        sh """
-                            /kaniko/executor -f `pwd`/Dockerfile \
-                            -c `pwd` \
-                            --cache=true \
-                            --destination=$TARGET_DOCKER_DESTINATION \
-                        """
-                    }
+                }
+                container('kaniko') {
+                    sh """
+                       /kaniko/executor -f `pwd`/Dockerfile \
+                       -c `pwd` \
+                       --cache=true \
+                       --destination=$TARGET_DOCKER_DESTINATION \
+                    """
                 }
             }
         }
