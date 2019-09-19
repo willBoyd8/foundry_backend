@@ -66,6 +66,7 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
+junit.xml
 
 # Translations
 *.mo
@@ -369,3 +370,5 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/git,python,django,pycharm,virtualenv,macos,linux,windows
+# Ignore dynaconf secret files
+.secrets.*

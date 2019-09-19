@@ -2,7 +2,7 @@ pipeline {
     agent {
         kubernetes {
             defaultContainer 'python3'
-            yamlFile '.kube.yml'
+            yamlFile 'cicd/.kube.yml'
         }
     }
     stages {
@@ -13,7 +13,7 @@ pipeline {
                     poetry run pytest --cov foundry_backend \
                                       --cov-report term-missing \
                                       --cov-report xml \
-                                      --cov-config .coveragerc \
+                                      --cov-config cicd/.coveragerc \
                                       --junitxml=junit.xml
                 """
             }
@@ -32,7 +32,7 @@ pipeline {
         }
         stage('publish') {
             environment {
-                def build_data = readJSON file: 'publish.json'
+                def build_data = readJSON file: 'cicd/publish.json'
                 TARGET_REPOSITORY = "${build_data.repository}"
             }
             when {
