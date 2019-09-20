@@ -64,7 +64,7 @@ pipeline {
                        -c `pwd` \
                        --cache=false \
                        --no-push \
-                       --destination=$TARGET_DOCKER_DESTINATION \
+                       --destination=$TARGET_DOCKER_DESTINATION
                     """
                 }
             }
