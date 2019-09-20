@@ -1,6 +1,6 @@
 {
     "pypi_repository": "https://nexus.abwlabs.com/repository/local-pypi/",
-    "docker_image": "jenkins-python-builder",
+    "docker_image": "backend",
     "docker_repository": "docker.abwlabs.com",
     "docker_namespace": "foundry"
 }
