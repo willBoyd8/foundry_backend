@@ -20,43 +20,43 @@ pipeline {
         TARGET_DOCKER_DESTINATION = "$TARGET_DOCKER_REPOSITORY/$TARGET_DOCKER_NAMESPACE/$TARGET_DOCKER_IMAGE:$TARGET_DOCKER_VERSION"
     }
     stages {
-        stage('test') {
-            steps {
-                sh 'poetry install'
-                sh """
-                    poetry run pytest --cov foundry_backend \
-                                      --cov-report term-missing \
-                                      --cov-report xml \
-                                      --cov-config cicd/.coveragerc \
-                                      --junitxml=junit.xml
-                """
-            }
-            post {
-                always {
-                    junit '**/junit.xml'
-                    step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
-                }
-            }
-        }
-        stage('build') {
-            steps {
-                container('python3') {
-                    sh 'poetry install'
-                    sh 'poetry build'
-                }
-            }
-        }
+//         stage('test') {
+//             steps {
+//                 sh 'poetry install'
+//                 sh """
+//                     poetry run pytest --cov foundry_backend \
+//                                       --cov-report term-missing \
+//                                       --cov-report xml \
+//                                       --cov-config cicd/.coveragerc \
+//                                       --junitxml=junit.xml
+//                 """
+//             }
+//             post {
+//                 always {
+//                     junit '**/junit.xml'
+//                     step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
+//                 }
+//             }
+//         }
+//         stage('build') {
+//             steps {
+//                 container('python3') {
+//                     sh 'poetry install'
+//                     sh 'poetry build'
+//                 }
+//             }
+//         }
         stage('publish') {
             when {
                 branch 'master'
             }
             steps {
-                container("python3") {
-                    withCredentials([usernamePassword(credentialsId: 'AutomationUser', passwordVariable: 'password', usernameVariable: 'username')]) {
-                        sh "poetry config repositories.deployment $TARGET_PYPI_REPOSITORY"
-                        sh "poetry publish --repository deployment --username $username --password $password"
-                    }
-                }
+//                 container("python3") {
+//                     withCredentials([usernamePassword(credentialsId: 'AutomationUser', passwordVariable: 'password', usernameVariable: 'username')]) {
+//                         sh "poetry config repositories.deployment $TARGET_PYPI_REPOSITORY"
+//                         sh "poetry publish --repository deployment --username $username --password $password"
+//                     }
+//                 }
                 container('kaniko') {
                     sh """
                        /kaniko/executor -f `pwd`/Dockerfile \
