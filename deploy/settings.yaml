@@ -26,6 +26,28 @@ default:
   ALLOWED_HOSTS:
     - '*'
 
+  # Database
+  # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
+  DATABASES:
+    default:
+      ENGINE: django.db.backends.sqlite3
+      NAME: db.sqlite3
+
+  # Valid Accept-Language HTTP Header
+  LANGUAGE_CODE: en-us
+
+  # A Valid UTC Time Zone Code
+  TIME_ZONE: UTC
+
+  # Use django's translation framework
+  USE_I18N: true
+
+  # Use locale data to format numbers and dates
+  USE_L10N: true
+
+  # Use Timezone-aware dates. See TIME_ZONE for zone to use
+  USE_TZ: true
+
   # Valid django apps. Don't change unless you know what you're doing
   INSTALLED_APPS:
     - django.contrib.admin
@@ -51,21 +73,6 @@ default:
   # The module with the wsgi application. Don't change unless you know what you're doing
   WSGI_APPLICATION: foundry_backend.wsgi.application
 
-  # Valid Accept-Language HTTP Header
-  LANGUAGE_CODE: en-us
-
-  # A Valid UTC Time Zone Code
-  TIME_ZONE: UTC
-
-  # Use django's translation framework
-  USE_I18N: true
-
-  # Use locale data to format numbers and dates
-  USE_L10N: true
-
-  # Use Timezone-aware dates. See TIME_ZONE for zone to use
-  USE_TZ: true
-
   # The Django Template Config. Don't change unless you know what you're doing
   TEMPLATES:
     - BACKEND: django.template.backends.django.DjangoTemplates
@@ -85,13 +92,6 @@ default:
     - NAME: django.contrib.auth.password_validation.MinimumLengthValidator
     - NAME: django.contrib.auth.password_validation.CommonPasswordValidator
     - NAME: django.contrib.auth.password_validation.NumericPasswordValidator
-
-  # Database
-  # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-  DATABASES:
-    default:
-      ENGINE: django.db.backends.sqlite3
-      NAME: db.sqlite3
 
 development:
   DEBUG: true
