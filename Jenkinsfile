@@ -18,7 +18,7 @@ pipeline {
         TARGET_DOCKER_IMAGE = "${build_data.image}"
         TARGET_DOCKER_REPOSITORY = "${build_data.docker_repository}"
         TARGET_DOCKER_NAMESPACE = "${build_data.docker_namespace}"
-        TARGET_DOCKER_DESTINATION = "$TARGET_DOCKER_REPOSITORY/$TARGET_DOCKER_NAMESPACE/$TARGET_DOCKER_IMAGE:$TARGET_DOCKER_VERSION"
+        TARGET_DOCKER_DESTINATION = "$TARGET_DOCKER_REPOSITORY/$TARGET_DOCKER_NAMESPACE/$TARGET_DOCKER_IMAGE"
     }
     stages {
         stage('test') {
@@ -72,7 +72,7 @@ pipeline {
                        /kaniko/executor -f `pwd`/Dockerfile \
                        -c `pwd` \
                        --cache=true \
-                       --destination=$TARGET_DOCKER_DESTINATION
+                       --destination=$TARGET_DOCKER_DESTINATION:$(cat pyproject.toml | sed -n 's/^version = "\([0-9].*\.[0-9].*\.[0-9].*\)"$/\1/p')
                     """
                 }
             }
