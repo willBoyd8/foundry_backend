@@ -63,6 +63,7 @@ pipeline {
                        /kaniko/executor -f `pwd`/Dockerfile \
                        -c `pwd` \
                        --cache=false \
+                       --no-push \
                        --destination=$TARGET_DOCKER_DESTINATION \
                     """
                 }
