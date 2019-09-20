@@ -50,6 +50,7 @@ pipeline {
                        /kaniko/executor -f `pwd`/Dockerfile \
                        -c `pwd` \
                        --cache=true \
+                       --cache-repo=$TARGET_DOCKER_REPOSITORY \
                        --no-push
                     """
                 }
