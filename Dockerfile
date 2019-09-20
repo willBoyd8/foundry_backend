@@ -12,7 +12,10 @@ WORKDIR /source
 RUN poetry build
 
 # Move to the actual base
-FROM phusion/baseimage
+# It seems that the phusion/baseimage within dockerhub is
+# old, and kaniko doesn't like that. We have to pull it from
+# another repository to ensure it is accepted
+FROM docker.abwlabs.com/phusion/baseimage
 
 # Copy the package, start script, and config to the new filesystem
 COPY --from=python /source/deploy/start.sh /etc/service/foundry_backend/run
