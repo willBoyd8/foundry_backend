@@ -16,7 +16,7 @@ import dynaconf
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 settings_location = os.path.join(
-    BASE_DIR, "config/settings.yaml,config/.secrets.yaml"
+    BASE_DIR, "deploy/settings.yaml,deploy/.secrets.yaml"
 )
 
 settings = dynaconf.DjangoDynaconf(
