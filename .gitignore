@@ -372,3 +372,7 @@ $RECYCLE.BIN/
 # End of https://www.gitignore.io/api/git,python,django,pycharm,virtualenv,macos,linux,windows
 # Ignore dynaconf secret files
 .secrets.*
+
+
+# VS Code
+.vscode/

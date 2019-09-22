@@ -13,9 +13,7 @@ pipeline {
         TARGET_PYPI_REPOSITORY = "${build_data.pypi_repository}"
 
         // Docker configuration
-//         TARGET_DOCKER_VERSION = "${poetry_source =~ /^version ?= ?\"(\d.\d.\d)\"$/}"
-        TARGET_DOCKER_VERSION = "0.1.0"
-        TARGET_DOCKER_IMAGE = "${build_data.image}"
+        TARGET_DOCKER_IMAGE = "${build_data.docker_image}"
         TARGET_DOCKER_REPOSITORY = "${build_data.docker_repository}"
         TARGET_DOCKER_NAMESPACE = "${build_data.docker_namespace}"
         TARGET_DOCKER_DESTINATION = "$TARGET_DOCKER_REPOSITORY/$TARGET_DOCKER_NAMESPACE/$TARGET_DOCKER_IMAGE"
