@@ -20,7 +20,7 @@ FROM docker.abwlabs.com/phusion/baseimage
 # Copy the package, start script, and config to the new filesystem
 COPY --from=python /source/deploy/start.sh /etc/service/foundry_backend/run
 COPY --from=python /source/dist/*.tar.gz /foundry.tar.gz
-COPY --from=python /source/config/settings.yaml /etc/foundry/settings.yaml
+COPY --from=python /source/deploy/settings.yaml /etc/foundry/settings.yaml
 
 # Set any Foundry environment variables
 ENV FOUNDRY_SETTINGS "/etc/foundry/settings.yaml"
