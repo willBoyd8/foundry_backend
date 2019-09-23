@@ -74,6 +74,15 @@ pipeline {
                     """
                 }
             }
+            post {
+                success {
+                    build job: '../foundry_config/master', wait: false
+                    discordSend description: "foundry/backend succeeded in master", footer: '', image: '', link: env.BUILD_URL, result: '', thumbnail: '', title: 'Foundry Backend Build Success', webhookURL: 'https://discordapp.com/api/webhooks/625518286313881627/C915tCpq2uscwoX_LIpiR0q3_pVRACG5_FDwUB0HqArqYKmCjwCxyUg3uSef14AfF9Rp'
+                }
+                failure {
+                    discordSend description: "foundry/backend failed in master", footer: '', image: '', link: env.BUILD_URL, result: '', thumbnail: '', title: 'Foundry Backend Build Failed', webhookURL: 'https://discordapp.com/api/webhooks/625518286313881627/C915tCpq2uscwoX_LIpiR0q3_pVRACG5_FDwUB0HqArqYKmCjwCxyUg3uSef14AfF9Rp'
+                }
+            }
         }
     }
 }
