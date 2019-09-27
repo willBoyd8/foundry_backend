@@ -45,6 +45,7 @@ pipeline {
                 container("python3") {
                     withCredentials([usernamePassword(credentialsId: 'AutomationUser', passwordVariable: 'password', usernameVariable: 'username')]) {
                         sh "poetry config repositories.deployment $TARGET_PYPI_REPOSITORY"
+                        sh "poetry install"
                         sh "poetry publish --repository deployment --username $username --password $password"
                     }
                 }
