@@ -12,30 +12,6 @@ from guardian.shortcuts import assign_perm
 
 class RegisterRealtorView(views.APIView):
     serializers = serializers.RegisterRealtorSerializer
-    # schema = ManualSchema(
-    #     fields=[
-    #         coreapi.Field(
-    #             'mls_number',
-    #             required=True,
-    #             location='path',
-    #             schema=coreschema.Integer(
-    #                 title='MLS Number',
-    #                 description='The MLS Number of the Realtor'
-    #             ),
-    #         ),
-    #         coreapi.Field(
-    #             'user',
-    #             required=True,
-    #             location='path',
-    #             schema=coreschema.String(
-    #                 title='Agent',
-    #                 description='The id of the user to test association'
-    #             ),
-    #         )
-    #     ],
-    #     encoding='application/json',
-    #     description='Register a user to an MLS Number'
-    # )
 
     @staticmethod
     def get_serializer():
