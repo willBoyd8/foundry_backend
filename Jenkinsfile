@@ -37,23 +37,6 @@ pipeline {
                 }
             }
         }
-        stage('build') {
-            steps {
-                container('python3') {
-                    sh 'poetry install'
-                    sh 'poetry build'
-                }
-                container('kaniko') {
-                    sh """
-                       /kaniko/executor -f `pwd`/Dockerfile \
-                       -c `pwd` \
-                       --cache=true \
-                       --cache-repo=$TARGET_DOCKER_REPOSITORY \
-                       --no-push
-                    """
-                }
-            }
-        }
         stage('publish') {
             when {
                 branch 'master'
