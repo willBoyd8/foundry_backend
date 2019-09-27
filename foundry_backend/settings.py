@@ -15,6 +15,12 @@ import dynaconf
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# For some reason, DRF doesn't seem to like DEFAULT_PAGINATION_CLASS in the YAML
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
+
 settings_location = os.path.join(
     BASE_DIR, "deploy/settings.yaml,deploy/.secrets.yaml"
 )
