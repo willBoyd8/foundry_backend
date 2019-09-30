@@ -17,6 +17,7 @@ django-address = "^0.2.1"
 pytest-django = "^3.5"
 django-guardian = "^2.1"
 drf-yasg = "^1.16"
+whitenoise = "^4.1"
 
 [tool.poetry.scripts]
 django_manage = 'manage:main'
