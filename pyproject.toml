@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "foundry_backend"
-version = "0.2.1"
+version = "0.3.0"
 description = "The backend component of Foundry MLS"
 authors = ["The Foundry MLS Team <foundry@abwlabs.com>"]
 
@@ -17,6 +17,10 @@ django-address = "^0.2.1"
 pytest-django = "^3.5"
 django-guardian = "^2.1"
 drf-yasg = "^1.16"
+whitenoise = "^4.1"
+
+[tool.poetry.scripts]
+django_manage = 'manage:main'
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.1"

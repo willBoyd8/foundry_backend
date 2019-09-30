@@ -17,6 +17,9 @@ default:
   # The URL to host static content from
   STATIC_URL: /static/
 
+  STATICFILES_DIRS:
+    - '/opt/foundry/static'
+
   # Whether to run the server in debug mode.
   # https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-DEBUG
   DEBUG: false
@@ -72,6 +75,7 @@ default:
     - django.contrib.auth.middleware.AuthenticationMiddleware
     - django.contrib.messages.middleware.MessageMiddleware
     - django.middleware.clickjacking.XFrameOptionsMiddleware
+    - whitenoise.middleware.WhiteNoiseMiddleware
 
   # For django-guardian
   AUTHENTICATION_BACKENDS:
@@ -83,6 +87,9 @@ default:
 
   # The module with the wsgi application. Don't change unless you know what you're doing
   WSGI_APPLICATION: foundry_backend.wsgi.application
+
+  # WhiteNoise config
+  STATICFILES_STORAGE: whitenoise.storage.CompressedManifestStaticFilesStorage
 
   # The Django Template Config. Don't change unless you know what you're doing
   TEMPLATES:

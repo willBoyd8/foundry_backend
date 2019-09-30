@@ -14,6 +14,8 @@ import os
 import dynaconf
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
 
 # For some reason, DRF doesn't seem to like DEFAULT_PAGINATION_CLASS in the YAML
 REST_FRAMEWORK = {
