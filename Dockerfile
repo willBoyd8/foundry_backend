@@ -32,3 +32,5 @@ RUN apt-get update && apt-get install -y python3-pip --no-install-recommends \
  && pip3 install /foundry.tar.gz \
  && rm -rf /foundry.tar.gz \
  && chmod +x /etc/service/foundry_backend/run
+
+RUN mkdir -p /opt/foundry/static
