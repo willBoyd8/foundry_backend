@@ -18,6 +18,9 @@ pytest-django = "^3.5"
 django-guardian = "^2.1"
 drf-yasg = "^1.16"
 
+[tool.poetry.scripts]
+django_manage = 'manage:main'
+
 [tool.poetry.dev-dependencies]
 pytest = "^5.1"
 pytest-cov = "^2.7"
