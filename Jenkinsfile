@@ -52,7 +52,7 @@ pipeline {
                     sh """
                        /kaniko/executor -f `pwd`/Dockerfile \
                        -c `pwd` \
-                       --cache=true \
+                       --cache=false \
                        --destination=$TARGET_DOCKER_DESTINATION:\$(cat pyproject.toml | sed -n 's/^version = "\\([0-9].*\\.[0-9].*\\.[0-9].*\\)"\$/\\1/p') \
                        --destination=$TARGET_DOCKER_DESTINATION:latest
                     """
