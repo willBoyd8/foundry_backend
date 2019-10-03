@@ -2,12 +2,6 @@ from foundry_backend.database import models as db_models
 from rest_framework import serializers
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = db_models.User
-        fields = ['id', 'username']
-
-
 class AgencySerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Agency

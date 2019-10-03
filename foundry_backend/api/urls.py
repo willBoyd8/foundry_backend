@@ -11,7 +11,6 @@ router = routers.DefaultRouter()
 router.register(r'agencies', views.AgencyViewSet)
 router.register(r'mls_numbers', views.MLSNumberViewSet)
 router.register(r'realtors', views.RealtorUserViewSet)
-router.register(r'users', views.UserViewSet)
 router.register(r'listings', views.ListingViewSet)
 
 register_functions = [

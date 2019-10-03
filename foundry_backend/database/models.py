@@ -5,7 +5,6 @@ from phonenumber_field.modelfields import PhoneNumberField
 import uuid
 
 
-
 class Agency(models.Model):
     """
     Represents a real estate agency
