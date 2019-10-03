@@ -15,9 +15,9 @@ django-phonenumber-field = "^3.0"
 phonenumbers = "^8.10"
 django-address = "^0.2.1"
 pytest-django = "^3.5"
-django-guardian = "^2.1"
 drf-yasg = "^1.16"
 whitenoise = "^4.1"
+dry-rest-permissions = "^0.1.10"
 
 [tool.poetry.scripts]
 django_manage = 'manage:main'

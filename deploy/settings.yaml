@@ -62,7 +62,7 @@ default:
     - foundry_backend.database
     - rest_framework
     - drf_yasg
-    - guardian
+    - dry_rest_permissions
     - phonenumber_field
     - address
 
@@ -80,7 +80,6 @@ default:
   # For django-guardian
   AUTHENTICATION_BACKENDS:
     - django.contrib.auth.backends.ModelBackend
-    - guardian.backends.ObjectPermissionBackend
 
   # Django's central urlconf. Don't change unless you know what you're doing
   ROOT_URLCONF: foundry_backend.urls
