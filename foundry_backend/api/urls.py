@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.contrib.auth.models import Group
 from django.urls import include, path
 from django.views.generic import RedirectView
 from drf_yasg import openapi
@@ -41,3 +42,8 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('register/', include(register_functions))
 ]
+
+# Create the groups
+_, created = Group.objects.get_or_create(name='admins')
+if created:
+    print('Created Admin Group')
