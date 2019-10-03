@@ -61,6 +61,8 @@ default:
     - django.contrib.staticfiles
     - foundry_backend.database
     - rest_framework
+    - djoser
+    - rest_framework.authtoken
     - drf_yasg
     - dry_rest_permissions
     - phonenumber_field
@@ -80,6 +82,18 @@ default:
   # For django-guardian
   AUTHENTICATION_BACKENDS:
     - django.contrib.auth.backends.ModelBackend
+
+  SWAGGER_SETTINGS:
+    DOC_EXPANSION: 'None'
+    SECURITY_DEFINITIONS:
+      api_key:
+        type: apiKey
+        in: header
+        name: 'Authorization'
+
+  REST_FRAMEWORK:
+    DEFAULT_AUTHENTICATION_CLASSES:
+        - rest_framework.authentication.TokenAuthentication
 
   # Django's central urlconf. Don't change unless you know what you're doing
   ROOT_URLCONF: foundry_backend.urls
@@ -112,10 +126,17 @@ default:
 
 development:
   DEBUG: true
+
   DATABASES:
     default:
       ENGINE: django.db.backends.sqlite3
       NAME: db.sqlite3
+
+  # Password validation
+  # In debug, I want to be able to use the password 'password'
+  AUTH_PASSWORD_VALIDATORS:
+    - NAME: django.contrib.auth.password_validation.UserAttributeSimilarityValidator
+    - NAME: django.contrib.auth.password_validation.MinimumLengthValidator
 
 production:
   server: prodserver.com

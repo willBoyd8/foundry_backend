@@ -18,6 +18,8 @@ pytest-django = "^3.5"
 drf-yasg = "^1.16"
 whitenoise = "^4.1"
 dry-rest-permissions = "^0.1.10"
+djoser = "^2.0"
+djangorestframework_simplejwt = "^4.3"
 
 [tool.poetry.scripts]
 django_manage = 'manage:main'
