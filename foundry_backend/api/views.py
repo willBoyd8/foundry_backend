@@ -1,20 +1,14 @@
 from foundry_backend.database import models as db_models
 from rest_framework import viewsets
 from . import serializers
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API Endpoint for user creation and management
-    """
-    queryset = db_models.User.objects.all()
-    serializer_class = serializers.UserSerializer
+from dry_rest_permissions.generics import DRYPermissions
 
 
 class AgencyViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Foundry Agencies
     """
+    permission_classes = (DRYPermissions,)
     queryset = db_models.Agency.objects.all()
     serializer_class = serializers.AgencySerializer
 

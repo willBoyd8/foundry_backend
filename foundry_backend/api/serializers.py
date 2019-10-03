@@ -2,12 +2,6 @@ from foundry_backend.database import models as db_models
 from rest_framework import serializers
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = db_models.User
-        fields = ['id', 'username']
-
-
 class AgencySerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Agency
@@ -42,3 +36,13 @@ class RegisterRealtorSerializer(serializers.Serializer):
 
     mls_number = serializers.CharField(max_length=15, help_text="The MLS Number for the realtor being registered")
     user = serializers.IntegerField(help_text="The user to associate as a realtor")
+
+
+class RegisterAdminSerializer(serializers.Serializer):
+    def update(self, instance, validated_data):
+        pass
+
+    def create(self, validated_data):
+        pass
+
+    user = serializers.IntegerField(help_text="The user to associate as an admin")
