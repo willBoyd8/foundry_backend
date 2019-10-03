@@ -16,6 +16,8 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import RedirectView
+
 from foundry_backend.api.urls import urlpatterns as api_urls
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
@@ -40,4 +42,5 @@ urlpatterns = [
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    url(r'^$', RedirectView.as_view(url='swagger/', permanent=False), name='index')
 ]
