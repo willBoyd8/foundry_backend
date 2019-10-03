@@ -1,13 +1,12 @@
 import coreapi
 import coreschema
 from drf_yasg import views
-from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
 from foundry_backend.api import serializers
 from foundry_backend.database import models
-from guardian.shortcuts import assign_perm
 
 
 class RegisterRealtorView(views.APIView):
