@@ -5,7 +5,7 @@ from rest_framework import serializers
 class AgencySerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Agency
-        fields = ['name', 'address', 'phone']
+        fields = ['id', 'name', 'address', 'phone']
 
 
 class MLSNumberSerializer(serializers.ModelSerializer):
