@@ -9,6 +9,9 @@ router = routers.DefaultRouter()
 router.register(r'agencies', views.AgencyViewSet)
 router.register(r'mls_numbers', views.MLSNumberViewSet)
 router.register(r'realtors', views.RealtorUserViewSet)
+router.register(r'subdivisions', views.SubdivisionViewSet)
+router.register(r'school_districts', views.SchoolDistrictViewSet)
+router.register(r'shopping_areas', views.ShoppingAreaViewSet)
 router.register(r'listings', views.ListingViewSet)
 
 # Wire up our API using automatic URL routing.

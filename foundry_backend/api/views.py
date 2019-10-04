@@ -29,6 +29,33 @@ class RealtorUserViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.RealtorUserSerializer
 
 
+class SubdivisionViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for Subdivisions
+    """
+    permission_classes = (DRYPermissions,)
+    queryset = db_models.Subdivision.objects.all()
+    serializer_class = serializers.SubdivisionSerializer
+
+
+class SchoolDistrictViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for School Districts
+    """
+    permission_classes = (DRYPermissions,)
+    queryset = db_models.SchoolDistrict.objects.all()
+    serializer_class = serializers.SchoolDistrictSerializer
+
+
+class ShoppingAreaViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for Shopping Areas
+    """
+    permission_classes = (DRYPermissions,)
+    queryset = db_models.ShoppingArea.objects.all()
+    serializer_class = serializers.ShoppingAreaSerializer
+
+
 class ListingViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for listings

@@ -21,6 +21,24 @@ class RealtorUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'mls', 'user']
 
 
+class SubdivisionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.Subdivision
+        fields = ['id', 'name']
+
+
+class SchoolDistrictSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.SchoolDistrict
+        fields = ['id', 'name']
+
+
+class ShoppingAreaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.ShoppingArea
+        fields = ['id', 'name']
+
+
 class ListingSerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Listing
