@@ -222,6 +222,52 @@ class ShoppingArea(models.Model):
         return True
 
 
+class Property(models.Model):
+    """
+    A property model
+    """
+    address = models.TextField(unique=True)
+    square_footage = models.IntegerField(validators=[MinValueValidator(0)])
+    description = models.TextField(unique=True)
+    subdivision = models.ForeignKey(Subdivision, on_delete=models.CASCADE)
+
+    # TODO: Add Property Type
+
+    @staticmethod
+    def has_read_permission(request):
+        """
+        Allow anyone to list the objects
+        """
+        return True
+
+    @staticmethod
+    def has_write_permission(request):
+        """
+        allow admin users to create new agencies
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_write_permission(request):
+        """
+        allow admin users to delete agencies
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_update_permission(request):
+        """
+        allow admin users to update agency information
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_read_permission(request):
+        """
+        allow anyone to read the specific object
+        """
+        return True
+
 class Listing(models.Model):
     """
     A listing of a house

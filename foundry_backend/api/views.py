@@ -56,6 +56,15 @@ class ShoppingAreaViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ShoppingAreaSerializer
 
 
+class PropertyViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for Properties
+    """
+    permission_classes = (DRYPermissions,)
+    queryset = db_models.ShoppingArea.objects.all()
+    serializer_class = serializers.PropertySerializer
+
+
 class ListingViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for listings

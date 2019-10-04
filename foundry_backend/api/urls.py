@@ -12,6 +12,7 @@ router.register(r'realtors', views.RealtorUserViewSet)
 router.register(r'subdivisions', views.SubdivisionViewSet)
 router.register(r'school_districts', views.SchoolDistrictViewSet)
 router.register(r'shopping_areas', views.ShoppingAreaViewSet)
+router.register(r'properties', views.PropertyViewSet)
 router.register(r'listings', views.ListingViewSet)
 
 # Wire up our API using automatic URL routing.

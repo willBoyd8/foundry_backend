@@ -39,6 +39,12 @@ class ShoppingAreaSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 
+class PropertySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.Property
+        fields = ['id', 'address', 'square_footage', 'description', 'subdivision']
+
+
 class ListingSerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Listing
