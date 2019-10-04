@@ -24,7 +24,7 @@ urlpatterns = [
     path('register/', include(register_functions))
 ]
 
-# Create the groups
-_, created = Group.objects.get_or_create(name='admins')
-if created:
-    print('Created Admin Group')
+# # Create the groups
+# _, created = Group.objects.get_or_create(name='admins')
+# if created:
+#     print('Created Admin Group')

@@ -96,130 +96,68 @@ class Realtor(models.Model):
     mls = models.OneToOneField(MLSNumber, on_delete=models.CASCADE)
 
 
-class Subdivision(models.Model):
+class NearbyAttractions(models.Model):
+    """
+    A superclass for all the things near a property
+    """
+    name = models.CharField(max_length=50, unique=True)
+    type = models.CharField(max_length=10) # TODO: Make this a multichoice
+
+    @staticmethod
+    def has_read_permission(request):
+        """
+        Allow anyone to list the objects
+        """
+        return True
+
+    @staticmethod
+    def has_write_permission(request):
+        """
+        allow admin users to create new agencies
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_write_permission(request):
+        """
+        allow admin users to delete agencies
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_update_permission(request):
+        """
+        allow admin users to update agency information
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_read_permission(request):
+        """
+        allow anyone to read the specific object
+        """
+        return True
+
+
+class Subdivision(NearbyAttractions):
     """
     A neighborhood subdivision
     """
-    name = models.CharField(max_length=50, unique=True)
-
-    @staticmethod
-    def has_read_permission(request):
-        """
-        Allow anyone to list the objects
-        """
-        return True
-
-    @staticmethod
-    def has_write_permission(request):
-        """
-        allow admin users to create new agencies
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_write_permission(request):
-        """
-        allow admin users to delete agencies
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_update_permission(request):
-        """
-        allow admin users to update agency information
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_read_permission(request):
-        """
-        allow anyone to read the specific object
-        """
-        return True
+    pass
 
 
-class SchoolDistrict(models.Model):
+class SchoolDistrict(NearbyAttractions):
     """
     The neighborhood school district
     """
-    name = models.CharField(max_length=50, unique=True)
-
-    @staticmethod
-    def has_read_permission(request):
-        """
-        Allow anyone to list the objects
-        """
-        return True
-
-    @staticmethod
-    def has_write_permission(request):
-        """
-        allow admin users to create new agencies
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_write_permission(request):
-        """
-        allow admin users to delete agencies
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_update_permission(request):
-        """
-        allow admin users to update agency information
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_read_permission(request):
-        """
-        allow anyone to read the specific object
-        """
-        return True
+    pass
 
 
-class ShoppingArea(models.Model):
+class ShoppingArea(NearbyAttractions):
     """
     Nearby shopping centers
     """
-    name = models.CharField(max_length=50, unique=True)
-
-    @staticmethod
-    def has_read_permission(request):
-        """
-        Allow anyone to list the objects
-        """
-        return True
-
-    @staticmethod
-    def has_write_permission(request):
-        """
-        allow admin users to create new agencies
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_write_permission(request):
-        """
-        allow admin users to delete agencies
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_update_permission(request):
-        """
-        allow admin users to update agency information
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_read_permission(request):
-        """
-        allow anyone to read the specific object
-        """
-        return True
+    pass
 
 
 class Property(models.Model):
@@ -267,6 +205,53 @@ class Property(models.Model):
         allow anyone to read the specific object
         """
         return True
+
+
+class NearbyAttractionPropertyConnector(models.Model):
+    """
+    Connect properties to nearby schools
+    """
+    attraction = models.ForeignKey(NearbyAttractions, on_delete=models.CASCADE)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (('attraction', 'property'),)
+
+    @staticmethod
+    def has_read_permission(request):
+        """
+        Allow anyone to list the objects
+        """
+        return True
+
+    @staticmethod
+    def has_write_permission(request):
+        """
+        allow admin users to create new agencies
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_write_permission(request):
+        """
+        allow admin users to delete agencies
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_update_permission(request):
+        """
+        allow admin users to update agency information
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_read_permission(request):
+        """
+        allow anyone to read the specific object
+        """
+        return True
+
 
 class Listing(models.Model):
     """
