@@ -1,8 +1,8 @@
 from django.urls import path
 from . import register_endpoints
 
-register_functions = [
-    path(r'register_realtor/', register_endpoints.RegisterRealtorView.as_view(), name='register_realtor'),
-    path(r'register_admin/', register_endpoints.RegisterAdminView.as_view(), name='register_admin'),
-    path(r'unregister_admin/', register_endpoints.UnRegisterAdminView.as_view(), name='unregister_admin')
+permissions_functions = [
+    path(r'enable_realtor/', register_endpoints.EnableRealtorView.as_view(), name='enable_realtor'),
+    path(r'enable_admin/', register_endpoints.EnableAdminView.as_view(), name='enable_admin'),
+    path(r'disable_admin/', register_endpoints.DisableAdminView.as_view(), name='disable_admin')
 ]
