@@ -4,6 +4,8 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 import uuid
 
+from rest_framework.exceptions import ValidationError
+
 
 class Agency(models.Model):
     """
@@ -96,12 +98,22 @@ class Realtor(models.Model):
     mls = models.OneToOneField(MLSNumber, on_delete=models.CASCADE)
 
 
-class NearbyAttractions(models.Model):
+class NearbyAttraction(models.Model):
     """
     A superclass for all the things near a property
     """
+    NEARBY_ATTRACTION_TYPES = (
+        ('SCHOOL_ELEM', 'Public Elementary School'),
+        ('SCHOOL_MIDDLE', 'Public Middle School'),
+        ('SCHOOL_HIGH', 'Public High School'),
+        ('SCHOOL_PRIVATE', 'Private School'),
+        ('SHOPPING', 'Shopping Area'),
+        ('NEIGHBORHOOD', 'Neighborhood'),
+        ('ENTERTAINMENT', 'Entertainment Area'),
+    )
+
     name = models.CharField(max_length=50, unique=True)
-    type = models.CharField(max_length=10) # TODO: Make this a multichoice
+    type = models.CharField(max_length=15, choices=NEARBY_ATTRACTION_TYPES)
 
     @staticmethod
     def has_read_permission(request):
@@ -139,37 +151,21 @@ class NearbyAttractions(models.Model):
         return True
 
 
-class Subdivision(NearbyAttractions):
-    """
-    A neighborhood subdivision
-    """
-    pass
-
-
-class SchoolDistrict(NearbyAttractions):
-    """
-    The neighborhood school district
-    """
-    pass
-
-
-class ShoppingArea(NearbyAttractions):
-    """
-    Nearby shopping centers
-    """
-    pass
-
-
 class Property(models.Model):
     """
     A property model
     """
+    PROPERTY_TYPES = (
+        ('APARTMENT', 'Apartment'),
+        ('CONDO', 'Condominium'),
+        ('DUPLEX', 'Duplex Home'),
+        ('HOUSE', 'Standalone House')
+    )
+
     address = models.TextField(unique=True)
     square_footage = models.IntegerField(validators=[MinValueValidator(0)])
     description = models.TextField(unique=True)
-    subdivision = models.ForeignKey(Subdivision, on_delete=models.CASCADE)
-
-    # TODO: Add Property Type
+    type = models.CharField(max_length=12, choices=PROPERTY_TYPES)
 
     @staticmethod
     def has_read_permission(request):
@@ -211,11 +207,29 @@ class NearbyAttractionPropertyConnector(models.Model):
     """
     Connect properties to nearby schools
     """
-    attraction = models.ForeignKey(NearbyAttractions, on_delete=models.CASCADE)
+    attraction = models.ForeignKey(NearbyAttraction, on_delete=models.CASCADE)
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = (('attraction', 'property'),)
+
+    def save(self, *args, **kwargs):
+        errors = []
+
+        if len(self.property.nearbyattractionpropertyconnector_set.filter(type='SCHOOL_ELEM').all()):
+            errors.append('The property already has a Public Elementary School listed')
+
+        if len(self.property.nearbyattractionpropertyconnector_set.filter(type='SCHOOL_MIDDLE').all()):
+            errors.append('The property already has a Public Middle School listed')
+
+        if len(self.property.nearbyattractionpropertyconnector_set.filter(type='SCHOOL_HIGH').all()):
+            errors.append('The property already has a Public High School listed')
+
+        if len(errors) is not 0:
+            raise ValidationError({'property': errors})
+
+        super().save(*args, **kwargs)
+
 
     @staticmethod
     def has_read_permission(request):

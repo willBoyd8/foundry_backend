@@ -21,28 +21,22 @@ class RealtorUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'mls', 'user']
 
 
-class SubdivisionSerializer(serializers.ModelSerializer):
+class NearbyAttractionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = db_models.Subdivision
-        fields = ['id', 'name']
-
-
-class SchoolDistrictSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = db_models.SchoolDistrict
-        fields = ['id', 'name']
-
-
-class ShoppingAreaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = db_models.ShoppingArea
-        fields = ['id', 'name']
+        model = db_models.NearbyAttraction
+        fields = ['id', 'name', 'type']
 
 
 class PropertySerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Property
-        fields = ['id', 'address', 'square_footage', 'description', 'subdivision']
+        fields = ['id', 'address', 'square_footage', 'description']
+
+
+class NearbyAttractionPropertyConnectorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.NearbyAttractionPropertyConnector
+        fields = ['id', 'attraction', 'property']
 
 
 class ListingSerializer(serializers.ModelSerializer):
