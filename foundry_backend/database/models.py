@@ -1,10 +1,26 @@
+from address.models import AddressField
 from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MinLengthValidator, MaxLengthValidator
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 import uuid
 
 from rest_framework.exceptions import ValidationError
+
+
+class Address(models.Model):
+    """
+    An address entry
+    """
+    street_number = models.CharField(max_length=5)
+    street = models.CharField(max_length=50)
+    locality = models.CharField(max_length=50)
+    postal_code = models.CharField(max_length=5, validators=[MinLengthValidator(5), MaxLengthValidator(5)])
+    state = models.CharField(max_length=15)
+    state_code = models.CharField(max_length=2, validators=[MinLengthValidator(2), MaxLengthValidator(2)])
+
+    class Meta:
+        unique_together = (('street_number', 'street', 'locality', 'postal_code', 'state_code'),)
 
 
 class Agency(models.Model):
@@ -162,9 +178,9 @@ class Property(models.Model):
         ('HOUSE', 'Standalone House')
     )
 
-    address = models.TextField(unique=True)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
     square_footage = models.IntegerField(validators=[MinValueValidator(0)])
-    description = models.TextField(unique=True)
+    description = models.TextField()
     type = models.CharField(max_length=12, choices=PROPERTY_TYPES)
 
     @staticmethod

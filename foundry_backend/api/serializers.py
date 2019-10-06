@@ -2,6 +2,12 @@ from foundry_backend.database import models as db_models
 from rest_framework import serializers
 
 
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.Address
+        fields = ['street_number', 'street', 'locality', 'postal_code', 'state', 'state_code']
+
+
 class AgencySerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Agency
@@ -28,9 +34,20 @@ class NearbyAttractionSerializer(serializers.ModelSerializer):
 
 
 class PropertySerializer(serializers.ModelSerializer):
+    address = AddressSerializer()
+
     class Meta:
         model = db_models.Property
         fields = ['id', 'address', 'square_footage', 'description']
+
+    def create(self, validated_data):
+        address_data = validated_data.pop('address')
+        address = db_models.Address.objects.create(**address_data)
+        print(address)
+        new_property = db_models.Property.objects.create(address_id=address.id,
+                                                         square_footage=validated_data['square_footage'],
+                                                         description=validated_data['description'])
+        return new_property
 
 
 class NearbyAttractionPropertyConnectorSerializer(serializers.ModelSerializer):
