@@ -10,12 +10,12 @@ from foundry_backend.api import serializers
 from foundry_backend.database import models
 
 
-class RegisterRealtorView(views.APIView):
-    serializers = serializers.RegisterRealtorSerializer
+class EnableRealtorView(views.APIView):
+    serializers = serializers.EnableRealtorSerializer
 
     @staticmethod
     def get_serializer():
-        return serializers.RegisterRealtorSerializer()
+        return serializers.EnableRealtorSerializer()
 
     @staticmethod
     def post(request: Request, **kwargs):
@@ -23,7 +23,7 @@ class RegisterRealtorView(views.APIView):
         Register a user as a realtor, using their MLS number
         """
         errors = {}
-        serializer = serializers.RegisterRealtorSerializer(data=request.data)
+        serializer = serializers.EnableRealtorSerializer(data=request.data)
 
         # check to see if we have any validation errors
         if not serializer.is_valid():
@@ -65,12 +65,12 @@ class RegisterRealtorView(views.APIView):
         return Response({'id': mls.id}, status=status.HTTP_202_ACCEPTED)
 
 
-class RegisterAdminView(views.APIView):
-    serializers = serializers.RegisterAdminSerializer
+class EnableAdminView(views.APIView):
+    serializers = serializers.EnableAdminSerializer
 
     @staticmethod
     def get_serializer():
-        return serializers.RegisterAdminSerializer()
+        return serializers.EnableAdminSerializer()
 
     @staticmethod
     def post(request: Request, **kwargs):
@@ -78,7 +78,7 @@ class RegisterAdminView(views.APIView):
         Register a user as an admin
         """
         errors = {}
-        serializer = serializers.RegisterAdminSerializer(data=request.data)
+        serializer = serializers.EnableAdminSerializer(data=request.data)
 
         # check to see if we have any validation errors
         if not serializer.is_valid():
@@ -105,12 +105,12 @@ class RegisterAdminView(views.APIView):
         return Response({'id': user.pk}, status=status.HTTP_202_ACCEPTED)
 
 
-class UnRegisterAdminView(views.APIView):
-    serializers = serializers.RegisterAdminSerializer
+class DisableAdminView(views.APIView):
+    serializers = serializers.EnableAdminSerializer
 
     @staticmethod
     def get_serializer():
-        return serializers.RegisterAdminSerializer()
+        return serializers.EnableAdminSerializer()
 
     @staticmethod
     def post(request: Request, **kwargs):
@@ -118,7 +118,7 @@ class UnRegisterAdminView(views.APIView):
         Register a user as an admin
         """
         errors = {}
-        serializer = serializers.RegisterAdminSerializer(data=request.data)
+        serializer = serializers.EnableAdminSerializer(data=request.data)
 
         # check to see if we have any validation errors
         if not serializer.is_valid():

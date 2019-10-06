@@ -27,7 +27,7 @@ class ListingSerializer(serializers.ModelSerializer):
         fields = ['id', 'asking_price']
 
 
-class RegisterRealtorSerializer(serializers.Serializer):
+class EnableRealtorSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         pass
 
@@ -38,7 +38,7 @@ class RegisterRealtorSerializer(serializers.Serializer):
     user = serializers.IntegerField(help_text="The user to associate as a realtor")
 
 
-class RegisterAdminSerializer(serializers.Serializer):
+class EnableAdminSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         pass
 
