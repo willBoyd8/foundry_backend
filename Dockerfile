@@ -26,10 +26,11 @@ COPY --from=python /source/deploy/settings.yaml /etc/foundry/settings.yaml
 ENV FOUNDRY_SETTINGS "/etc/foundry/settings.yaml"
 
 # Install and configure foundry_backend
-RUN apt-get update && apt-get install -y python3-pip --no-install-recommends \
+RUN add-apt-repository --yes ppa:deadsnakes/ppa \
+ && apt-get update && apt-get install -y python3.7 python3-pip --no-install-recommends \
  && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
- && pip3 install setuptools wheel \
- && pip3 install /foundry.tar.gz \
+ && python3.7 -m pip install setuptools wheel \
+ && python3.7 -m pip install /foundry.tar.gz \
  && rm -rf /foundry.tar.gz \
  && chmod +x /etc/service/foundry_backend/run
 
