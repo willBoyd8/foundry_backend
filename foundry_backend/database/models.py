@@ -180,7 +180,6 @@ class Property(models.Model):
 
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
     square_footage = models.IntegerField(validators=[MinValueValidator(0)])
-    description = models.TextField()
     type = models.CharField(max_length=12, choices=PROPERTY_TYPES)
 
     @staticmethod
@@ -288,3 +287,6 @@ class Listing(models.Model):
     A listing of a house
     """
     asking_price = models.IntegerField(validators=[MinValueValidator(0)])
+    description = models.TextField()
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    agent = models.ForeignKey(MLSNumber, on_delete=models.CASCADE)

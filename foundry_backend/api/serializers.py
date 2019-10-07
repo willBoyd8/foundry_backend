@@ -38,7 +38,7 @@ class PropertySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = db_models.Property
-        fields = ['id', 'address', 'square_footage', 'description']
+        fields = ['id', 'address', 'square_footage']
 
     def create(self, validated_data):
         address_data = validated_data.pop('address')
@@ -59,7 +59,7 @@ class NearbyAttractionPropertyConnectorSerializer(serializers.ModelSerializer):
 class ListingSerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Listing
-        fields = ['id', 'asking_price']
+        fields = ['id', 'asking_price', 'description']
 
 
 class RegisterRealtorSerializer(serializers.Serializer):
