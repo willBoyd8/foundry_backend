@@ -13,6 +13,7 @@ router.register(r'nearby_attraction', views.NearbyAttractionViewSet)
 router.register(r'properties', views.PropertyViewSet)
 router.register(r'nearby_property_attraction_connectors', views.NearbyAttractionPropertyConnectorViewSet)
 router.register(r'listings', views.ListingViewSet)
+router.register(r'rooms', views.RoomViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

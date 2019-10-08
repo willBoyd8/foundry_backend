@@ -62,3 +62,11 @@ class ListingViewSet(viewsets.ModelViewSet):
     """
     queryset = db_models.Listing.objects.all()
     serializer_class = serializers.ListingSerializer
+
+
+class RoomViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for listings
+    """
+    queryset = db_models.Listing.objects.all()
+    serializer_class = serializers.RoomSerializer

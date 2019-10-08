@@ -62,6 +62,12 @@ class ListingSerializer(serializers.ModelSerializer):
         fields = ['id', 'asking_price', 'description']
 
 
+class RoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.Room
+        fields = '__all__'
+
+
 class RegisterRealtorSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         pass

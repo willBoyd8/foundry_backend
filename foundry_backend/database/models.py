@@ -1,11 +1,10 @@
-from address.models import AddressField
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MinLengthValidator, MaxLengthValidator
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 import uuid
-
 from rest_framework.exceptions import ValidationError
+from rest_framework.request import Request
 
 
 class Address(models.Model):
@@ -52,12 +51,41 @@ class Agency(models.Model):
         """
         return request.user.groups.filter(name='admins').exists()
 
-    @staticmethod
-    def has_object_update_permission(request):
+    def has_object_update_permission(self, request: Request):
         """
         allow admin users to update agency information
         """
-        return request.user.groups.filter(name='admins').exists()
+        # if they are an admin, authorize them
+        is_admin = request.user.groups.filter(name='admins').exists()
+        if is_admin:
+            return True
+
+        # else, check if they are a realtor
+        if MLSNumber.objects.filter(user=request.user).exists():
+            mls_number = MLSNumber.objects.filter(user=request.user).get()
+            if mls_number.agency.id == self.id:
+                return True
+
+        return False
+
+    def has_object_partial_update_permission(self, request: Request):
+        """
+        allow admin users to update agency information
+        """
+        # if they are an admin, authorize them
+        is_admin = request.user.groups.filter(name='admins').exists()
+        if is_admin:
+            return True
+
+        # else, check if they are a realtor
+        if MLSNumber.objects.filter(user=request.user).exists():
+            mls_number = MLSNumber.objects.filter(user=request.user).get()
+            if mls_number.agency.id == self.id:
+                return True
+
+        return False
+
+
 
     @staticmethod
     def has_object_read_permission(request):
@@ -290,3 +318,26 @@ class Listing(models.Model):
     description = models.TextField()
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
     agent = models.ForeignKey(MLSNumber, on_delete=models.CASCADE)
+
+
+class Room(models.Model):
+    """
+    An individual room in the house
+    """
+    ROOM_TYPES = (
+        ('BEDROOM', 'Bedroom'),
+        ('BATHROOM', 'Bathroom'),
+        ('KITCHEN', 'Kitchen'),
+        ('DINING_ROOM', 'Dining Room'),
+        ('OFFICE', 'Office'),
+        ('DEN', 'Den'),
+        ('RECREATION', 'Recreational Room')
+    )
+
+    description = models.TextField(null=True, blank=True)
+    name = models.CharField(max_length=25)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    type = models.CharField(max_length=15, choices=ROOM_TYPES)
+
+    class Meta:
+        unique_together = (('name', 'property'),)
