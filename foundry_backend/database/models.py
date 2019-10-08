@@ -1,8 +1,25 @@
 from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MinLengthValidator, MaxLengthValidator
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 import uuid
+from rest_framework.exceptions import ValidationError
+from rest_framework.request import Request
+
+
+class Address(models.Model):
+    """
+    An address entry
+    """
+    street_number = models.CharField(max_length=5)
+    street = models.CharField(max_length=50)
+    locality = models.CharField(max_length=50)
+    postal_code = models.CharField(max_length=5, validators=[MinLengthValidator(5), MaxLengthValidator(5)])
+    state = models.CharField(max_length=15)
+    state_code = models.CharField(max_length=2, validators=[MinLengthValidator(2), MaxLengthValidator(2)])
+
+    class Meta:
+        unique_together = (('street_number', 'street', 'locality', 'postal_code', 'state_code'),)
 
 
 class Agency(models.Model):
@@ -34,12 +51,41 @@ class Agency(models.Model):
         """
         return request.user.groups.filter(name='admins').exists()
 
-    @staticmethod
-    def has_object_update_permission(request):
+    def has_object_update_permission(self, request: Request):
         """
         allow admin users to update agency information
         """
-        return request.user.groups.filter(name='admins').exists()
+        # if they are an admin, authorize them
+        is_admin = request.user.groups.filter(name='admins').exists()
+        if is_admin:
+            return True
+
+        # else, check if they are a realtor
+        if MLSNumber.objects.filter(user=request.user).exists():
+            mls_number = MLSNumber.objects.filter(user=request.user).get()
+            if mls_number.agency.id == self.id:
+                return True
+
+        return False
+
+    def has_object_partial_update_permission(self, request: Request):
+        """
+        allow admin users to update agency information
+        """
+        # if they are an admin, authorize them
+        is_admin = request.user.groups.filter(name='admins').exists()
+        if is_admin:
+            return True
+
+        # else, check if they are a realtor
+        if MLSNumber.objects.filter(user=request.user).exists():
+            mls_number = MLSNumber.objects.filter(user=request.user).get()
+            if mls_number.agency.id == self.id:
+                return True
+
+        return False
+
+
 
     @staticmethod
     def has_object_read_permission(request):
@@ -96,8 +142,202 @@ class Realtor(models.Model):
     mls = models.OneToOneField(MLSNumber, on_delete=models.CASCADE)
 
 
+class NearbyAttraction(models.Model):
+    """
+    A superclass for all the things near a property
+    """
+    NEARBY_ATTRACTION_TYPES = (
+        ('SCHOOL_ELEM', 'Public Elementary School'),
+        ('SCHOOL_MIDDLE', 'Public Middle School'),
+        ('SCHOOL_HIGH', 'Public High School'),
+        ('SCHOOL_PRIVATE', 'Private School'),
+        ('SHOPPING', 'Shopping Area'),
+        ('NEIGHBORHOOD', 'Neighborhood'),
+        ('ENTERTAINMENT', 'Entertainment Area'),
+    )
+
+    name = models.CharField(max_length=50, unique=True)
+    type = models.CharField(max_length=15, choices=NEARBY_ATTRACTION_TYPES)
+
+    @staticmethod
+    def has_read_permission(request):
+        """
+        Allow anyone to list the objects
+        """
+        return True
+
+    @staticmethod
+    def has_write_permission(request):
+        """
+        allow admin users to create new agencies
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_write_permission(request):
+        """
+        allow admin users to delete agencies
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_update_permission(request):
+        """
+        allow admin users to update agency information
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_read_permission(request):
+        """
+        allow anyone to read the specific object
+        """
+        return True
+
+
+class Property(models.Model):
+    """
+    A property model
+    """
+    PROPERTY_TYPES = (
+        ('APARTMENT', 'Apartment'),
+        ('CONDO', 'Condominium'),
+        ('DUPLEX', 'Duplex Home'),
+        ('HOUSE', 'Standalone House')
+    )
+
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
+    square_footage = models.IntegerField(validators=[MinValueValidator(0)])
+    type = models.CharField(max_length=12, choices=PROPERTY_TYPES)
+
+    @staticmethod
+    def has_read_permission(request):
+        """
+        Allow anyone to list the objects
+        """
+        return True
+
+    @staticmethod
+    def has_write_permission(request):
+        """
+        allow admin users to create new agencies
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_write_permission(request):
+        """
+        allow admin users to delete agencies
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_update_permission(request):
+        """
+        allow admin users to update agency information
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_read_permission(request):
+        """
+        allow anyone to read the specific object
+        """
+        return True
+
+
+class NearbyAttractionPropertyConnector(models.Model):
+    """
+    Connect properties to nearby schools
+    """
+    attraction = models.ForeignKey(NearbyAttraction, on_delete=models.CASCADE)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (('attraction', 'property'),)
+
+    def save(self, *args, **kwargs):
+        errors = []
+
+        if len(self.property.nearbyattractionpropertyconnector_set.filter(type='SCHOOL_ELEM').all()):
+            errors.append('The property already has a Public Elementary School listed')
+
+        if len(self.property.nearbyattractionpropertyconnector_set.filter(type='SCHOOL_MIDDLE').all()):
+            errors.append('The property already has a Public Middle School listed')
+
+        if len(self.property.nearbyattractionpropertyconnector_set.filter(type='SCHOOL_HIGH').all()):
+            errors.append('The property already has a Public High School listed')
+
+        if len(errors) is not 0:
+            raise ValidationError({'property': errors})
+
+        super().save(*args, **kwargs)
+
+
+    @staticmethod
+    def has_read_permission(request):
+        """
+        Allow anyone to list the objects
+        """
+        return True
+
+    @staticmethod
+    def has_write_permission(request):
+        """
+        allow admin users to create new agencies
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_write_permission(request):
+        """
+        allow admin users to delete agencies
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_update_permission(request):
+        """
+        allow admin users to update agency information
+        """
+        return request.user.groups.filter(name='admins').exists()
+
+    @staticmethod
+    def has_object_read_permission(request):
+        """
+        allow anyone to read the specific object
+        """
+        return True
+
+
 class Listing(models.Model):
     """
     A listing of a house
     """
     asking_price = models.IntegerField(validators=[MinValueValidator(0)])
+    description = models.TextField()
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    agent = models.ForeignKey(MLSNumber, on_delete=models.CASCADE)
+
+
+class Room(models.Model):
+    """
+    An individual room in the house
+    """
+    ROOM_TYPES = (
+        ('BEDROOM', 'Bedroom'),
+        ('BATHROOM', 'Bathroom'),
+        ('KITCHEN', 'Kitchen'),
+        ('DINING_ROOM', 'Dining Room'),
+        ('OFFICE', 'Office'),
+        ('DEN', 'Den'),
+        ('RECREATION', 'Recreational Room')
+    )
+
+    description = models.TextField(null=True, blank=True)
+    name = models.CharField(max_length=25)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    type = models.CharField(max_length=15, choices=ROOM_TYPES)
+
+    class Meta:
+        unique_together = (('name', 'property'),)

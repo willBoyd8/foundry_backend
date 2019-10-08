@@ -29,9 +29,44 @@ class RealtorUserViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.RealtorUserSerializer
 
 
+class NearbyAttractionViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for Subdivisions
+    """
+    permission_classes = (DRYPermissions,)
+    queryset = db_models.NearbyAttraction.objects.all()
+    serializer_class = serializers.NearbyAttractionSerializer
+
+
+class PropertyViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for Properties
+    """
+    permission_classes = (DRYPermissions,)
+    queryset = db_models.Property.objects.all()
+    serializer_class = serializers.PropertySerializer
+
+
+class NearbyAttractionPropertyConnectorViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for NearbyAttractionPropertyConnectors
+    """
+    permission_classes = (DRYPermissions,)
+    queryset = db_models.NearbyAttractionPropertyConnector.objects.all()
+    serializer_class = serializers.NearbyAttractionPropertyConnectorSerializer
+
+
 class ListingViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for listings
     """
     queryset = db_models.Listing.objects.all()
     serializer_class = serializers.ListingSerializer
+
+
+class RoomViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for listings
+    """
+    queryset = db_models.Listing.objects.all()
+    serializer_class = serializers.RoomSerializer

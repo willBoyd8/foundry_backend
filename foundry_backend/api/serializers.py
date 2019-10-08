@@ -2,6 +2,12 @@ from foundry_backend.database import models as db_models
 from rest_framework import serializers
 
 
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.Address
+        fields = ['street_number', 'street', 'locality', 'postal_code', 'state', 'state_code']
+
+
 class AgencySerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Agency
@@ -21,10 +27,45 @@ class RealtorUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'mls', 'user']
 
 
+class NearbyAttractionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.NearbyAttraction
+        fields = ['id', 'name', 'type']
+
+
+class PropertySerializer(serializers.ModelSerializer):
+    address = AddressSerializer()
+
+    class Meta:
+        model = db_models.Property
+        fields = ['id', 'address', 'square_footage']
+
+    def create(self, validated_data):
+        address_data = validated_data.pop('address')
+        address = db_models.Address.objects.create(**address_data)
+        print(address)
+        new_property = db_models.Property.objects.create(address_id=address.id,
+                                                         square_footage=validated_data['square_footage'],
+                                                         description=validated_data['description'])
+        return new_property
+
+
+class NearbyAttractionPropertyConnectorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.NearbyAttractionPropertyConnector
+        fields = ['id', 'attraction', 'property']
+
+
 class ListingSerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Listing
-        fields = ['id', 'asking_price']
+        fields = ['id', 'asking_price', 'description']
+
+
+class RoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.Room
+        fields = '__all__'
 
 
 class EnableRealtorSerializer(serializers.Serializer):
