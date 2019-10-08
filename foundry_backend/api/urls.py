@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from django.urls import include, path
 from rest_framework import routers
 from . import views
-from .endpoints import register_functions
+from .endpoints import permissions_functions
 
 router = routers.DefaultRouter()
 router.register(r'agencies', views.AgencyViewSet)
@@ -21,7 +21,7 @@ urlpatterns = [
     path('', include(router.urls)),
     url(r'^auth/', include('djoser.urls')),
     url(r'^auth/', include('djoser.urls.authtoken')),
-    path('register/', include(register_functions))
+    url(r'^auth/permissions/', include(permissions_functions))
 ]
 
 # # Create the groups
