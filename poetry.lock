@@ -168,6 +168,14 @@ django-templated-mail = "*"
 
 [[package]]
 category = "main"
+description = "Declarative access policies/permissions modeled after AWS' IAM policies."
+name = "drf-access-policy"
+optional = false
+python-versions = "*"
+version = "0.5.0"
+
+[[package]]
+category = "main"
 description = "Automated generation of real Swagger/OpenAPI 2.0 schemas from Django Rest Framework code."
 name = "drf-yasg"
 optional = false
@@ -183,14 +191,6 @@ inflection = ">=0.3.1"
 "ruamel.yaml" = ">=0.15.34"
 six = ">=1.10.0"
 uritemplate = ">=3.0.0"
-
-[[package]]
-category = "main"
-description = "Rules based permissions for the Django Rest Framework"
-name = "dry-rest-permissions"
-optional = false
-python-versions = "*"
-version = "0.1.10"
 
 [[package]]
 category = "main"
@@ -533,7 +533,7 @@ version = "0.6.0"
 more-itertools = "*"
 
 [metadata]
-content-hash = "dc6a2ed63587b9e12953c2ccdbac4bc88e412bd7c64321458814c9352f09d963"
+content-hash = "2d3c92e364b7ac7ab4647abd7ef20723dd4f246f1b9b9f397a52a0b0ff8c0c86"
 python-versions = "^3.5"
 
 [metadata.hashes]
@@ -554,8 +554,8 @@ django-templated-mail = ["8db807effebb42a532622e2d142dfd453dafcd0d7794c4c3332acb
 djangorestframework = ["5488aed8f8df5ec1d70f04b2114abc52ae6729748a176c453313834a9ee179c8", "dc81cbf9775c6898a580f6f1f387c4777d12bd87abf0f5406018d32ccae71090"]
 djangorestframework-simplejwt = ["4cb1a51bf9b098b983e1326a1cfc65fb0b3c5a2aa0fa43effdbf05dd6da5e8cb", "d025211806622c53020aa4f66029f1f7305e38de6439116b4a842661fc02cf36"]
 djoser = ["36e06fdfc429a3aa8647289ee0e50806114d89f781de9245a68c6a44575d1bdd", "e08570cc691caab6bf708e884b98fe3aeda61d5f84eca2d5781dfd9601ee04cf"]
+drf-access-policy = ["8825952f1cc0ba5ede9c3f7119595f8d3d6498d046756550db3007265dc58497"]
 drf-yasg = ["68fded2ffdf46e03f33e766184b7d8f1e1a5236f94acfd0c4ba932a57b812566", "fcef74709ead2b365410be3d12afbfd0a6e49d1efe615a15a929da7e950bb83c"]
-dry-rest-permissions = ["1f40461184063390e5b24e9c5602eb8cc8c3c2433c796f39a5332065bfbddd2b", "f3fe685760004ce182801602819b43ebfa922e587036f1f5a5c10ffcfa646039"]
 dynaconf = ["74e0b88252008370195d7ff1f5f39cb8a389ca6a33538a50463f25b084d66218", "b9b55b4ffd108b6f356e8bad46f39daad2172d8b08330b18f9c6b55ce2e62f9b"]
 gunicorn = ["aa8e0b40b4157b36a5df5e599f45c9c76d6af43845ba3b3b0efe2c70473c2471", "fa2662097c66f920f53f70621c6c58ca4a3c4d3434205e608e121b5b3b71f4f3"]
 idna = ["c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407", "ea8b7f6188e6fa117537c3df7da9fc686d485087abf6ac197f9c46432f7e4a3c"]
