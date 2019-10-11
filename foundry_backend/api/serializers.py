@@ -32,7 +32,7 @@ class PropertySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = db_models.Property
-        fields = ['id', 'address', 'square_footage']
+        fields = ['id', 'address', 'square_footage', 'description']
 
     def create(self, validated_data):
         address_data = validated_data.pop('address')

@@ -128,6 +128,7 @@ class Property(models.Model):
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
     square_footage = models.IntegerField(validators=[MinValueValidator(0)])
     type = models.CharField(max_length=12, choices=PROPERTY_TYPES)
+    description = models.TextField()
 
     @staticmethod
     def has_read_permission(request):
