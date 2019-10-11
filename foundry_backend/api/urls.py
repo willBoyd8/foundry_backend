@@ -8,7 +8,6 @@ from .endpoints import permissions_functions
 router = routers.DefaultRouter()
 router.register(r'agencies', views.AgencyViewSet)
 router.register(r'mls_numbers', views.MLSNumberViewSet)
-router.register(r'realtors', views.RealtorUserViewSet)
 router.register(r'nearby_attraction', views.NearbyAttractionViewSet)
 router.register(r'properties', views.PropertyViewSet)
 router.register(r'nearby_property_attraction_connectors', views.NearbyAttractionPropertyConnectorViewSet)

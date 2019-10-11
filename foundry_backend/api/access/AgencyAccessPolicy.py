@@ -13,7 +13,7 @@ class AgencyAccessPolicy(AccessPolicy):
             'action': ['update', 'partial_update'],
             'principal': ['group:realtor'],
             'effect': 'allow',
-            'condition': 'is_member_agent'
+            'condition': 'is_agent_in_agency'
         },
         {  # Forbid realtors from deleting
             'action': ['create'],
@@ -26,7 +26,3 @@ class AgencyAccessPolicy(AccessPolicy):
             'effect': 'allow'
         }
     ]
-
-    def is_member_agent(self, request, view, action) -> bool:
-        agency: Agency = view.get_object()
-        return agency.mlsnumber_set.filter(user_id=request.user.id).exists()

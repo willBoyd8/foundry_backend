@@ -1,14 +1,14 @@
 from foundry_backend.database import models as db_models
 from rest_framework import viewsets
 from . import serializers
-from . import access_policies
+from . import access
 
 
 class AgencyViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Foundry Agencies
     """
-    permission_classes = (access_policies.AgencyAccessPolicy,)
+    permission_classes = (access.AgencyAccessPolicy,)
 
     @property
     def access_policy(self):
@@ -22,7 +22,7 @@ class MLSNumberViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Foundry Agencies
     """
-    permission_classes = (access_policies.MLSNumberAccessPolicy,)
+    permission_classes = (access.MLSNumberAccessPolicy,)
 
     @property
     def access_policy(self):
@@ -30,14 +30,6 @@ class MLSNumberViewSet(viewsets.ModelViewSet):
 
     queryset = db_models.MLSNumber.objects.all()
     serializer_class = serializers.MLSNumberSerializer
-
-
-class RealtorUserViewSet(viewsets.ModelViewSet):
-    """
-    API Endpoint for Foundry Agencies
-    """
-    queryset = db_models.Realtor.objects.all()
-    serializer_class = serializers.RealtorUserSerializer
 
 
 class NearbyAttractionViewSet(viewsets.ModelViewSet):

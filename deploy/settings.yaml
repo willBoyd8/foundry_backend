@@ -95,6 +95,9 @@ default:
         - rest_framework.authentication.TokenAuthentication
     TEST_REQUEST_DEFAULT_FORMAT: 'json'
 
+  DRF_ACCESS_POLICY:
+    reusable_conditions: foundry_backend.api.access.global_conditions
+
   # Django's central urlconf. Don't change unless you know what you're doing
   ROOT_URLCONF: foundry_backend.urls
 

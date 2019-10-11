@@ -21,12 +21,6 @@ class MLSNumberSerializer(serializers.ModelSerializer):
         read_only_fields = ('number',)
 
 
-class RealtorUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = db_models.Realtor
-        fields = ['id', 'mls', 'user']
-
-
 class NearbyAttractionSerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.NearbyAttraction

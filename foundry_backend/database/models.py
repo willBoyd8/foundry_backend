@@ -61,16 +61,6 @@ class MLSNumber(models.Model):
         super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
 
-class Realtor(models.Model):
-    """
-    A Realtor's User Profile
-
-    TODO: Make this work with the django user implementation
-    """
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    mls = models.OneToOneField(MLSNumber, on_delete=models.CASCADE)
-
-
 class NearbyAttraction(models.Model):
     """
     A superclass for all the things near a property

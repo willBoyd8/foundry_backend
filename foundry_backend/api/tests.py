@@ -6,7 +6,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from rest_framework.utils import json
 
-from foundry_backend.api import views, access_policies
+from foundry_backend.api import views, access
 from foundry_backend.database.models import Agency, MLSNumber
 
 
@@ -22,7 +22,7 @@ def test_agency_redirect(client):
 
 
 def test_agency_permission():
-    assert type(views.AgencyViewSet().access_policy()) == access_policies.AgencyAccessPolicy
+    assert type(views.AgencyViewSet().access_policy()) == access.AgencyAccessPolicy
 
 
 @pytest.mark.django_db
@@ -221,7 +221,7 @@ def test_realtor_cannot_patch_different_agency(realtor_a, realtor_b):
 
 
 def test_mls_number_permission():
-    assert type(views.MLSNumberViewSet().access_policy()) == access_policies.MLSNumberAccessPolicy
+    assert type(views.MLSNumberViewSet().access_policy()) == access.MLSNumberAccessPolicy
 
 
 @pytest.mark.django_db
