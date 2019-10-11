@@ -4,7 +4,6 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 import uuid
 from rest_framework.exceptions import ValidationError
-from rest_framework.request import Request
 
 
 class Address(models.Model):
@@ -30,70 +29,6 @@ class Agency(models.Model):
     address = models.TextField(unique=True)
     phone = PhoneNumberField()
 
-    @staticmethod
-    def has_read_permission(request):
-        """
-        Allow anyone to list the objects
-        """
-        return True
-
-    @staticmethod
-    def has_write_permission(request):
-        """
-        allow admin users to create new agencies
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_write_permission(request):
-        """
-        allow admin users to delete agencies
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    def has_object_update_permission(self, request: Request):
-        """
-        allow admin users to update agency information
-        """
-        # if they are an admin, authorize them
-        is_admin = request.user.groups.filter(name='admins').exists()
-        if is_admin:
-            return True
-
-        # else, check if they are a realtor
-        if MLSNumber.objects.filter(user=request.user).exists():
-            mls_number = MLSNumber.objects.filter(user=request.user).get()
-            if mls_number.agency.id == self.id:
-                return True
-
-        return False
-
-    def has_object_partial_update_permission(self, request: Request):
-        """
-        allow admin users to update agency information
-        """
-        # if they are an admin, authorize them
-        is_admin = request.user.groups.filter(name='admins').exists()
-        if is_admin:
-            return True
-
-        # else, check if they are a realtor
-        if MLSNumber.objects.filter(user=request.user).exists():
-            mls_number = MLSNumber.objects.filter(user=request.user).get()
-            if mls_number.agency.id == self.id:
-                return True
-
-        return False
-
-
-
-    @staticmethod
-    def has_object_read_permission(request):
-        """
-        allow anyone to read the specific object
-        """
-        return True
-
 
 class MLSNumber(models.Model):
     """
@@ -102,12 +37,6 @@ class MLSNumber(models.Model):
     number = models.CharField(max_length=12, unique=True, blank=True)
     agency = models.ForeignKey(Agency, on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name='mls_number', on_delete=models.CASCADE, null=True)
-
-    def __unicode__(self):
-        return '{}'.format(self.number)
-
-    def __str__(self):
-        return '****'
 
     def _generate_number(self):
         """

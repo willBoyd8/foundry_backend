@@ -1,14 +1,19 @@
 from foundry_backend.database import models as db_models
 from rest_framework import viewsets
 from . import serializers
-from dry_rest_permissions.generics import DRYPermissions
+from . import access_policies
 
 
 class AgencyViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Foundry Agencies
     """
-    permission_classes = (DRYPermissions,)
+    permission_classes = (access_policies.AgencyAccessPolicy,)
+
+    @property
+    def access_policy(self):
+        return self.permission_classes[0]
+
     queryset = db_models.Agency.objects.all()
     serializer_class = serializers.AgencySerializer
 
@@ -17,6 +22,12 @@ class MLSNumberViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Foundry Agencies
     """
+    permission_classes = (access_policies.MLSNumberAccessPolicy,)
+
+    @property
+    def access_policy(self):
+        return self.permission_classes[0]
+
     queryset = db_models.MLSNumber.objects.all()
     serializer_class = serializers.MLSNumberSerializer
 
@@ -33,7 +44,6 @@ class NearbyAttractionViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Subdivisions
     """
-    permission_classes = (DRYPermissions,)
     queryset = db_models.NearbyAttraction.objects.all()
     serializer_class = serializers.NearbyAttractionSerializer
 
@@ -42,7 +52,6 @@ class PropertyViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Properties
     """
-    permission_classes = (DRYPermissions,)
     queryset = db_models.Property.objects.all()
     serializer_class = serializers.PropertySerializer
 
@@ -51,7 +60,6 @@ class NearbyAttractionPropertyConnectorViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for NearbyAttractionPropertyConnectors
     """
-    permission_classes = (DRYPermissions,)
     queryset = db_models.NearbyAttractionPropertyConnector.objects.all()
     serializer_class = serializers.NearbyAttractionPropertyConnectorSerializer
 
