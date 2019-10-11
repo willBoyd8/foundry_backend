@@ -174,19 +174,6 @@ def test_realtor_cannot_delete_agency(realtor_a):
     assert Agency.objects.filter(id=agency.id).exists()
 
 
-@pytest.mark.django_db
-def test_realtor_cannot_create_agency(realtor_a):
-    client = APIClient()
-
-    data = {'name': 'Agency', 'phone': '+14035555319', 'address': 'Someplace Drive'}
-
-    response = perform_api_action(client.post, data, '/api/v1/agencies/', realtor_a[3])
-
-    assert realtor_a[1].mlsnumber_set.filter(user_id=realtor_a[0]).exists()
-
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-
-
 def test_realtor_cannot_put_different_agency(realtor_a, realtor_b):
     client = APIClient()
     _, agency, _, _ = realtor_a

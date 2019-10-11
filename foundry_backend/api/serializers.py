@@ -69,21 +69,9 @@ class RoomSerializer(serializers.ModelSerializer):
 
 
 class EnableRealtorSerializer(serializers.Serializer):
-    def update(self, instance, validated_data):
-        pass
-
-    def create(self, validated_data):
-        pass
-
     mls_number = serializers.CharField(max_length=15, help_text="The MLS Number for the realtor being registered")
     user = serializers.IntegerField(help_text="The user to associate as a realtor")
 
 
 class EnableAdminSerializer(serializers.Serializer):
-    def update(self, instance, validated_data):
-        pass
-
-    def create(self, validated_data):
-        pass
-
     user = serializers.IntegerField(help_text="The user to associate as an admin")
