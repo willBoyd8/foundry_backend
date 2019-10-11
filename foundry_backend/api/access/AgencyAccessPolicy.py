@@ -1,5 +1,4 @@
 from rest_access_policy import AccessPolicy
-from foundry_backend.database.models import Agency
 
 
 class AgencyAccessPolicy(AccessPolicy):
