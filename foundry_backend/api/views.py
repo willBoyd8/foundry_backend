@@ -36,6 +36,12 @@ class NearbyAttractionViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Subdivisions
     """
+    permission_classes = (access.RealtorAdminAccessPolicy,)
+
+    @property
+    def access_policy(self):
+        return self.permission_classes[0]
+
     queryset = db_models.NearbyAttraction.objects.all()
     serializer_class = serializers.NearbyAttractionSerializer
 
@@ -44,6 +50,12 @@ class PropertyViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Properties
     """
+    permission_classes = (access.InterAgencyListingAccessPolicy,)
+
+    @property
+    def access_policy(self):
+        return self.permission_classes[0]
+
     queryset = db_models.Property.objects.all()
     serializer_class = serializers.PropertySerializer
 
@@ -52,6 +64,12 @@ class NearbyAttractionPropertyConnectorViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for NearbyAttractionPropertyConnectors
     """
+    permission_classes = (access.RealtorAdminAccessPolicy,)
+
+    @property
+    def access_policy(self):
+        return self.permission_classes[0]
+
     queryset = db_models.NearbyAttractionPropertyConnector.objects.all()
     serializer_class = serializers.NearbyAttractionPropertyConnectorSerializer
 
@@ -60,6 +78,12 @@ class ListingViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for listings
     """
+    permission_classes = (access.InterAgencyListingAccessPolicy,)
+
+    @property
+    def access_policy(self):
+        return self.permission_classes[0]
+
     queryset = db_models.Listing.objects.all()
     serializer_class = serializers.ListingSerializer
 
@@ -70,3 +94,17 @@ class RoomViewSet(viewsets.ModelViewSet):
     """
     queryset = db_models.Listing.objects.all()
     serializer_class = serializers.RoomSerializer
+
+
+class HomeAlarmViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for home alarms
+    """
+    permission_classes = (access.HomeAlarmAccessPolicy,)
+
+    @property
+    def access_policy(self):
+        return self.permission_classes[0]
+
+    queryset = db_models.Listing.objects.all()
+    serializer_class = serializers.HomeAlarmSerializer

@@ -15,7 +15,7 @@ class AgencyAccessPolicy(AccessPolicy):
             'condition': 'is_agent_in_agency'
         },
         {  # Forbid realtors from deleting
-            'action': ['create'],
+            'action': ['delete'],
             'principal': ['group:realtor'],
             'effect': 'deny',
         },

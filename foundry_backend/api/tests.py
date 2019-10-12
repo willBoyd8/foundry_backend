@@ -1,11 +1,10 @@
 import pytest
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from requests import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from rest_framework.utils import json
-
 from foundry_backend.api import views, access
 from foundry_backend.database.models import Agency, MLSNumber
 
@@ -13,6 +12,10 @@ from foundry_backend.database.models import Agency, MLSNumber
 def perform_api_action(action, data, path, token):
     response = action(path, data=data, format='json', HTTP_AUTHORIZATION='Token {}'.format(token))
     return response
+
+
+def perform_creation(token, client, data, path):
+    return perform_api_action(client.post, data, path, token)
 
 
 @pytest.mark.django_db
@@ -324,3 +327,110 @@ def test_admin_can_delete_mls_number(admin_user):
 
     assert response.status_code == status.HTTP_204_NO_CONTENT
     assert not MLSNumber.objects.filter(id=mls.id).exists()
+
+
+def test_nearby_attraction_permission():
+    assert type(views.NearbyAttractionViewSet().access_policy()) == access.RealtorAdminAccessPolicy
+
+
+@pytest.mark.django_db
+def test_anyone_can_get_nearby_attractions(client):
+    response: Response = client.get('/api/v1/nearby_attractions/')
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+@pytest.mark.django_db
+def test_unauthenticated_cannot_create_nearby_attraction(client):
+    data = {'name': 'Movie Theater', 'type': 'ENTERTAINMENT'}
+
+    response: Response = client.post('/api/v1/nearby_attractions/', data)
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+@pytest.mark.django_db
+def test_admin_can_create_nearby_attractions(admin_user):
+    client = APIClient()
+
+    data = {'name': 'Movie Theater', 'type': 'ENTERTAINMENT'}
+
+    response = perform_creation(admin_user[1],
+                                client,
+                                data,
+                                '/api/v1/nearby_attractions/')
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert json.loads(response.render().content) == {**data, 'id': 1}
+
+
+@pytest.mark.django_db
+def test_realtor_can_create_nearby_attractions(realtor_a):
+    client = APIClient()
+
+    data = {'name': 'Movie Theater', 'type': 'ENTERTAINMENT'}
+
+    response = perform_creation(realtor_a[3],
+                                client,
+                                data,
+                                '/api/v1/nearby_attractions/')
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert json.loads(response.render().content) == {**data, 'id': 1}
+
+
+def test_property_permission():
+    assert type(views.PropertyViewSet().access_policy()) == access.InterAgencyListingAccessPolicy
+
+
+def test_nearby_attraction_property_connector_permission():
+    assert type(views.NearbyAttractionPropertyConnectorViewSet().access_policy()) == access.RealtorAdminAccessPolicy
+
+
+def test_realtor_can_change_owned_listing(realtor_c, listing_a):
+    client = APIClient()
+
+    data = {'agent': realtor_c[2].id}
+    response = perform_api_action(client.patch, data, '/api/v1/listings/{}/'.format(listing_a.id), realtor_c[3])
+
+    listing_a.refresh_from_db()
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == {'id': listing_a.id, 'agent': listing_a.agent.id,
+                               'asking_price': listing_a.asking_price, 'description': listing_a.description}
+
+
+def test_realtor_cannot_change_non_owned_listing(realtor_b, listing_a):
+    client = APIClient()
+
+    data = {'agent': realtor_b[2].id}
+    response = perform_api_action(client.patch, data, '/api/v1/listings/{}/'.format(listing_a.id), realtor_b[3])
+
+    listing_a.refresh_from_db()
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_realtor_can_change_owned_property(realtor_c, listing_a):
+    client = APIClient()
+
+    data = {'square_footage': 3000}
+    response = perform_api_action(client.patch, data, '/api/v1/properties/{}/'.format(listing_a.property.id), realtor_c[3])
+
+    listing_a.refresh_from_db()
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == {'id': listing_a.property.id, 'square_footage': 3000,
+                               'address': listing_a.property.address.to_dict(), 'listing': listing_a.id,
+                               'type': listing_a.property.type}
+
+
+def test_realtor_cannot_change_non_owned_property(realtor_b, listing_a):
+    client = APIClient()
+
+    data = {'square_footage': 3000}
+    response = perform_api_action(client.patch, data, '/api/v1/properties/{}/'.format(listing_a.property.id), realtor_b[3])
+
+    listing_a.refresh_from_db()
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN

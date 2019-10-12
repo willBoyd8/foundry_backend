@@ -32,15 +32,14 @@ class PropertySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = db_models.Property
-        fields = ['id', 'address', 'square_footage', 'description']
+        fields = '__all__'
 
     def create(self, validated_data):
         address_data = validated_data.pop('address')
         address = db_models.Address.objects.create(**address_data)
         print(address)
         new_property = db_models.Property.objects.create(address_id=address.id,
-                                                         square_footage=validated_data['square_footage'],
-                                                         description=validated_data['description'])
+                                                         square_footage=validated_data['square_footage'])
         return new_property
 
 
@@ -53,12 +52,18 @@ class NearbyAttractionPropertyConnectorSerializer(serializers.ModelSerializer):
 class ListingSerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Listing
-        fields = ['id', 'asking_price', 'description']
+        fields = '__all__'
 
 
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Room
+        fields = '__all__'
+
+
+class HomeAlarmSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.HomeAlarm
         fields = '__all__'
 
 

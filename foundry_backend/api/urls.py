@@ -8,11 +8,13 @@ from .endpoints import permissions_functions
 router = routers.DefaultRouter()
 router.register(r'agencies', views.AgencyViewSet)
 router.register(r'mls_numbers', views.MLSNumberViewSet)
-router.register(r'nearby_attraction', views.NearbyAttractionViewSet)
+router.register(r'nearby_attractions', views.NearbyAttractionViewSet)
 router.register(r'properties', views.PropertyViewSet)
 router.register(r'nearby_property_attraction_connectors', views.NearbyAttractionPropertyConnectorViewSet)
 router.register(r'listings', views.ListingViewSet)
 router.register(r'rooms', views.RoomViewSet)
+router.register(r'home_alarms', views.HomeAlarmViewSet)
+
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

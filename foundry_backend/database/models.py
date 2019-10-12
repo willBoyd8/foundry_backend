@@ -20,6 +20,16 @@ class Address(models.Model):
     class Meta:
         unique_together = (('street_number', 'street', 'locality', 'postal_code', 'state_code'),)
 
+    def to_dict(self):
+        return {
+            'locality': self.locality,
+            'postal_code': self.postal_code,
+            'state': self.state,
+            'state_code': self.state_code,
+            'street': self.street,
+            'street_number': self.street_number
+        }
+
 
 class Agency(models.Model):
     """
@@ -78,40 +88,14 @@ class NearbyAttraction(models.Model):
     name = models.CharField(max_length=50, unique=True)
     type = models.CharField(max_length=15, choices=NEARBY_ATTRACTION_TYPES)
 
-    @staticmethod
-    def has_read_permission(request):
-        """
-        Allow anyone to list the objects
-        """
-        return True
 
-    @staticmethod
-    def has_write_permission(request):
-        """
-        allow admin users to create new agencies
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_write_permission(request):
-        """
-        allow admin users to delete agencies
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_update_permission(request):
-        """
-        allow admin users to update agency information
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_read_permission(request):
-        """
-        allow anyone to read the specific object
-        """
-        return True
+class Listing(models.Model):
+    """
+    A listing of a house
+    """
+    asking_price = models.IntegerField(validators=[MinValueValidator(0)])
+    description = models.TextField()
+    agent = models.ForeignKey(MLSNumber, on_delete=models.CASCADE)
 
 
 class Property(models.Model):
@@ -125,45 +109,10 @@ class Property(models.Model):
         ('HOUSE', 'Standalone House')
     )
 
+    listing = models.OneToOneField(Listing, on_delete=models.CASCADE)
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
     square_footage = models.IntegerField(validators=[MinValueValidator(0)])
     type = models.CharField(max_length=12, choices=PROPERTY_TYPES)
-    description = models.TextField()
-
-    @staticmethod
-    def has_read_permission(request):
-        """
-        Allow anyone to list the objects
-        """
-        return True
-
-    @staticmethod
-    def has_write_permission(request):
-        """
-        allow admin users to create new agencies
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_write_permission(request):
-        """
-        allow admin users to delete agencies
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_update_permission(request):
-        """
-        allow admin users to update agency information
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_read_permission(request):
-        """
-        allow anyone to read the specific object
-        """
-        return True
 
 
 class NearbyAttractionPropertyConnector(models.Model):
@@ -194,52 +143,6 @@ class NearbyAttractionPropertyConnector(models.Model):
         super().save(*args, **kwargs)
 
 
-    @staticmethod
-    def has_read_permission(request):
-        """
-        Allow anyone to list the objects
-        """
-        return True
-
-    @staticmethod
-    def has_write_permission(request):
-        """
-        allow admin users to create new agencies
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_write_permission(request):
-        """
-        allow admin users to delete agencies
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_update_permission(request):
-        """
-        allow admin users to update agency information
-        """
-        return request.user.groups.filter(name='admins').exists()
-
-    @staticmethod
-    def has_object_read_permission(request):
-        """
-        allow anyone to read the specific object
-        """
-        return True
-
-
-class Listing(models.Model):
-    """
-    A listing of a house
-    """
-    asking_price = models.IntegerField(validators=[MinValueValidator(0)])
-    description = models.TextField()
-    property = models.ForeignKey(Property, on_delete=models.CASCADE)
-    agent = models.ForeignKey(MLSNumber, on_delete=models.CASCADE)
-
-
 class Room(models.Model):
     """
     An individual room in the house
@@ -261,3 +164,14 @@ class Room(models.Model):
 
     class Meta:
         unique_together = (('name', 'property'),)
+
+
+class HomeAlarm(models.Model):
+    """
+    Info for the homeowner's alarm and security info
+    """
+    property = models.OneToOneField(Property, on_delete=models.CASCADE)
+    arm_code = models.CharField(max_length=50)
+    disarm_code = models.CharField(max_length=50)
+    password = models.CharField(max_length=50)
+    notes = models.TextField()
