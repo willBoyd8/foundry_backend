@@ -20,6 +20,7 @@ whitenoise = "^4.1"
 djoser = "^2.0"
 djangorestframework_simplejwt = "^4.3"
 drf-access-policy = "^0.5.0"
+requests-toolbelt = "^0.9.1"
 
 [tool.poetry.scripts]
 django_manage = 'manage:main'
