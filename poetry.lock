@@ -168,6 +168,14 @@ django-templated-mail = "*"
 
 [[package]]
 category = "main"
+description = "Declarative access policies/permissions modeled after AWS' IAM policies."
+name = "drf-access-policy"
+optional = false
+python-versions = "*"
+version = "0.5.0"
+
+[[package]]
+category = "main"
 description = "Automated generation of real Swagger/OpenAPI 2.0 schemas from Django Rest Framework code."
 name = "drf-yasg"
 optional = false
@@ -183,14 +191,6 @@ inflection = ">=0.3.1"
 "ruamel.yaml" = ">=0.15.34"
 six = ">=1.10.0"
 uritemplate = ">=3.0.0"
-
-[[package]]
-category = "main"
-description = "Rules based permissions for the Django Rest Framework"
-name = "dry-rest-permissions"
-optional = false
-python-versions = "*"
-version = "0.1.10"
 
 [[package]]
 category = "main"
@@ -444,6 +444,17 @@ urllib3 = ">=1.21.1,<1.25.0 || >1.25.0,<1.25.1 || >1.25.1,<1.26"
 
 [[package]]
 category = "main"
+description = "A utility belt for advanced users of python-requests"
+name = "requests-toolbelt"
+optional = false
+python-versions = "*"
+version = "0.9.1"
+
+[package.dependencies]
+requests = ">=2.0.1,<3.0.0"
+
+[[package]]
+category = "main"
 description = "ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order"
 name = "ruamel.yaml"
 optional = false
@@ -533,7 +544,7 @@ version = "0.6.0"
 more-itertools = "*"
 
 [metadata]
-content-hash = "dc6a2ed63587b9e12953c2ccdbac4bc88e412bd7c64321458814c9352f09d963"
+content-hash = "096b561618ad91eeb5a7558edea3deac2cf8e8429f6c36a0bfd8f03fb8694752"
 python-versions = "^3.5"
 
 [metadata.hashes]
@@ -554,8 +565,8 @@ django-templated-mail = ["8db807effebb42a532622e2d142dfd453dafcd0d7794c4c3332acb
 djangorestframework = ["5488aed8f8df5ec1d70f04b2114abc52ae6729748a176c453313834a9ee179c8", "dc81cbf9775c6898a580f6f1f387c4777d12bd87abf0f5406018d32ccae71090"]
 djangorestframework-simplejwt = ["4cb1a51bf9b098b983e1326a1cfc65fb0b3c5a2aa0fa43effdbf05dd6da5e8cb", "d025211806622c53020aa4f66029f1f7305e38de6439116b4a842661fc02cf36"]
 djoser = ["36e06fdfc429a3aa8647289ee0e50806114d89f781de9245a68c6a44575d1bdd", "e08570cc691caab6bf708e884b98fe3aeda61d5f84eca2d5781dfd9601ee04cf"]
+drf-access-policy = ["8825952f1cc0ba5ede9c3f7119595f8d3d6498d046756550db3007265dc58497"]
 drf-yasg = ["68fded2ffdf46e03f33e766184b7d8f1e1a5236f94acfd0c4ba932a57b812566", "fcef74709ead2b365410be3d12afbfd0a6e49d1efe615a15a929da7e950bb83c"]
-dry-rest-permissions = ["1f40461184063390e5b24e9c5602eb8cc8c3c2433c796f39a5332065bfbddd2b", "f3fe685760004ce182801602819b43ebfa922e587036f1f5a5c10ffcfa646039"]
 dynaconf = ["74e0b88252008370195d7ff1f5f39cb8a389ca6a33538a50463f25b084d66218", "b9b55b4ffd108b6f356e8bad46f39daad2172d8b08330b18f9c6b55ce2e62f9b"]
 gunicorn = ["aa8e0b40b4157b36a5df5e599f45c9c76d6af43845ba3b3b0efe2c70473c2471", "fa2662097c66f920f53f70621c6c58ca4a3c4d3434205e608e121b5b3b71f4f3"]
 idna = ["c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407", "ea8b7f6188e6fa117537c3df7da9fc686d485087abf6ac197f9c46432f7e4a3c"]
@@ -580,6 +591,7 @@ python-dotenv = ["debd928b49dbc2bf68040566f55cdb3252458036464806f4094487244e2a40
 pytz = ["26c0b32e437e54a18161324a2fca3c4b9846b74a8dccddd843113109e1116b32", "c894d57500a4cd2d5c71114aaab77dbab5eabd9022308ce5ac9bb93a60a6f0c7"]
 pyyaml = ["0113bc0ec2ad727182326b61326afa3d1d8280ae1122493553fd6f4397f33df9", "01adf0b6c6f61bd11af6e10ca52b7d4057dd0be0343eb9283c878cf3af56aee4", "5124373960b0b3f4aa7df1707e63e9f109b5263eca5976c66e08b1c552d4eaf8", "5ca4f10adbddae56d824b2c09668e91219bb178a1eee1faa56af6f99f11bf696", "7907be34ffa3c5a32b60b95f4d95ea25361c951383a894fec31be7252b2b6f34", "7ec9b2a4ed5cad025c2278a1e6a19c011c80a3caaac804fd2d329e9cc2c287c9", "87ae4c829bb25b9fe99cf71fbb2140c448f534e24c998cc60f39ae4f94396a73", "9de9919becc9cc2ff03637872a440195ac4241c80536632fffeb6a1e25a74299", "a5a85b10e450c66b49f98846937e8cfca1db3127a9d5d1e31ca45c3d0bef4c5b", "b0997827b4f6a7c286c01c5f60384d218dca4ed7d9efa945c3e1aa623d5709ae", "b631ef96d3222e62861443cc89d6563ba3eeb816eeb96b2629345ab795e53681", "bf47c0607522fdbca6c9e817a6e81b08491de50f3766a7a0e6a5be7905961b41", "f81025eddd0327c7d4cfe9b62cf33190e1e736cc6e97502b3ec425f574b3e7a8"]
 requests = ["11e007a8a2aa0323f5a921e9e6a2d7e4e67d9877e85773fba9ba6419025cbeb4", "9cf5292fcd0f598c671cfc1e0d7d1a7f13bb8085e9a590f48c010551dc6c4b31"]
+requests-toolbelt = ["380606e1d10dc85c3bd47bf5a6095f815ec007be7a8b69c878507068df059e6f", "968089d4584ad4ad7c171454f0a5c6dac23971e9472521ea3b6d49d610aa6fc0"]
 "ruamel.yaml" = ["0db639b1b2742dae666c6fc009b8d1931ef15c9276ef31c0673cc6dcf766cf40", "412a6f5cfdc0525dee6a27c08f5415c7fd832a7afcb7a0ed7319628aed23d408"]
 "ruamel.yaml.clib" = ["0bbe19d3e099f8ba384e1846e6b54f245f58aeec8700edbbf9abb87afa54fd82", "2f38024592613f3a8772bbc2904be027d9abf463518ba145f2d0c8e6da27009f", "44449b3764a3f75815eea8ae5930b98e8326be64a90b0f782747318f861abfe0", "5710be9a357801c31c1eaa37b9bc92d38176d785af5b2f0c9751385c5dc9659a", "5a089acb6833ed5f412e24cbe3e665683064c1429824d2819137b5ade54435c3", "6143386ddd61599ea081c012a69a16e5bdd7b3c6c231bd039534365a48940f30", "6726aaf851f5f9e4cbdd3e1e414bc700bdd39220e8bc386415fd41c87b1b53c2", "68fbc3b5d94d145a391452f886ae5fca240cb7e3ab6bd66e1a721507cdaac28a", "75ebddf99ba9e0b48f32b5bdcf9e5a2b84c017da9e0db7bf11995fa414aa09cd", "79948a6712baa686773a43906728e20932c923f7b2a91be7347993be2d745e55", "8a2dd8e8b08d369558cade05731172c4b5e2f4c5097762c6b352bd28fd9f9dc4", "c747acdb5e8c242ab2280df6f0c239e62838af4bee647031d96b3db2f9cefc04", "cadc8eecd27414dca30366b2535cb5e3f3b47b4e2d6be7a0b13e4e52e459ff9f", "cee86ecc893a6a8ecaa7c6a9c2d06f75f614176210d78a5f155f8e78d6989509", "e59af39e895aff28ee5f55515983cab3466d1a029c91c04db29da1c0f09cf333", "eee7ecd2eee648884fae6c51ae50c814acdcc5d6340dc96c970158aebcd25ac6", "ef8d4522d231cb9b29f6cdd0edc8faac9d9715c60dc7becbd6eb82c915a98e5b", "f504d45230cc9abf2810623b924ae048b224a90adb01f97db4e766cfdda8e6eb"]
 six = ["3350809f0555b11f552448330d0b52d5f24c91a322ea4a15ef22629740f3761c", "d16a0141ec1a18405cd4ce8b4613101da75da0e9a7aec5bdd4fa804d0e0eba73"]

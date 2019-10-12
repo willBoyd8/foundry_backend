@@ -56,11 +56,16 @@ class EnableRealtorView(views.APIView):
         user = models.User.objects.filter(pk=request.data['user']).get()
 
         # Link the MLS Number to the User
-        mls.owner = user
+        mls.user = user
         mls.save()
+        user.save()
 
-        # Apply permissions to the user
+        # Add the user to the realtor group
+        realtors, created = Group.objects.get_or_create(name='realtor')
+        if created:
+            print('Created Realtor Group')
 
+        realtors.user_set.add(user)
 
         return Response({'id': mls.id}, status=status.HTTP_202_ACCEPTED)
 
@@ -96,7 +101,7 @@ class EnableAdminView(views.APIView):
 
         # Add the user to the admin group
         user: User = models.User.objects.filter(pk=request.data['user']).first()
-        admins, created = Group.objects.get_or_create(name='admins')
+        admins, created = Group.objects.get_or_create(name='admin')
         if created:
             print('Created Admin Group')
 
@@ -135,7 +140,7 @@ class DisableAdminView(views.APIView):
             raise ValidationError(errors)
 
         # Add the user to the admin group
-        admins, created = Group.objects.get_or_create(name='admins')
+        admins, created = Group.objects.get_or_create(name='admin')
         if created:
             print('Created Admin Group')
 

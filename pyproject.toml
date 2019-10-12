@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "foundry_backend"
-version = "1.1.1"
+version = "2.0.0"
 description = "The backend component of Foundry MLS"
 authors = ["The Foundry MLS Team <foundry@abwlabs.com>"]
 
@@ -17,9 +17,10 @@ django-address = "^0.2.1"
 pytest-django = "^3.5"
 drf-yasg = "^1.16"
 whitenoise = "^4.1"
-dry-rest-permissions = "^0.1.10"
 djoser = "^2.0"
 djangorestframework_simplejwt = "^4.3"
+drf-access-policy = "^0.5.0"
+requests-toolbelt = "^0.9.1"
 
 [tool.poetry.scripts]
 django_manage = 'manage:main'
