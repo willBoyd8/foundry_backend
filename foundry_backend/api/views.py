@@ -1,3 +1,4 @@
+from foundry_backend.api import models
 from foundry_backend.database import models as db_models
 from rest_framework import viewsets
 from . import serializers
@@ -123,3 +124,19 @@ class ShowingViewSet(viewsets.ModelViewSet):
 
     queryset = db_models.Listing.objects.all()
     serializer_class = serializers.HomeAlarmSerializer
+
+
+class IAMPolicyRuleViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for IAM Policies
+    """
+    queryset = models.IAMPolicyRule.objects.all()
+    serializer_class = serializers.IAMPolicyRuleSerializer
+
+
+class IAMPolicyViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for IAM Lists
+    """
+    queryset = models.IAMPolicy.objects.all()
+    serializer_class = serializers.IAMPolicySerializer

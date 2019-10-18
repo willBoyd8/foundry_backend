@@ -60,12 +60,14 @@ default:
     - django.contrib.messages
     - django.contrib.staticfiles
     - foundry_backend.database
+    - foundry_backend.api
     - rest_framework
     - djoser
     - rest_framework.authtoken
     - drf_yasg
     - phonenumber_field
     - address
+    - multiselectfield
 
   # Valid django middleware. Don't change unless you know what you're doing
   MIDDLEWARE:

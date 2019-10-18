@@ -15,6 +15,7 @@ router.register(r'listings', views.ListingViewSet)
 router.register(r'rooms', views.RoomViewSet)
 router.register(r'home_alarms', views.HomeAlarmViewSet)
 router.register(r'showings', views.HomeAlarmViewSet)
+router.register(r'iam', views.IAMPolicyViewSet)
 
 
 # Wire up our API using automatic URL routing.
