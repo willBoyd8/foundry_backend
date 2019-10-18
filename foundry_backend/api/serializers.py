@@ -67,6 +67,12 @@ class HomeAlarmSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ShowingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.Showing
+        fields = '__all__'
+
+
 class EnableRealtorSerializer(serializers.Serializer):
     mls_number = serializers.CharField(max_length=15, help_text="The MLS Number for the realtor being registered")
     user = serializers.IntegerField(help_text="The user to associate as a realtor")

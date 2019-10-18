@@ -14,6 +14,7 @@ router.register(r'nearby_property_attraction_connectors', views.NearbyAttraction
 router.register(r'listings', views.ListingViewSet)
 router.register(r'rooms', views.RoomViewSet)
 router.register(r'home_alarms', views.HomeAlarmViewSet)
+router.register(r'showings', views.HomeAlarmViewSet)
 
 
 # Wire up our API using automatic URL routing.

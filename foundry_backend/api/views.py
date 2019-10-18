@@ -108,3 +108,18 @@ class HomeAlarmViewSet(viewsets.ModelViewSet):
 
     queryset = db_models.Listing.objects.all()
     serializer_class = serializers.HomeAlarmSerializer
+
+
+class ShowingViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for home alarms
+    """
+    # TODO: Change me
+    permission_classes = (access.HomeAlarmAccessPolicy,)
+
+    @property
+    def access_policy(self):
+        return self.permission_classes[0]
+
+    queryset = db_models.Listing.objects.all()
+    serializer_class = serializers.HomeAlarmSerializer
