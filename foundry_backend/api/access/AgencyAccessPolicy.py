@@ -6,7 +6,7 @@ class AgencyAccessPolicy(AccessPolicy):
         {  # Allow anyone to list all the Agencies, and allow anyone to retrieve a specific Agency
             'action': ['list', 'retrieve'],
             'principal': '*',
-            'effect': 'allow'
+            'effect': 'allow',
         },
         {  # Allow realtors that are part of an agency to manage that agency
             'action': ['update', 'partial_update'],

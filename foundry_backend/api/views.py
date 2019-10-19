@@ -126,14 +126,6 @@ class ShowingViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.HomeAlarmSerializer
 
 
-class IAMPolicyRuleViewSet(viewsets.ModelViewSet):
-    """
-    API Endpoint for IAM Policies
-    """
-    queryset = models.IAMPolicyRule.objects.all()
-    serializer_class = serializers.IAMPolicyRuleSerializer
-
-
 class IAMPolicyViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for IAM Lists

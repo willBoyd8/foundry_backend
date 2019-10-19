@@ -9,12 +9,19 @@ class IAMPolicy(models.Model):
     notes = models.CharField(max_length=255, null=True, blank=True)
     name = models.CharField(max_length=255, unique=True)
 
+    def serialize(self) -> dict:
+        return {
+            'name': self.name,
+            'notes': self.notes,
+            'statements': [statement.serialize() for statement in self.statements]
+        }
 
-class IAMPolicyRule(models.Model):
+
+class IAMPolicyStatement(models.Model):
     """
-    Defines a specific IAM policy
+    Defines a specific IAM policy statement
     """
-    IAM_ACTION_OPTIONS = (
+    STATEMENT_ACTION_OPTIONS = (
         ('list', 'List all objects (GET)'),
         ('retrieve', 'Retrieve a specific object (GET with PK)'),
         ('create', 'Create a new object (POST)'),
@@ -30,23 +37,41 @@ class IAMPolicyRule(models.Model):
         ('deny', 'This rule denies users permission')
     )
 
-    policy = models.ForeignKey(IAMPolicy, related_name='rules', on_delete=models.CASCADE)
+    policy = models.ForeignKey(IAMPolicy, related_name='statements', on_delete=models.CASCADE)
     notes = models.CharField(max_length=255, null=True, blank=True)
-    actions = MultiSelectField(choices=IAM_ACTION_OPTIONS)
+    actions = MultiSelectField(choices=STATEMENT_ACTION_OPTIONS)
     effect = models.CharField(max_length=5, choices=IAM_EFFECT_OPTIONS)
 
+    def serialize(self) -> dict:
+        e = self.effect
 
-class IAMPrincipalItem(models.Model):
+        if e == 'all':
+            e = '*'
+        elif e == 'safe':
+            e = '<safe_methods>'
+
+        return {
+            'notes': self.notes,
+            'effect': e,
+            'principal': [principal.serialize() for principal in self.principals],
+            'condition': [condition.serialize() for condition in self.conditions]
+        }
+
+
+class IAMPolicyStatementPrincipal(models.Model):
     """
     Defines a principal actor for an IAM policy
     """
-    policy = models.ForeignKey(IAMPolicyRule, related_name='principals', on_delete=models.CASCADE)
+    statement = models.ForeignKey(IAMPolicyStatement, related_name='principals', on_delete=models.CASCADE)
     value = models.CharField(max_length=255)
 
+    def serialize(self) -> str:
+        return self.value
 
-class IAMConditionItem(models.Model):
+
+class IAMPolicyStatementConditionItem(models.Model):
     """
     Defines a condition for an IAM policy
     """
-    policy = models.ForeignKey(IAMPolicyRule, related_name='conditions', on_delete=models.CASCADE)
+    policy = models.ForeignKey(IAMPolicyStatement, related_name='conditions', on_delete=models.CASCADE)
     value = models.CharField(max_length=255)

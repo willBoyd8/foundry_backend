@@ -22,6 +22,7 @@ djangorestframework_simplejwt = "^4.3"
 drf-access-policy = "^0.5.0"
 requests-toolbelt = "^0.9.1"
 django-multiselectfield = "^0.1.9"
+drf-writable-nested = "^0.5.1"
 
 [tool.poetry.scripts]
 django_manage = 'manage:main'

@@ -1,5 +1,5 @@
+from drf_writable_nested import WritableNestedModelSerializer, NestedUpdateMixin
 from rest_framework.fields import MultipleChoiceField
-
 from foundry_backend.api import models
 from foundry_backend.database import models as db_models
 from rest_framework import serializers
@@ -85,54 +85,43 @@ class EnableAdminSerializer(serializers.Serializer):
     user = serializers.IntegerField(help_text="The user to associate as an admin")
 
 
-class IAMPolicyRuleSerializer(serializers.ModelSerializer):
+class IAMPolicyRulePrincipalSerializer(serializers.ModelSerializer):
     """
-    Serialize an IAMPolicyRule
+    Serialize an IAMPolicyRulePrincipal item
     """
-    actions = MultipleChoiceField(choices=models.IAMPolicyRule.IAM_ACTION_OPTIONS)
+    class Meta:
+        model = models.IAMPolicyStatementPrincipal
+        fields = ['id', 'value']
+
+
+class IAMPolicyRuleConditionSerializer(serializers.ModelSerializer):
+    """
+    Serialize an IAMPolicyStatementConditionPrincipal item
+    """
+    class Meta:
+        model = models.IAMPolicyStatementConditionItem
+        fields = ['id', 'value']
+
+
+class IAMPolicyStatementSerializer(WritableNestedModelSerializer):
+    """
+    Serialize an IAMPolicyStatement
+    """
+    actions = MultipleChoiceField(choices=models.IAMPolicyStatement.STATEMENT_ACTION_OPTIONS)
+    principals = IAMPolicyRulePrincipalSerializer(many=True)
+    conditions = IAMPolicyRuleConditionSerializer(many=True)
 
     class Meta:
-        model = models.IAMPolicyRule
-        fields = ['id', 'notes', 'actions', 'effect']
+        model = models.IAMPolicyStatement
+        fields = ['id', 'notes', 'actions', 'effect', 'principals', 'conditions']
 
 
-class IAMPolicySerializer(serializers.ModelSerializer):
+class IAMPolicySerializer(WritableNestedModelSerializer):
     """
     Serialize an IAMPolicy
     """
-    rules = IAMPolicyRuleSerializer(many=True)
+    statements = IAMPolicyStatementSerializer(many=True)
 
     class Meta:
         model = models.IAMPolicy
-        fields = ['id', 'name', 'notes', 'rules']
-
-    def create(self, validated_data):
-        rules_data = validated_data.pop('rules')
-
-        policy = models.IAMPolicy.objects.create(**validated_data)
-
-        for rule_data in rules_data:
-            IAMPolicyRuleSerializer().create({**rule_data, 'policy': policy})
-
-        policy.save()
-        return policy
-
-    def update(self, instance, validated_data):
-        # Get the rules JSON and the rule objects
-        rules_data = validated_data.pop('rules')
-        rules = list((instance.rules).all())
-
-        # update the policy
-        instance.notes = validated_data.get('notes', instance.notes)
-        instance.name = validated_data.get('name', instance.name)
-        instance.save()
-
-        for rule_data in rules_data:
-            # Remove and edit a rule
-            rule = rules.pop(0)
-            rule.notes = rule_data.get('notes', rule.notes)
-            rule.actions = rule_data.get('actions', rule.actions)
-            rule.effect = rule_data.get('effect', rule.effect)
-            rule.save()
-
-        return instance
+        fields = ['id', 'name', 'notes', 'statements']
