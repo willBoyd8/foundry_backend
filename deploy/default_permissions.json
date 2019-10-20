@@ -1,0 +1,256 @@
+[
+  {
+    "name": "default",
+    "notes": "The default access policy",
+    "statements": [
+      {
+        "notes": "Deny access to anything that does not have an explicit policy",
+        "actions": [
+          "all"
+        ],
+        "effect": "deny",
+        "principals": [
+          {
+            "value": "*"
+          }
+        ],
+        "conditions": []
+      }
+    ]
+  },
+  {
+    "name": "agency-access-policy",
+    "notes": "Allows agents to manipulate their own agencies",
+    "statements": [
+      {
+        "notes": "Allow anyone to list or retrieve agencies",
+        "actions": [
+          "list",
+          "retrieve"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "*"
+          }
+        ],
+        "conditions": []
+      },
+      {
+        "notes": "Allow realtors to modify their own agency",
+        "actions": [
+          "update"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "group:realtor"
+          }
+        ],
+        "conditions": [
+          {
+            "value": "is_agent_in_agency"
+          }
+        ]
+      },
+      {
+        "notes": "Allow admins to do anything",
+        "actions": [
+          "all"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "group:admin"
+          }
+        ],
+        "conditions": []
+      }
+    ]
+  },
+  {
+    "name": "home-alarm-access-policy",
+    "notes": "Allow privileged realtors to view sensitive home alarm info",
+    "statements": [
+      {
+        "notes": "Allow realtors to list or retrieve home alarm info",
+        "actions": [
+          "list",
+          "retrieve"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "group:realtor"
+          }
+        ],
+        "conditions": []
+      },
+      {
+        "notes": "Allow realtors to create, update, and delete if they are member to this agency",
+        "actions": [
+          "create",
+          "update",
+          "delete"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "id": 6,
+            "value": "group:realtor"
+          }
+        ],
+        "conditions": [
+          {
+            "value": "property_belongs_to_agency"
+          }
+        ]
+      },
+      {
+        "notes": "Allow admins to do anything",
+        "actions": [
+          "all"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "group:admin"
+          }
+        ],
+        "conditions": []
+      }
+    ]
+  },
+  {
+    "name": "inter-agency-listing-access-policy",
+    "notes": "Allow realtors to manage resources owned by their agency",
+    "statements": [
+      {
+        "notes": "Allow anyone to list or retrieve listing elements",
+        "actions": [
+          "list",
+          "retrieve"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "*"
+          }
+        ],
+        "conditions": []
+      },
+      {
+        "notes": "Allow realtors to create, update, and delete if they are member to this agency",
+        "actions": [
+          "create",
+          "update",
+          "delete"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "group:realtor"
+          }
+        ],
+        "conditions": [
+          {
+            "value": "property_belongs_to_agency"
+          }
+        ]
+      },
+      {
+        "notes": "Allow admins to do anything",
+        "actions": [
+          "all"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "group:admin"
+          }
+        ],
+        "conditions": []
+      }
+    ]
+  },
+  {
+    "name": "mls-number-access-policy",
+    "notes": "Allow admins to make MLS Number objects and anyone to find them",
+    "statements": [
+      {
+        "notes": "Allow anyone to list or retrieve MLS Numbers",
+        "actions": [
+          "list",
+          "retrieve"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "*"
+          }
+        ],
+        "conditions": []
+      },
+      {
+        "notes": "Allow admins to do anything",
+        "actions": [
+          "all"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "id": 12,
+            "value": "group:admin"
+          }
+        ],
+        "conditions": []
+      }
+    ]
+  },
+  {
+    "name": "realtor-admin-access-policy",
+    "notes": "Allow admins and realtors to perform administrative tasks",
+    "statements": [
+      {
+        "notes": "Allow anyone to list or retrieve protected elements",
+        "actions": [
+          "list",
+          "retrieve"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "*"
+          }
+        ],
+        "conditions": []
+      },
+      {
+        "notes": "Allow admins to do anything",
+        "actions": [
+          "all"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "group:admin"
+          }
+        ],
+        "conditions": []
+      },
+      {
+        "notes": "Allow realtors to do anything",
+        "actions": [
+          "all"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "group:realtor"
+          }
+        ],
+        "conditions": []
+      }
+    ]
+  }
+]

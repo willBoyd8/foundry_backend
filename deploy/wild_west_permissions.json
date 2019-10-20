@@ -1,0 +1,21 @@
+[
+  {
+    "name": "default",
+    "notes": "⚠️\uD83C\uDF35️\uD83D\uDC0E WILD WEST MODE \uD83D\uDC0E\uD83C\uDF35️⚠️: The default access policy",
+    "statements": [
+      {
+        "notes": "⚠️\uD83C\uDF35️\uD83D\uDC0E WILD WEST MODE \uD83D\uDC0E\uD83C\uDF35️⚠️: Allow anyone to do anything",
+        "actions": [
+          "all"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "*"
+          }
+        ],
+        "conditions": []
+      }
+    ]
+  }
+]

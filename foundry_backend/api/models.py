@@ -13,7 +13,7 @@ class IAMPolicy(models.Model):
         return {
             'name': self.name,
             'notes': self.notes,
-            'statements': [statement.serialize() for statement in self.statements]
+            'statements': [statement.serialize() for statement in self.statements.all()]
         }
 
 
@@ -43,19 +43,25 @@ class IAMPolicyStatement(models.Model):
     effect = models.CharField(max_length=5, choices=IAM_EFFECT_OPTIONS)
 
     def serialize(self) -> dict:
-        e = self.effect
+        final_actions = []
 
-        if e == 'all':
-            e = '*'
-        elif e == 'safe':
-            e = '<safe_methods>'
+        for action in self.actions:
+            if action == 'all':
+                final_actions.append('*')
+            elif action == 'safe':
+                final_actions.append('<safe_methods>')
+            else:
+                final_actions.append(action)
 
-        return {
+        return_value = {
             'notes': self.notes,
-            'effect': e,
-            'principal': [principal.serialize() for principal in self.principals],
-            'condition': [condition.serialize() for condition in self.conditions]
+            'effect': self.effect,
+            'action': final_actions,
+            'principal': [principal.serialize() for principal in self.principals.all()],
+            'condition': [condition.serialize() for condition in self.conditions.all()]
         }
+
+        return return_value
 
 
 class IAMPolicyStatementPrincipal(models.Model):

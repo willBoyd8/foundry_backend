@@ -130,6 +130,22 @@ default:
     - NAME: django.contrib.auth.password_validation.NumericPasswordValidator
 
 development:
+  ENV_NAME: development
+  DEBUG: true
+
+  DATABASES:
+    default:
+      ENGINE: django.db.backends.sqlite3
+      NAME: db.sqlite3
+
+  # Password validation
+  # In debug, I want to be able to use the password 'password'
+  AUTH_PASSWORD_VALIDATORS:
+    - NAME: django.contrib.auth.password_validation.UserAttributeSimilarityValidator
+    - NAME: django.contrib.auth.password_validation.MinimumLengthValidator
+
+wild_west:
+  ENV_NAME: wild_west
   DEBUG: true
 
   DATABASES:
