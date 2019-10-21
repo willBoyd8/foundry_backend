@@ -7,10 +7,15 @@
 import json
 import os
 from foundry_backend.api.serializers import IAMPolicySerializer
+from foundry_backend.api.models import IAMPolicy
 from django.conf import settings
 
 
 def load_json_access_policies(path: str):
+    print('Deleting default authentication model...')
+    IAMPolicy.objects.filter(name='default').delete()
+
+    print('Creating authentication models')
     with open(path, 'r') as permissions_file:
         permissions_data = json.loads(str(permissions_file.read()))
         for perm in permissions_data:
