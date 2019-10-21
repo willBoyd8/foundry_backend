@@ -61,6 +61,12 @@ class IAMPolicyStatement(models.Model):
             'condition': [condition.serialize() for condition in self.conditions.all()]
         }
 
+        if len(self.principals.all()) > 0:
+            return_value['principal'] = [principal.serialize() for principal in self.principals.all()]
+
+        if len(self.conditions.all()) > 0:
+            return_value['condition'] = [condition.serialize() for condition in self.conditions.all()]
+
         return return_value
 
 
@@ -81,3 +87,6 @@ class IAMPolicyStatementConditionItem(models.Model):
     """
     policy = models.ForeignKey(IAMPolicyStatement, related_name='conditions', on_delete=models.CASCADE)
     value = models.CharField(max_length=255)
+
+    def serialize(self):
+        return self.value

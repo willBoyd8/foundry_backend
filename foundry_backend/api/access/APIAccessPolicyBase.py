@@ -26,11 +26,11 @@ class APIAccessPolicyBase(AccessPolicy):
 
         if not model_policy_query.exists():
             policy_data = default_policy_query.get().serialize().get('statements')
-            logging.error('Attempted to get access policy for model \'{}\', failed.'.format(self.id))
-            logging.error('Using default access policy instead: \'{}\''.format(json.dumps(policy_data)))
+            print('Attempted to get access policy for model \'{}\', failed.'.format(self.id))
+            print('Using default access policy instead: \'{}\''.format(json.dumps(policy_data)))
             return policy_data
         else:
             policy_data = model_policy_query.get().serialize().get('statements')
-            logging.error('Attempted to get access policy for model \'{}\', success!.'.format(self.id))
-            logging.error('Using access policy: {}'.format(json.dumps(json.dumps(policy_data, indent=2))))
+            print('Attempted to get access policy for model \'{}\', success!.'.format(self.id))
+            print('Using access policy: {}'.format(json.dumps(json.dumps(policy_data, indent=2))))
             return policy_data
