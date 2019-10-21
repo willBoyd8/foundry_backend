@@ -1,11 +1,14 @@
 import pytest
 from django.contrib.auth.models import User, Group
-from requests_toolbelt.utils import user_agent
 from rest_framework.authtoken.models import Token
-from rest_framework.test import APIClient
-
+from foundry_backend.autoload import run
 from foundry_backend.database import models
 from foundry_backend.database.models import MLSNumber, Agency
+
+
+@pytest.fixture
+def setup(db):
+    run()
 
 
 @pytest.fixture

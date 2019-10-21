@@ -2,6 +2,8 @@ from foundry_backend.api import models
 from foundry_backend.database import models as db_models
 from rest_framework import viewsets
 from . import serializers
+from .access import make_access_policy
+from .access import APIAccessPolicyBase
 from . import access
 
 
@@ -9,7 +11,7 @@ class AgencyViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Foundry Agencies
     """
-    permission_classes = (access.AgencyAccessPolicy,)
+    permission_classes = (make_access_policy('Agency', 'agency-access-policy'),)
 
     @property
     def access_policy(self):
@@ -23,7 +25,7 @@ class MLSNumberViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Foundry Agencies
     """
-    permission_classes = (access.MLSNumberAccessPolicy,)
+    permission_classes = (make_access_policy('MLSNumber', 'mls-number-access-policy'),)
 
     @property
     def access_policy(self):
@@ -37,7 +39,7 @@ class NearbyAttractionViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Subdivisions
     """
-    permission_classes = (access.RealtorAdminAccessPolicy,)
+    permission_classes = (make_access_policy('RealtorAdmin', 'realtor-admin-access-policy'),)
 
     @property
     def access_policy(self):
@@ -51,7 +53,7 @@ class PropertyViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Properties
     """
-    permission_classes = (access.InterAgencyListingAccessPolicy,)
+    permission_classes = (make_access_policy('Property', 'inter-agency-listing-access-policy'),)
 
     @property
     def access_policy(self):
@@ -65,7 +67,7 @@ class NearbyAttractionPropertyConnectorViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for NearbyAttractionPropertyConnectors
     """
-    permission_classes = (access.RealtorAdminAccessPolicy,)
+    permission_classes = (make_access_policy('RealtorAdmin', 'realtor-admin-access-policy'),)
 
     @property
     def access_policy(self):
@@ -79,7 +81,7 @@ class ListingViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for listings
     """
-    permission_classes = (access.InterAgencyListingAccessPolicy,)
+    permission_classes = (make_access_policy('InterAgencyListing', 'inter-agency-listing-access-policy'),)
 
     @property
     def access_policy(self):
@@ -101,7 +103,7 @@ class HomeAlarmViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for home alarms
     """
-    permission_classes = (access.HomeAlarmAccessPolicy,)
+    permission_classes = (make_access_policy('HomeAlarm', 'home-alarm-access-policy'),)
 
     @property
     def access_policy(self):
@@ -116,7 +118,7 @@ class ShowingViewSet(viewsets.ModelViewSet):
     API Endpoint for home alarms
     """
     # TODO: Change me
-    permission_classes = (access.HomeAlarmAccessPolicy,)
+    permission_classes = (make_access_policy('HomeAlarm', 'home-alarm-access-policy'),)
 
     @property
     def access_policy(self):
@@ -130,5 +132,11 @@ class IAMPolicyViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for IAM Lists
     """
+    permission_classes = (make_access_policy('IAMPolicy', 'iam-policy-access-policy'),)
+
+    @property
+    def access_policy(self):
+        return self.permission_classes[0]
+
     queryset = models.IAMPolicy.objects.all()
     serializer_class = serializers.IAMPolicySerializer

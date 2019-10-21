@@ -39,7 +39,8 @@
       {
         "notes": "Allow realtors to modify their own agency",
         "actions": [
-          "update"
+          "update",
+          "update_partial"
         ],
         "effect": "allow",
         "principals": [

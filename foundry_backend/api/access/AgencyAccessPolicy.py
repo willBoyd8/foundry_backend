@@ -1,14 +1,14 @@
 from .APIAccessPolicyBase import APIAccessPolicyBase as AccessPolicy
 
 
-class AgencyAccessPolicy(AccessPolicy):
-    """
-    Define the access policy for Agencies
-    """
-
-    @property
-    def id(self):
-        return 'agency-access-policy'
+# class AgencyAccessPolicy(AccessPolicy):
+#     """
+#     Define the access policy for Agencies
+#     """
+#
+#     @property
+#     def id(self):
+#         return 'agency-access-policy'
 
     # statements = [
     #     {  # Allow anyone to list all the Agencies, and allow anyone to retrieve a specific Agency

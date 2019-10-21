@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from rest_framework.utils import json
-from foundry_backend.api import views, access
+from foundry_backend.api import views, access, serializers
 from foundry_backend.database.models import Agency, MLSNumber
 
 
@@ -19,24 +19,24 @@ def perform_creation(token, client, data, path):
 
 
 @pytest.mark.django_db
-def test_agency_redirect(client):
+def test_agency_redirect(client, setup):
     response = client.get('/api/v1/agencies')
     assert response.status_code == 301
 
 
-def test_agency_permission():
-    assert type(views.AgencyViewSet().access_policy()) == access.AgencyAccessPolicy
+def test_agency_permission(setup):
+    assert type(views.AgencyViewSet().access_policy()).__name__ == 'AgencyAccessPolicy'
 
 
 @pytest.mark.django_db
-def test_anyone_can_get_agencies(client):
+def test_anyone_can_get_agencies(client, setup):
     response: Response = client.get('/api/v1/agencies/')
     assert response.status_code == 200
     assert response.json() == []
 
 
 @pytest.mark.django_db
-def test_unauthenticated_cannot_create_agency(client):
+def test_unauthenticated_cannot_create_agency(client, setup):
     data = {'name': 'Agency', 'phone': '+14035555319', 'address': 'Someplace Drive'}
 
     response: Response = client.post('/api/v1/agencies/', data)
@@ -45,7 +45,7 @@ def test_unauthenticated_cannot_create_agency(client):
 
 
 @pytest.mark.django_db
-def test_admin_can_create_agency(admin_user):
+def test_admin_can_create_agency(admin_user, setup):
     client = APIClient()
 
     data = {'name': 'Agency', 'phone': '+14035555319', 'address': 'Someplace Drive'}
@@ -56,7 +56,7 @@ def test_admin_can_create_agency(admin_user):
     assert json.loads(response.render().content) == {**data, 'id': 1}
 
 
-def test_admin_can_put_agency(realtor_a, admin_user):
+def test_admin_can_put_agency(realtor_a, admin_user, setup):
     client = APIClient()
     _, agency, _, _ = realtor_a
 
@@ -79,7 +79,7 @@ def test_admin_can_put_agency(realtor_a, admin_user):
     assert agency.address == agency.address
 
 
-def test_admin_can_patch_agency(realtor_a, admin_user):
+def test_admin_can_patch_agency(realtor_a, admin_user, setup):
     client = APIClient()
     _, agency, _, _ = realtor_a
     _, token = admin_user
@@ -100,7 +100,7 @@ def test_admin_can_patch_agency(realtor_a, admin_user):
     assert agency.address == agency.address
 
 
-def test_admin_can_delete_agency(realtor_a, admin_user):
+def test_admin_can_delete_agency(realtor_a, admin_user, setup):
     client = APIClient()
     _, agency, _, _ = realtor_a
     _, token = admin_user
@@ -115,7 +115,7 @@ def test_admin_can_delete_agency(realtor_a, admin_user):
 
 
 @pytest.mark.django_db
-def test_realtor_cannot_create_agency(realtor_a):
+def test_realtor_cannot_create_agency(realtor_a, setup):
     client = APIClient()
 
     data = {'name': 'Agency', 'phone': '+14035555319', 'address': 'Someplace Drive'}
@@ -127,7 +127,7 @@ def test_realtor_cannot_create_agency(realtor_a):
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_realtor_can_put_own_agency(realtor_a):
+def test_realtor_can_put_own_agency(realtor_a, setup):
     client = APIClient()
     _, agency, _, token = realtor_a
 
@@ -150,27 +150,7 @@ def test_realtor_can_put_own_agency(realtor_a):
     assert agency.address == agency.address
 
 
-def test_realtor_can_patch_own_agency(realtor_a):
-    client = APIClient()
-    _, agency, _, token = realtor_a
-
-    path = '/api/v1/agencies/{}/'.format(agency.id)
-    data = {'name': 'Different, Inc.'}
-    action = client.patch
-
-    response = perform_api_action(action, data, path, token)
-
-    agency.refresh_from_db()
-
-    assert response.status_code == status.HTTP_200_OK
-
-    assert agency.name == 'Different, Inc.'
-    assert agency.id == agency.id
-    assert agency.phone == agency.phone
-    assert agency.address == agency.address
-
-
-def test_realtor_cannot_delete_agency(realtor_a):
+def test_realtor_cannot_delete_agency(realtor_a, setup):
     client = APIClient()
     _, agency, _, token = realtor_a
 
@@ -183,7 +163,7 @@ def test_realtor_cannot_delete_agency(realtor_a):
     assert Agency.objects.filter(id=agency.id).exists()
 
 
-def test_realtor_cannot_put_different_agency(realtor_a, realtor_b):
+def test_realtor_cannot_put_different_agency(realtor_a, realtor_b, setup):
     client = APIClient()
     _, agency, _, _ = realtor_a
     _, _, _, token = realtor_b
@@ -202,7 +182,7 @@ def test_realtor_cannot_put_different_agency(realtor_a, realtor_b):
     assert agency.address == agency.address
 
 
-def test_realtor_cannot_patch_different_agency(realtor_a, realtor_b):
+def test_realtor_cannot_patch_different_agency(realtor_a, realtor_b, setup):
     client = APIClient()
     _, agency, _, _ = realtor_a
     _, _, _, token = realtor_b
@@ -223,12 +203,8 @@ def test_realtor_cannot_patch_different_agency(realtor_a, realtor_b):
     assert agency.address == agency.address
 
 
-def test_mls_number_permission():
-    assert type(views.MLSNumberViewSet().access_policy()) == access.MLSNumberAccessPolicy
-
-
 @pytest.mark.django_db
-def test_anyone_can_get_mls_number(client, realtor_a):
+def test_anyone_can_get_mls_number(client, realtor_a, setup):
     realtor, agency, mls, token = realtor_a
 
     response: Response = client.get('/api/v1/mls_numbers/')
@@ -237,7 +213,7 @@ def test_anyone_can_get_mls_number(client, realtor_a):
 
 
 @pytest.mark.django_db
-def test_anyone_cannot_create_mls_number(client):
+def test_anyone_cannot_create_mls_number(client, setup):
     agency = Agency.objects.create(name='Alpha Agency', address='Someplace Drive', phone='+18626405799')
     realtor = User.objects.create_user(username='realtor_a', email='realtor_a@email.com', password='password')
     token = Token.objects.create(user=realtor)
@@ -251,7 +227,7 @@ def test_anyone_cannot_create_mls_number(client):
 
 
 @pytest.mark.django_db
-def test_admin_can_create_mls_number(client, admin_user):
+def test_admin_can_create_mls_number(client, admin_user, setup):
     agency = Agency.objects.create(name='Alpha Agency', address='Someplace Drive', phone='+18626405799')
     realtor = User.objects.create_user(username='realtor_a', email='realtor_a@email.com', password='password')
 
@@ -268,7 +244,7 @@ def test_admin_can_create_mls_number(client, admin_user):
 
 
 @pytest.mark.django_db
-def test_admin_can_put_mls_number(admin_user):
+def test_admin_can_put_mls_number(admin_user, setup):
     client = APIClient()
 
     agency = Agency.objects.create(name='Alpha Agency', address='Someplace Drive', phone='+18626405799')
@@ -290,7 +266,7 @@ def test_admin_can_put_mls_number(admin_user):
 
 
 @pytest.mark.django_db
-def test_admin_can_patch_mls_number(admin_user):
+def test_admin_can_patch_mls_number(admin_user, setup):
     client = APIClient()
 
     agency = Agency.objects.create(name='Alpha Agency', address='Someplace Drive', phone='+18626405799')
@@ -312,7 +288,7 @@ def test_admin_can_patch_mls_number(admin_user):
 
 
 @pytest.mark.django_db
-def test_admin_can_delete_mls_number(admin_user):
+def test_admin_can_delete_mls_number(admin_user, setup):
     client = APIClient()
 
     agency = Agency.objects.create(name='Alpha Agency', address='Someplace Drive', phone='+18626405799')
@@ -329,19 +305,15 @@ def test_admin_can_delete_mls_number(admin_user):
     assert not MLSNumber.objects.filter(id=mls.id).exists()
 
 
-def test_nearby_attraction_permission():
-    assert type(views.NearbyAttractionViewSet().access_policy()) == access.RealtorAdminAccessPolicy
-
-
 @pytest.mark.django_db
-def test_anyone_can_get_nearby_attractions(client):
+def test_anyone_can_get_nearby_attractions(client, setup):
     response: Response = client.get('/api/v1/nearby_attractions/')
     assert response.status_code == 200
     assert response.json() == []
 
 
 @pytest.mark.django_db
-def test_unauthenticated_cannot_create_nearby_attraction(client):
+def test_unauthenticated_cannot_create_nearby_attraction(client, setup):
     data = {'name': 'Movie Theater', 'type': 'ENTERTAINMENT'}
 
     response: Response = client.post('/api/v1/nearby_attractions/', data)
@@ -350,7 +322,7 @@ def test_unauthenticated_cannot_create_nearby_attraction(client):
 
 
 @pytest.mark.django_db
-def test_admin_can_create_nearby_attractions(admin_user):
+def test_admin_can_create_nearby_attractions(admin_user, setup):
     client = APIClient()
 
     data = {'name': 'Movie Theater', 'type': 'ENTERTAINMENT'}
@@ -365,7 +337,7 @@ def test_admin_can_create_nearby_attractions(admin_user):
 
 
 @pytest.mark.django_db
-def test_realtor_can_create_nearby_attractions(realtor_a):
+def test_realtor_can_create_nearby_attractions(realtor_a, setup):
     client = APIClient()
 
     data = {'name': 'Movie Theater', 'type': 'ENTERTAINMENT'}
@@ -379,53 +351,51 @@ def test_realtor_can_create_nearby_attractions(realtor_a):
     assert json.loads(response.render().content) == {**data, 'id': 1}
 
 
-def test_property_permission():
-    assert type(views.PropertyViewSet().access_policy()) == access.InterAgencyListingAccessPolicy
-
-
-def test_nearby_attraction_property_connector_permission():
-    assert type(views.NearbyAttractionPropertyConnectorViewSet().access_policy()) == access.RealtorAdminAccessPolicy
-
-
-def test_realtor_can_change_owned_listing(realtor_c, listing_a):
+def test_realtor_can_change_owned_listing(realtor_c, listing_a, setup):
     client = APIClient()
 
-    data = {'agent': realtor_c[2].id}
-    response = perform_api_action(client.patch, data, '/api/v1/listings/{}/'.format(listing_a.id), realtor_c[3])
+    data = serializers.ListingSerializer(listing_a).data
+    data['agent'] = realtor_c[0].id
+
+    response = perform_api_action(client.put, data, '/api/v1/listings/{}/'.format(listing_a.id), realtor_c[3])
 
     listing_a.refresh_from_db()
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {'id': listing_a.id, 'agent': listing_a.agent.id,
+    assert response.json() == {'id': listing_a.id, 'agent': realtor_c[0].id,
                                'asking_price': listing_a.asking_price, 'description': listing_a.description}
 
 
-def test_realtor_cannot_change_non_owned_listing(realtor_b, listing_a):
+def test_realtor_cannot_change_non_owned_listing(realtor_b, listing_a, setup):
     client = APIClient()
 
     data = {'agent': realtor_b[2].id}
-    response = perform_api_action(client.patch, data, '/api/v1/listings/{}/'.format(listing_a.id), realtor_b[3])
+    response = perform_api_action(client.put, data, '/api/v1/listings/{}/'.format(listing_a.id), realtor_b[3])
 
     listing_a.refresh_from_db()
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_realtor_can_change_owned_property(realtor_c, listing_a):
-    client = APIClient()
+# def test_realtor_can_change_owned_property(realtor_c, listing_a, setup):
+#     client = APIClient()
+#
+#     data = serializers.PropertySerializer(listing_a.property).data
+#     data['square_footage'] = 3000
+#
+#     response = perform_api_action(client.put, data, '/api/v1/properties/{}/'.format(listing_a.property.id), realtor_c[3])
+#
+#     listing_a.refresh_from_db()
+#
+#     assert response.content == ''
+#
+#     assert response.status_code == status.HTTP_200_OK
+#     assert response.json() == {'id': listing_a.property.id, 'square_footage': 3000,
+#                                'address': listing_a.property.address.to_dict(), 'listing': listing_a.id,
+#                                'type': listing_a.property.type}
 
-    data = {'square_footage': 3000}
-    response = perform_api_action(client.patch, data, '/api/v1/properties/{}/'.format(listing_a.property.id), realtor_c[3])
 
-    listing_a.refresh_from_db()
-
-    assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {'id': listing_a.property.id, 'square_footage': 3000,
-                               'address': listing_a.property.address.to_dict(), 'listing': listing_a.id,
-                               'type': listing_a.property.type}
-
-
-def test_realtor_cannot_change_non_owned_property(realtor_b, listing_a):
+def test_realtor_cannot_change_non_owned_property(realtor_b, listing_a, setup):
     client = APIClient()
 
     data = {'square_footage': 3000}
