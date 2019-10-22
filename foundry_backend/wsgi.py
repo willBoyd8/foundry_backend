@@ -11,8 +11,8 @@ import os
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'foundry_backend.settings')
 
-from foundry_backend import autoload
-autoload.run()
+# from foundry_backend import autoload
+# autoload.run()
 
 from django.core.wsgi import get_wsgi_application
 

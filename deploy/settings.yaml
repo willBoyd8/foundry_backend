@@ -24,6 +24,8 @@ default:
   # https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-DEBUG
   DEBUG: false
 
+  PERMISSIONS_JSON: deploy/default_permissions.json
+
   # Valid hosts to request from.
   # Change this in production
   ALLOWED_HOSTS:
@@ -147,6 +149,8 @@ development:
 wild_west:
   ENV_NAME: wild_west
   DEBUG: true
+
+  PERMISSIONS_JSON: deploy/wild_west_permissions.json
 
   DATABASES:
     default:

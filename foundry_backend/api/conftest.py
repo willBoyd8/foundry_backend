@@ -1,7 +1,7 @@
 import pytest
 from django.contrib.auth.models import User, Group
 from rest_framework.authtoken.models import Token
-from foundry_backend.autoload import run
+from foundry_backend.api.autoload import run
 from foundry_backend.database import models
 from foundry_backend.database.models import MLSNumber, Agency
 

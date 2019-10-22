@@ -19,6 +19,39 @@
     ]
   },
   {
+    "name": "iam-policy-access-policy",
+    "notes": "Allow only admins to edit permissions",
+    "statements": [
+      {
+        "notes": "Allow anyone to list or retrieve protected elements",
+        "actions": [
+          "list",
+          "retrieve"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "*"
+          }
+        ],
+        "conditions": []
+      },
+      {
+        "notes": "Allow admins to do anything",
+        "actions": [
+          "all"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "group:admin"
+          }
+        ],
+        "conditions": []
+      }
+    ]
+  },
+  {
     "name": "agency-access-policy",
     "notes": "Allows agents to manipulate their own agencies",
     "statements": [
@@ -97,7 +130,6 @@
         "effect": "allow",
         "principals": [
           {
-            "id": 6,
             "value": "group:realtor"
           }
         ],
@@ -200,7 +232,6 @@
         "effect": "allow",
         "principals": [
           {
-            "id": 12,
             "value": "group:admin"
           }
         ],

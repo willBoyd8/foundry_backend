@@ -21,9 +21,11 @@ FROM docker.abwlabs.com/phusion/baseimage
 COPY --from=python /source/deploy/start.sh /etc/service/foundry_backend/run
 COPY --from=python /source/dist/*.tar.gz /foundry.tar.gz
 COPY --from=python /source/deploy/settings.yaml /etc/foundry/settings.yaml
+COPY --from=python /source/deploy/default_permissions.json /etc/foundry/permissions.json
 
 # Set any Foundry environment variables
 ENV FOUNDRY_SETTINGS "/etc/foundry/settings.yaml"
+ENV FOUNDRY_PERMISSIONS_JSON "/etc/foundry/permissions.json"
 
 # Install and configure foundry_backend
 RUN add-apt-repository --yes ppa:deadsnakes/ppa \
