@@ -175,3 +175,13 @@ class HomeAlarm(models.Model):
     disarm_code = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
     notes = models.TextField()
+
+
+class Showing(models.Model):
+    """
+    A showing of a property
+    """
+    start_time = models.DateTimeField()
+    duration = models.DurationField()
+    agent = models.ForeignKey(MLSNumber, on_delete=models.CASCADE)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE)

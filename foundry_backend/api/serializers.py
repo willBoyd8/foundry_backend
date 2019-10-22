@@ -1,3 +1,6 @@
+from drf_writable_nested import WritableNestedModelSerializer, NestedUpdateMixin
+from rest_framework.fields import MultipleChoiceField
+from foundry_backend.api import models
 from foundry_backend.database import models as db_models
 from rest_framework import serializers
 
@@ -67,6 +70,12 @@ class HomeAlarmSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ShowingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.Showing
+        fields = '__all__'
+
+
 class EnableRealtorSerializer(serializers.Serializer):
     mls_number = serializers.CharField(max_length=15, help_text="The MLS Number for the realtor being registered")
     user = serializers.IntegerField(help_text="The user to associate as a realtor")
@@ -74,3 +83,45 @@ class EnableRealtorSerializer(serializers.Serializer):
 
 class EnableAdminSerializer(serializers.Serializer):
     user = serializers.IntegerField(help_text="The user to associate as an admin")
+
+
+class IAMPolicyRulePrincipalSerializer(serializers.ModelSerializer):
+    """
+    Serialize an IAMPolicyRulePrincipal item
+    """
+    class Meta:
+        model = models.IAMPolicyStatementPrincipal
+        fields = ['id', 'value']
+
+
+class IAMPolicyRuleConditionSerializer(serializers.ModelSerializer):
+    """
+    Serialize an IAMPolicyStatementConditionPrincipal item
+    """
+    class Meta:
+        model = models.IAMPolicyStatementConditionItem
+        fields = ['id', 'value']
+
+
+class IAMPolicyStatementSerializer(WritableNestedModelSerializer):
+    """
+    Serialize an IAMPolicyStatement
+    """
+    actions = MultipleChoiceField(choices=models.IAMPolicyStatement.STATEMENT_ACTION_OPTIONS)
+    principals = IAMPolicyRulePrincipalSerializer(many=True)
+    conditions = IAMPolicyRuleConditionSerializer(many=True)
+
+    class Meta:
+        model = models.IAMPolicyStatement
+        fields = ['id', 'notes', 'actions', 'effect', 'principals', 'conditions']
+
+
+class IAMPolicySerializer(WritableNestedModelSerializer):
+    """
+    Serialize an IAMPolicy
+    """
+    statements = IAMPolicyStatementSerializer(many=True)
+
+    class Meta:
+        model = models.IAMPolicy
+        fields = ['id', 'name', 'notes', 'statements']
