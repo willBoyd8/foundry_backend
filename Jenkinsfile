@@ -23,7 +23,8 @@ pipeline {
             steps {
                 sh 'poetry install'
                 sh """
-                    poetry run pytest --cov foundry_backend \
+                    poetry run pytest --create-db \
+                                      --cov foundry_backend \
                                       --cov-report term-missing \
                                       --cov-report xml \
                                       --cov-config cicd/.coveragerc \

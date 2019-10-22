@@ -163,21 +163,10 @@ wild_west:
     - NAME: django.contrib.auth.password_validation.UserAttributeSimilarityValidator
     - NAME: django.contrib.auth.password_validation.MinimumLengthValidator
 
-production:
-  server: prodserver.com
-  username: prod user
-  foo: bar prod
-  value: this value is for django app
-
-staging:
-  server: stagingserver.com
-  username: staging user
-  foo: bar stag
-
 testing:
-  server: stagingserver.com
-  username: testing user
-  foo: bar testing
+  ENV_NAME: testing
 
-global:
-  foo: It overrides every other env
+  DATABASES:
+    default:
+      ENGINE: django.db.backends.sqlite3
+      NAME: ':memory:'

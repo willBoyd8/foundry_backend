@@ -6,24 +6,34 @@
 # the foundry_backend.
 import json
 import os
+
 from django.conf import settings
+from django.db import connection
 
 from foundry_backend.api.models import IAMPolicy
 from foundry_backend.api.serializers import IAMPolicySerializer
 
 
 def load_json_access_policies(path: str):
-    print('Deleting default authentication model...')
-    IAMPolicy.objects.filter(name='default').delete()
+    all_tables = connection.introspection.table_names()
 
-    print('Creating authentication models')
-    with open(path, 'r') as permissions_file:
-        permissions_data = json.loads(str(permissions_file.read()))
-        for perm in permissions_data:
-            serializer = IAMPolicySerializer(data=perm)
+    if len(all_tables) > 0:
+        print('Deleting default authentication model...')
+        IAMPolicy.objects.filter(name='default').delete()
 
-            if serializer.is_valid():
-                serializer.save()
+        print('Creating authentication models')
+        with open(path, 'r') as permissions_file:
+            permissions_data = json.loads(str(permissions_file.read()))
+            for perm in permissions_data:
+                serializer = IAMPolicySerializer(data=perm)
+
+                if serializer.is_valid():
+                    serializer.save()
+    else:
+        print('WARNING: No tables were found in the database, so applying '
+              '         IAM permissions was defered to a later date. If '
+              '         you are running in production, you have failed to'
+              '         create IAM models and the application WILL FAIL')
 
 
 def load_default_access_policies():
