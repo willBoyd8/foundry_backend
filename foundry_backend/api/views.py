@@ -130,8 +130,7 @@ class ShowingViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for home alarms
     """
-    # TODO: Change me
-    permission_classes = (make_access_policy('HomeAlarm', 'home-alarm-access-policy'),)
+    permission_classes = (make_access_policy('Showing', 'showing-access-policy'),)
 
     @property
     def access_policy(self):

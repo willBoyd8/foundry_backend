@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from rest_framework.utils import json
-from foundry_backend.api import views, access, serializers
+from foundry_backend.api import views, serializers
 from foundry_backend.api.models import IAMPolicy
 from foundry_backend.database.models import Agency, MLSNumber
 
