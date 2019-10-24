@@ -2,6 +2,9 @@ import pytest
 from django.contrib.auth.models import User, Group
 from rest_framework.authtoken.models import Token
 from foundry_backend.api.autoload import run
+from foundry_backend.api.models import IAMPolicy, IAMPolicyStatement, IAMPolicyStatementPrincipal, \
+    IAMPolicyStatementCondition
+from foundry_backend.api.serializers import IAMPolicySerializer
 from foundry_backend.database import models
 from foundry_backend.database.models import MLSNumber, Agency
 
@@ -16,6 +19,10 @@ def admin_user(db):
     # make the user and group, with a token
     user = User.objects.create_user(username='admin', email='admin@email.com', password='password')
     token = Token.objects.create(user=user)
+
+    user.is_staff = True
+    user.is_superuser = True
+    
     user.save()
     token.save()
 
@@ -113,3 +120,25 @@ def listing_a(realtor_a):
     listing.save()
 
     return listing
+
+
+@pytest.fixture
+def policy(db):
+    policy = IAMPolicy.objects.create(name='an-example-policy', notes='Does some stuff')
+    statement = IAMPolicyStatement.objects.create(notes='A policy', policy=policy,
+                                                  actions=['list', 'retrieve'], effect='allow')
+    principal = IAMPolicyStatementPrincipal.objects.create(statement=statement, value='*')
+    condition = IAMPolicyStatementCondition.objects.create(statement=statement, value='true_is_not_false')
+
+    policy.save()
+    statement.save()
+    principal.save()
+    condition.save()
+
+    data = dict(name='an-example-policy', notes='Does some stuff',
+                statements=[
+                    dict(notes='A policy', actions=['list', 'retrieve'], effect='allow',
+                         principals=[dict(value='*')], conditions=[dict(value='true_is_not_false')])
+                ])
+
+    return policy, data

@@ -85,21 +85,39 @@ class EnableAdminSerializer(serializers.Serializer):
     user = serializers.IntegerField(help_text="The user to associate as an admin")
 
 
-class IAMPolicyRulePrincipalSerializer(serializers.ModelSerializer):
+class FullIAMPolicyStatementPrincipalSerializer(serializers.ModelSerializer):
     """
     Serialize an IAMPolicyRulePrincipal item
+    """
+    class Meta:
+        model = models.IAMPolicyStatementPrincipal
+        fields = '__all__'
+
+
+class IAMPolicyStatementPrincipalSerializer(serializers.ModelSerializer):
+    """
+    Serialize an IAMPolicyStatement item
     """
     class Meta:
         model = models.IAMPolicyStatementPrincipal
         fields = ['id', 'value']
 
 
-class IAMPolicyRuleConditionSerializer(serializers.ModelSerializer):
+class FullIAMPolicyStatementConditionSerializer(serializers.ModelSerializer):
+    """
+    Serialize an IAMPolicyPolicyCondition item
+    """
+    class Meta:
+        model = models.IAMPolicyStatementCondition
+        fields = '__all__'
+
+
+class IAMPolicyStatementConditionSerializer(serializers.ModelSerializer):
     """
     Serialize an IAMPolicyStatementConditionPrincipal item
     """
     class Meta:
-        model = models.IAMPolicyStatementConditionItem
+        model = models.IAMPolicyStatementCondition
         fields = ['id', 'value']
 
 
@@ -108,12 +126,25 @@ class IAMPolicyStatementSerializer(WritableNestedModelSerializer):
     Serialize an IAMPolicyStatement
     """
     actions = MultipleChoiceField(choices=models.IAMPolicyStatement.STATEMENT_ACTION_OPTIONS)
-    principals = IAMPolicyRulePrincipalSerializer(many=True)
-    conditions = IAMPolicyRuleConditionSerializer(many=True)
+    principals = IAMPolicyStatementPrincipalSerializer(many=True)
+    conditions = IAMPolicyStatementConditionSerializer(many=True)
 
     class Meta:
         model = models.IAMPolicyStatement
         fields = ['id', 'notes', 'actions', 'effect', 'principals', 'conditions']
+
+
+class FullIAMPolicyStatementSerializer(WritableNestedModelSerializer):
+    """
+    Serialize an IAMPolicyStatement
+    """
+    actions = MultipleChoiceField(choices=models.IAMPolicyStatement.STATEMENT_ACTION_OPTIONS)
+    principals = IAMPolicyStatementPrincipalSerializer(many=True)
+    conditions = IAMPolicyStatementConditionSerializer(many=True)
+
+    class Meta:
+        model = models.IAMPolicyStatement
+        fields = '__all__'
 
 
 class IAMPolicySerializer(WritableNestedModelSerializer):

@@ -187,6 +187,18 @@ version = "0.5.0"
 
 [[package]]
 category = "main"
+description = "Nested resources for the Django Rest Framework"
+name = "drf-nested-routers"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "0.91"
+
+[package.dependencies]
+Django = ">=1.11"
+djangorestframework = ">=3.6.0"
+
+[[package]]
+category = "main"
 description = "Writable nested helpers for django-rest-framework's serializers"
 name = "drf-writable-nested"
 optional = false
@@ -563,7 +575,7 @@ version = "0.6.0"
 more-itertools = "*"
 
 [metadata]
-content-hash = "d686137ed66ac188d91b62d1d8f58e21eb01f32ea26b48a0e375fcdae35c0bda"
+content-hash = "6c18962899a0bb07979ed6c783ddf91e04cc1aa8e93c936c9ccb0c0af99318ce"
 python-versions = "^3.5"
 
 [metadata.hashes]
@@ -586,6 +598,7 @@ djangorestframework = ["5488aed8f8df5ec1d70f04b2114abc52ae6729748a176c453313834a
 djangorestframework-simplejwt = ["4cb1a51bf9b098b983e1326a1cfc65fb0b3c5a2aa0fa43effdbf05dd6da5e8cb", "d025211806622c53020aa4f66029f1f7305e38de6439116b4a842661fc02cf36"]
 djoser = ["36e06fdfc429a3aa8647289ee0e50806114d89f781de9245a68c6a44575d1bdd", "e08570cc691caab6bf708e884b98fe3aeda61d5f84eca2d5781dfd9601ee04cf"]
 drf-access-policy = ["8825952f1cc0ba5ede9c3f7119595f8d3d6498d046756550db3007265dc58497"]
+drf-nested-routers = ["46e5c3abc15c782cafafd7d75028e8f9121bbc6228e3599bbb48a3daa4585034", "60c1e1f5cc801e757d26a8138e61c44419ef800c213c3640c5b6138e77d46762"]
 drf-writable-nested = ["5c54eca93d74dc22014fb7ea54b6dbd559a058587596feba4d79078e32a83e16"]
 drf-yasg = ["68fded2ffdf46e03f33e766184b7d8f1e1a5236f94acfd0c4ba932a57b812566", "fcef74709ead2b365410be3d12afbfd0a6e49d1efe615a15a929da7e950bb83c"]
 dynaconf = ["74e0b88252008370195d7ff1f5f39cb8a389ca6a33538a50463f25b084d66218", "b9b55b4ffd108b6f356e8bad46f39daad2172d8b08330b18f9c6b55ce2e62f9b"]

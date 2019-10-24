@@ -1,3 +1,5 @@
+from typing import List
+
 import pytest
 from django.contrib.auth.models import User
 from requests import Response
@@ -6,7 +8,12 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from rest_framework.utils import json
 from foundry_backend.api import views, access, serializers
+from foundry_backend.api.models import IAMPolicy
 from foundry_backend.database.models import Agency, MLSNumber
+
+
+def check_list_equal(first: List, second: List):
+    return len(first) == len(second) and sorted(first) == sorted(second)
 
 
 def perform_api_action(action, data, path, token):
@@ -404,3 +411,69 @@ def test_realtor_cannot_change_non_owned_property(realtor_b, listing_a, setup):
     listing_a.refresh_from_db()
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_anyone_can_access_policies(policy, setup, client):
+    policy_obj: IAMPolicy = policy[0]
+
+    response: Response = client.get('/api/v1/iam_policies/{}/'.format(policy_obj.id))
+
+    assert response.status_code == 200
+
+    # Check the policy
+    response_data = response.json()
+    assert response_data.get('id') == policy_obj.id
+    assert response_data.get('name') == policy_obj.name
+
+    # Check the first policy statement
+    assert len(response_data.get('statements')) == len(policy_obj.statements.all())
+    assert len(response_data.get('statements')) == 1
+    assert len(policy_obj.statements.all()) == 1
+
+    first_statement_data = response_data.get('statements')[0]
+    first_statement_obj = policy_obj.statements.first()
+    assert check_list_equal(first_statement_data.get('actions'), first_statement_obj.actions)
+
+    # check the statement scalars
+    assert first_statement_data.get('effect') == first_statement_obj.effect
+    assert first_statement_data.get('notes') == first_statement_obj.notes
+
+    # Check the conditions
+    assert len(first_statement_data.get('conditions')) == len(first_statement_obj.conditions.all())
+    assert len(first_statement_data.get('conditions')) == 1
+    assert len(first_statement_obj.conditions.all()) == 1
+
+    first_condition_data = first_statement_data.get('conditions')[0]
+    first_condition_obj = first_statement_obj.conditions.first()
+    assert first_condition_data.get('value') == first_condition_obj.value
+
+    # Check the conditions
+    assert len(first_statement_data.get('principals')) == len(first_statement_obj.principals.all())
+    assert len(first_statement_data.get('principals')) == 1
+    assert len(first_statement_obj.principals.all()) == 1
+
+    first_condition_data = first_statement_data.get('principals')[0]
+    first_condition_obj = first_statement_obj.principals.first()
+    assert first_condition_data.get('value') == first_condition_obj.value
+
+
+def test_anyone_cannot_create_access_policies(policy, setup, client):
+    policy_obj: IAMPolicy = policy[0]
+    policy_data: dict = policy[1]
+    policy_obj.delete()
+
+    response: Response = client.post('/api/v1/iam_policies/', policy_data)
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_admin_can_create_access_policies(policy, setup, admin_user):
+    client = APIClient()
+
+    policy_obj: IAMPolicy = policy[0]
+    policy_data: dict = policy[1]
+    policy_obj.delete()
+
+    response: Response = perform_api_action(client.post, policy_data, '/api/v1/iam_policies/', admin_user[1])
+
+    assert response.status_code == status.HTTP_201_CREATED

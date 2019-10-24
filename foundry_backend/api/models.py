@@ -81,11 +81,11 @@ class IAMPolicyStatementPrincipal(models.Model):
         return self.value
 
 
-class IAMPolicyStatementConditionItem(models.Model):
+class IAMPolicyStatementCondition(models.Model):
     """
     Defines a condition for an IAM policy
     """
-    policy = models.ForeignKey(IAMPolicyStatement, related_name='conditions', on_delete=models.CASCADE)
+    statement = models.ForeignKey(IAMPolicyStatement, related_name='conditions', on_delete=models.CASCADE)
     value = models.CharField(max_length=255)
 
     def serialize(self):
