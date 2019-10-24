@@ -1,12 +1,11 @@
 from rest_framework.exceptions import ValidationError
-
 from foundry_backend.api import models
 from foundry_backend.database import models as db_models
 from rest_framework import viewsets
+
+from foundry_backend.database.models import MLSNumber
 from . import serializers
 from .access import make_access_policy
-from .access import APIAccessPolicyBase
-from . import access
 
 
 class AgencyViewSet(viewsets.ModelViewSet):
@@ -32,6 +31,18 @@ class MLSNumberViewSet(viewsets.ModelViewSet):
     @property
     def access_policy(self):
         return self.permission_classes[0]
+
+    def get_queryset(self):
+        if self.kwargs.get('agency_pk') is not None:
+            return MLSNumber.objects.filter(agency=self.kwargs['agency_pk'])
+
+    def perform_create(self, serializer: serializers.MLSNumberSerializer):
+        serializer = serializers.FullMLSNumberSerializer(data={**serializer.data, 'agency': self.kwargs['agency_pk']})
+
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            raise ValidationError(serializer.errors)
 
     queryset = db_models.MLSNumber.objects.all()
     serializer_class = serializers.MLSNumberSerializer

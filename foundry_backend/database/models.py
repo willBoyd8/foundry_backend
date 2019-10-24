@@ -45,8 +45,8 @@ class MLSNumber(models.Model):
     A realtor's MLS Number
     """
     number = models.CharField(max_length=12, unique=True, blank=True)
-    agency = models.ForeignKey(Agency, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, related_name='mls_number', on_delete=models.CASCADE, null=True)
+    agency = models.ForeignKey(Agency, related_name='mls_numbers', on_delete=models.CASCADE)
+    user = models.OneToOneField(User, related_name='mls_number', on_delete=models.CASCADE, null=True, unique=True)
 
     def _generate_number(self):
         """

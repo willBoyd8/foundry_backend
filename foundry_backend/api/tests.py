@@ -55,7 +55,7 @@ def test_unauthenticated_cannot_create_agency(client, setup):
 def test_admin_can_create_agency(admin_user, setup):
     client = APIClient()
 
-    data = {'name': 'Agency', 'phone': '+14035555319', 'address': 'Someplace Drive'}
+    data = {'name': 'Agency', 'phone': '+14035555319', 'address': 'Someplace Drive', 'mls_numbers': []}
 
     response = perform_api_action(client.post, data, '/api/v1/agencies/', admin_user[1])
 
@@ -67,7 +67,7 @@ def test_admin_can_put_agency(realtor_a, admin_user, setup):
     client = APIClient()
     _, agency, _, _ = realtor_a
 
-    data = {'name': 'Agency Alpha', 'phone': str(agency.phone), 'address': agency.address}
+    data = {'name': 'Agency Alpha', 'phone': str(agency.phone), 'address': agency.address, 'mls_numbers': []}
 
     response = perform_api_action(client.put, data, '/api/v1/agencies/{}/'.format(agency.id), admin_user[1])
 
@@ -75,14 +75,15 @@ def test_admin_can_put_agency(realtor_a, admin_user, setup):
 
     assert json.loads(response.render().content) == {'name': 'Agency Alpha',
                                                      'address': agency.address,
-                                                     'phone': agency.phone,
+                                                     'mls_numbers': [],
+                                                     'phone': str(agency.phone),
                                                      'id': agency.id}
 
     agency.refresh_from_db()
 
     assert agency.name == 'Agency Alpha'
     assert agency.id == agency.id
-    assert agency.phone == agency.phone
+    assert agency.phone == str(agency.phone)
     assert agency.address == agency.address
 
 
@@ -129,7 +130,7 @@ def test_realtor_cannot_create_agency(realtor_a, setup):
 
     response = perform_api_action(client.post, data, '/api/v1/agencies/', realtor_a[3])
 
-    assert realtor_a[1].mlsnumber_set.filter(user_id=realtor_a[0]).exists()
+    assert realtor_a[1].mls_numbers.filter(user_id=realtor_a[0]).exists()
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -138,7 +139,7 @@ def test_realtor_can_put_own_agency(realtor_a, setup):
     client = APIClient()
     _, agency, _, token = realtor_a
 
-    data = {'name': 'Agency Alpha', 'phone': str(agency.phone), 'address': agency.address}
+    data = {'name': 'Agency Alpha', 'phone': str(agency.phone), 'address': agency.address, 'mls_numbers': []}
 
     response = perform_api_action(client.put, data, '/api/v1/agencies/{}/'.format(agency.id), token)
 
@@ -146,7 +147,8 @@ def test_realtor_can_put_own_agency(realtor_a, setup):
 
     assert json.loads(response.render().content) == {'name': 'Agency Alpha',
                                                      'address': agency.address,
-                                                     'phone': agency.phone,
+                                                     'phone': str(agency.phone),
+                                                     'mls_numbers': [],
                                                      'id': agency.id}
 
     agency.refresh_from_db()
@@ -214,9 +216,9 @@ def test_realtor_cannot_patch_different_agency(realtor_a, realtor_b, setup):
 def test_anyone_can_get_mls_number(client, realtor_a, setup):
     realtor, agency, mls, token = realtor_a
 
-    response: Response = client.get('/api/v1/mls_numbers/')
+    response: Response = client.get('/api/v1/agencies/{}/mls_numbers/'.format(agency.id))
     assert response.status_code == 200
-    assert response.json() == [{'id': mls.id, 'agency': agency.id, 'number': str(mls.number), 'user': realtor.id}]
+    assert response.json() == [{'id': mls.id, 'number': str(mls.number), 'user': realtor.id}]
 
 
 @pytest.mark.django_db
@@ -229,7 +231,7 @@ def test_anyone_cannot_create_mls_number(client, setup):
     realtor.save()
     token.save()
 
-    response: Response = client.post('/api/v1/mls_numbers/', {'agency': agency.id, 'user': realtor.id})
+    response: Response = client.post('/api/v1/agencies/{}/mls_numbers/'.format(agency.id), {'user': realtor.id})
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
@@ -241,13 +243,15 @@ def test_admin_can_create_mls_number(client, admin_user, setup):
     agency.save()
     realtor.save()
 
-    data = {'agency': agency.id, 'user': realtor.id}
-    response = perform_api_action(client.post, data, '/api/v1/mls_numbers/', admin_user[1])
-
-    mls = MLSNumber.objects.filter(user_id=realtor.id).get()
+    data = {'user': realtor.id}
+    response = perform_api_action(client.post, data, '/api/v1/agencies/{}/mls_numbers/'.format(agency.id),
+                                  admin_user[1])
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert response.json() == {'id': mls.id, 'agency': agency.id, 'number': str(mls.number), 'user': realtor.id}
+
+    mls = MLSNumber.objects.filter(user=realtor).get()
+
+    assert response.json() == {'user': realtor.id}
 
 
 @pytest.mark.django_db
@@ -266,10 +270,11 @@ def test_admin_can_put_mls_number(admin_user, setup):
     new_agency.save()
 
     data = {'agency': new_agency.id, 'user': realtor.id}
-    response = perform_api_action(client.put, data, '/api/v1/mls_numbers/{}/'.format(mls.id), admin_user[1])
+    response = perform_api_action(client.put, data, '/api/v1/agencies/{}/mls_numbers/{}/'.format(agency.id, mls.id),
+                                  admin_user[1])
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {'id': mls.id, 'agency': new_agency.id, 'user': realtor.id, 'number': str(mls.number)}
+    assert response.json() == {'id': mls.id, 'user': realtor.id, 'number': str(mls.number)}
 
 
 @pytest.mark.django_db
@@ -288,10 +293,11 @@ def test_admin_can_patch_mls_number(admin_user, setup):
     new_agency.save()
 
     data = {'agency': new_agency.id}
-    response = perform_api_action(client.patch, data, '/api/v1/mls_numbers/{}/'.format(mls.id), admin_user[1])
+    response = perform_api_action(client.patch, data, '/api/v1/agencies/{}/mls_numbers/{}/'.format(agency.id, mls.id),
+                                  admin_user[1])
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {'id': mls.id, 'agency': new_agency.id, 'user': realtor.id, 'number': str(mls.number)}
+    assert response.json() == {'id': mls.id, 'user': realtor.id, 'number': str(mls.number)}
 
 
 @pytest.mark.django_db
@@ -306,7 +312,8 @@ def test_admin_can_delete_mls_number(admin_user, setup):
     realtor.save()
     mls.save()
 
-    response = perform_api_action(client.delete, {}, '/api/v1/mls_numbers/{}/'.format(mls.id), admin_user[1])
+    response = perform_api_action(client.delete, {}, '/api/v1/agencies/{}/mls_numbers/{}/'.format(agency.id, mls.id),
+                                  admin_user[1])
 
     assert response.status_code == status.HTTP_204_NO_CONTENT
     assert not MLSNumber.objects.filter(id=mls.id).exists()

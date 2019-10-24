@@ -11,17 +11,26 @@ class AddressSerializer(serializers.ModelSerializer):
         fields = ['street_number', 'street', 'locality', 'postal_code', 'state', 'state_code']
 
 
-class AgencySerializer(serializers.ModelSerializer):
+class FullMLSNumberSerializer(serializers.ModelSerializer):
     class Meta:
-        model = db_models.Agency
-        fields = ['id', 'name', 'address', 'phone']
+        model = db_models.MLSNumber
+        fields = '__all__'
+        read_only_fields = ('number',)
 
 
 class MLSNumberSerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.MLSNumber
-        fields = ['id', 'agency', 'number', 'user']
+        fields = ['id', 'number', 'user']
         read_only_fields = ('number',)
+
+
+class AgencySerializer(WritableNestedModelSerializer):
+    mls_numbers = MLSNumberSerializer(many=True)
+
+    class Meta:
+        model = db_models.Agency
+        fields = ['id', 'name', 'address', 'phone', 'mls_numbers']
 
 
 class NearbyAttractionSerializer(serializers.ModelSerializer):
