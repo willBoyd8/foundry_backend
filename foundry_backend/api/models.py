@@ -26,7 +26,7 @@ class IAMPolicyStatement(models.Model):
         ('retrieve', 'Retrieve a specific object (GET with PK)'),
         ('create', 'Create a new object (POST)'),
         ('update', 'Update a specific object in it\'s entirety (PUT)'),
-        ('update_partial', 'Update a specific object\'s specific elements (PATCH)'),
+        ('partial_update', 'Update a specific object\'s specific elements (PATCH)'),
         ('delete', 'Delete an object (DELETE)'),
         ('all', 'All actions'),
         ('safe', 'Read only actions')

@@ -9,7 +9,7 @@ from rest_framework.test import APIClient
 from rest_framework.utils import json
 from foundry_backend.api import views, serializers
 from foundry_backend.api.models import IAMPolicy
-from foundry_backend.database.models import Agency, MLSNumber
+from foundry_backend.database.models import Agency, MLSNumber, Listing
 
 
 def check_list_equal(first: List, second: List):
@@ -365,19 +365,56 @@ def test_realtor_can_create_nearby_attractions(realtor_a, setup):
     assert json.loads(response.render().content) == {**data, 'id': 1}
 
 
+def test_realtor_can_create_listing(realtor_a, setup):
+    client = APIClient()
+
+    data = {
+        'agent': realtor_a[0].id,
+        'asking_price': 500000,
+        'description': 'Custom built home with lots of light and a beautiful treed '
+                       'lot. Hardwoods in the formals plus a study & library that '
+                       'open to a rear flagstone patio. Formerly owned by Dr. Wernher '
+                       'von Braun.',
+        'property': {
+            'address': {
+                'street_number': '1516',
+                'street': 'Big Cove Road',
+                'locality': 'Huntsville',
+                'postal_code': '35801',
+                'state': 'Alabama',
+                'state_code': 'AL'
+            },
+            'square_footage': 2750,
+            'type': 'HOUSE',
+            'rooms': [],
+            'nearby_attractions': []
+        }
+    }
+
+    response = perform_api_action(client.post, data, '/api/v1/listings/', realtor_a[3])
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+    listing = Listing.objects.get(property__address__street='Big Cove Road')
+
+    listing_data = response.json()
+
+    assert listing is not None
+    assert listing.id == listing_data['id']
+
+
 def test_realtor_can_change_owned_listing(realtor_c, listing_a, setup):
     client = APIClient()
 
-    data = serializers.ListingSerializer(listing_a).data
-    data['agent'] = realtor_c[0].id
+    data = {'agent': realtor_c[0].id}
 
-    response = perform_api_action(client.put, data, '/api/v1/listings/{}/'.format(listing_a.id), realtor_c[3])
+    response = perform_api_action(client.patch, data, '/api/v1/listings/{}/'.format(listing_a.id), realtor_c[3])
 
     listing_a.refresh_from_db()
+    listing_data = serializers.ListingSerializer(listing_a).data
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {'id': listing_a.id, 'agent': realtor_c[0].id,
-                               'asking_price': listing_a.asking_price, 'description': listing_a.description}
+    assert response.json() == listing_data
 
 
 def test_realtor_cannot_change_non_owned_listing(realtor_b, listing_a, setup):
@@ -397,11 +434,11 @@ def test_realtor_cannot_change_non_owned_listing(realtor_b, listing_a, setup):
 #     data = serializers.PropertySerializer(listing_a.property).data
 #     data['square_footage'] = 3000
 #
-#     response = perform_api_action(client.put, data, '/api/v1/properties/{}/'.format(listing_a.property.id), realtor_c[3])
+#     response = perform_api_action(client.put, data, '/api/v1/listings/{}/property/{}/'.format(listing_a.id,
+#                                                                                               listing_a.property.id),
+#                                   realtor_c[3])
 #
 #     listing_a.refresh_from_db()
-#
-#     assert response.content == ''
 #
 #     assert response.status_code == status.HTTP_200_OK
 #     assert response.json() == {'id': listing_a.property.id, 'square_footage': 3000,
@@ -413,7 +450,9 @@ def test_realtor_cannot_change_non_owned_property(realtor_b, listing_a, setup):
     client = APIClient()
 
     data = {'square_footage': 3000}
-    response = perform_api_action(client.patch, data, '/api/v1/properties/{}/'.format(listing_a.property.id), realtor_b[3])
+    response = perform_api_action(client.patch, data,
+                                  '/api/v1/listings/{}/property/{}/'.format(listing_a.id, listing_a.property.id),
+                                  realtor_b[3])
 
     listing_a.refresh_from_db()
 

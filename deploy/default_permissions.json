@@ -73,7 +73,7 @@
         "notes": "Allow realtors to modify their own agency",
         "actions": [
           "update",
-          "update_partial"
+          "partial_update"
         ],
         "effect": "allow",
         "principals": [
@@ -173,11 +173,20 @@
         "conditions": []
       },
       {
-        "notes": "Allow realtors to create, update, and delete if they are member to this agency",
+        "notes": "Allow a realtor to modify this if it is their own",
         "actions": [
-          "create",
           "update",
+          "partial_update",
           "delete"
+        ],
+        "effect": "allow",
+        "principals": [{"value": "group:realtor"}],
+        "conditions": [{"value": "property_belongs_to_agency"}]
+      },
+      {
+        "notes": "Allow realtors to create listings",
+        "actions": [
+          "create"
         ],
         "effect": "allow",
         "principals": [
@@ -185,11 +194,7 @@
             "value": "group:realtor"
           }
         ],
-        "conditions": [
-          {
-            "value": "property_belongs_to_agency"
-          }
-        ]
+        "conditions": []
       },
       {
         "notes": "Allow admins to do anything",

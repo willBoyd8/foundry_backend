@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import List
 from rest_access_policy import AccessPolicy
 from .. import models
@@ -8,6 +9,8 @@ class APIAccessPolicyBase(AccessPolicy):
     """
     Defines a generic access policy for API Objects
     """
+
+    logger = logging.getLogger('access')
 
     _model_name = 'default'
     @property
@@ -24,13 +27,13 @@ class APIAccessPolicyBase(AccessPolicy):
 
         if not model_policy_query.exists():
             policy_data = default_policy_query.get().serialize().get('statements')
-            print('Attempted to get access policy for model \'{}\', failed.'.format(self.model_name))
-            print('Using default access policy instead: \'{}\''.format(json.dumps(policy_data)))
+            self.logger.debug('Attempted to get access policy for model \'{}\', failed.'.format(self.model_name))
+            self.logger.debug('Using default access policy instead: \'{}\''.format(json.dumps(policy_data)))
             return policy_data
         else:
             policy_data = model_policy_query.get().serialize().get('statements')
-            print('Attempted to get access policy for model \'{}\', success!.'.format(self.model_name))
-            print('Using access policy: {}'.format(json.dumps(json.dumps(policy_data, indent=2))))
+            self.logger.debug('Attempted to get access policy for model \'{}\', success!.'.format(self.model_name))
+            self.logger.debug('Using access policy: {}'.format(json.dumps(json.dumps(policy_data, indent=2))))
             return policy_data
 
 

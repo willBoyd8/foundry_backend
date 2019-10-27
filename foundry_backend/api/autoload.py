@@ -28,10 +28,14 @@ def load_json_access_policies(path: str):
                 serializer = IAMPolicySerializer(data=perm)
 
                 if serializer.is_valid():
+                    print('Saving Policy: \'{}\''.format(perm['name']))
                     serializer.save()
+                else:
+                    print('⚠️⚠️⚠️ Error adding \'{}\'⚠️⚠️⚠️'.format(perm['name']))
+                    print(serializer.errors)
     else:
         print('WARNING: No tables were found in the database, so applying '
-              '         IAM permissions was defered to a later date. If '
+              '         IAM permissions was deferred to a later date. If '
               '         you are running in production, you have failed to'
               '         create IAM models and the application WILL FAIL')
 

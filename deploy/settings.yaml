@@ -38,6 +38,28 @@ default:
       ENGINE: django.db.backends.sqlite3
       NAME: db.sqlite3
 
+  # logging
+  LOGGING:
+    version: 1
+    disable_existing_loggers: false
+    handlers:
+      file:
+        level: DEBUG
+        class: logging.FileHandler
+        filename: "./log.txt"
+      console:
+        class: logging.StreamHandler
+    loggers:
+      django:
+        handlers:
+          - file
+        level: DEBUG
+        propagate: true
+      access:
+        handlers:
+          - console
+        level: DEBUG
+
   # Valid Accept-Language HTTP Header
   LANGUAGE_CODE: en-us
 

@@ -3,7 +3,7 @@ from foundry_backend.api import models
 from foundry_backend.database import models as db_models
 from rest_framework import viewsets
 
-from foundry_backend.database.models import MLSNumber
+from foundry_backend.database.models import MLSNumber, Listing, Room, NearbyAttraction
 from . import serializers
 from .access import make_access_policy
 
@@ -48,6 +48,23 @@ class MLSNumberViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.MLSNumberSerializer
 
 
+class AllNearbyAttractionsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for nearby attractions globally
+    """
+    permission_classes = (make_access_policy('RealtorAdmin', 'realtor-admin-access-policy'),)
+
+    @property
+    def access_policy(self):
+        return self.permission_classes[0]
+
+    def get_queryset(self):
+        return NearbyAttraction.objects.all()
+
+    queryset = db_models.NearbyAttraction.objects.all()
+    serializer_class = serializers.NearbyAttractionSerializer
+
+
 class NearbyAttractionViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Subdivisions
@@ -58,6 +75,19 @@ class NearbyAttractionViewSet(viewsets.ModelViewSet):
     def access_policy(self):
         return self.permission_classes[0]
 
+    def get_queryset(self):
+        if self.kwargs.get('property_pk') is not None:
+            return Listing.objects.filter(listing=self.kwargs['property'])
+
+    def perform_create(self, serializer: serializers.NearbyAttractionSerializer):
+        serializer = serializers.FullNearbyAttractionSerializer(data={**serializer.data,
+                                                                      'property': self.kwargs['property_pk']})
+
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            raise ValidationError(serializer.errors)
+
     queryset = db_models.NearbyAttraction.objects.all()
     serializer_class = serializers.NearbyAttractionSerializer
 
@@ -66,7 +96,7 @@ class PropertyViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Properties
     """
-    permission_classes = (make_access_policy('Property', 'inter-agency-listing-access-policy'),)
+    permission_classes = (make_access_policy('InterAgencyListing', 'inter-agency-listing-access-policy'),)
 
     @property
     def access_policy(self):
@@ -74,6 +104,14 @@ class PropertyViewSet(viewsets.ModelViewSet):
 
     queryset = db_models.Property.objects.all()
     serializer_class = serializers.PropertySerializer
+
+    def perform_create(self, serializer: serializers.PropertySerializer):
+        serializer = serializers.FullPropertySerializer(data={**serializer.data, 'listing': self.kwargs['listing_pk']})
+
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            raise ValidationError(serializer.errors)
 
 
 class NearbyAttractionPropertyConnectorViewSet(viewsets.ModelViewSet):
@@ -100,6 +138,12 @@ class ListingViewSet(viewsets.ModelViewSet):
     def access_policy(self):
         return self.permission_classes[0]
 
+    # def get_queryset(self):
+    #     if self.kwargs.get('listing_pk') is not None:
+    #         return db_models.Listing.objects.filter(listing=self.kwargs['listing_pk'])
+    #     else:
+    #         return Listing.objects.all()
+
     queryset = db_models.Listing.objects.all()
     serializer_class = serializers.ListingSerializer
 
@@ -110,6 +154,18 @@ class RoomViewSet(viewsets.ModelViewSet):
     """
     queryset = db_models.Listing.objects.all()
     serializer_class = serializers.RoomSerializer
+
+    def get_queryset(self):
+        if self.kwargs.get('property_pk') is not None:
+            return Room.objects.filter(listing=self.kwargs['property_pk'])
+
+    def perform_create(self, serializer: serializers.RoomSerializer):
+        serializer = serializers.FullRoomSerializer(data={**serializer.data, 'property': self.kwargs['property_pk']})
+
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            raise ValidationError(serializer.errors)
 
 
 class HomeAlarmViewSet(viewsets.ModelViewSet):

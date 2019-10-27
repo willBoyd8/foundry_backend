@@ -33,26 +33,48 @@ class AgencySerializer(WritableNestedModelSerializer):
         fields = ['id', 'name', 'address', 'phone', 'mls_numbers']
 
 
+class FullNearbyAttractionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.NearbyAttraction
+        fields = '__all__'
+
+
 class NearbyAttractionSerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.NearbyAttraction
         fields = ['id', 'name', 'type']
 
 
-class PropertySerializer(serializers.ModelSerializer):
+class FullRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.Room
+        fields = '__all__'
+
+
+class RoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.Room
+        fields = ['id', 'description', 'name', 'type']
+
+
+class FullPropertySerializer(WritableNestedModelSerializer):
     address = AddressSerializer()
+    rooms = RoomSerializer(many=True)
+    nearby_attractions = NearbyAttractionSerializer(many=True)
 
     class Meta:
         model = db_models.Property
-        fields = '__all__'
+        fields = ['id', 'property', 'address', 'square_footage', 'type', 'rooms', 'nearby_attractions']
 
-    def create(self, validated_data):
-        address_data = validated_data.pop('address')
-        address = db_models.Address.objects.create(**address_data)
-        print(address)
-        new_property = db_models.Property.objects.create(address_id=address.id,
-                                                         square_footage=validated_data['square_footage'])
-        return new_property
+
+class PropertySerializer(WritableNestedModelSerializer):
+    address = AddressSerializer()
+    rooms = RoomSerializer(many=True)
+    nearby_attractions = NearbyAttractionSerializer(many=True)
+
+    class Meta:
+        model = db_models.Property
+        fields = ['id', 'address', 'square_footage', 'type', 'rooms', 'nearby_attractions']
 
 
 class NearbyAttractionPropertyConnectorSerializer(serializers.ModelSerializer):
@@ -61,15 +83,11 @@ class NearbyAttractionPropertyConnectorSerializer(serializers.ModelSerializer):
         fields = ['id', 'attraction', 'property']
 
 
-class ListingSerializer(serializers.ModelSerializer):
+class ListingSerializer(WritableNestedModelSerializer):
+    property = PropertySerializer(many=False)
+
     class Meta:
         model = db_models.Listing
-        fields = '__all__'
-
-
-class RoomSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = db_models.Room
         fields = '__all__'
 
 

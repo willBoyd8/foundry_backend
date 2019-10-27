@@ -4,7 +4,6 @@ from rest_framework.authtoken.models import Token
 from foundry_backend.api.autoload import run
 from foundry_backend.api.models import IAMPolicy, IAMPolicyStatement, IAMPolicyStatementPrincipal, \
     IAMPolicyStatementCondition
-from foundry_backend.api.serializers import IAMPolicySerializer
 from foundry_backend.database import models
 from foundry_backend.database.models import MLSNumber, Agency
 
@@ -113,7 +112,7 @@ def listing_a(realtor_a):
                                                         'open to a rear flagstone patio. Formerly owned by Dr. Wernher '
                                                         'von Braun.')
 
-    prop = models.Property.objects.create(address=address, square_footage='2750', listing=listing)
+    prop = models.Property.objects.create(address=address, type='HOUSE', square_footage='2750', listing=listing)
 
     address.save()
     prop.save()

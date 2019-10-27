@@ -71,24 +71,6 @@ class MLSNumber(models.Model):
         super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
 
-class NearbyAttraction(models.Model):
-    """
-    A superclass for all the things near a property
-    """
-    NEARBY_ATTRACTION_TYPES = (
-        ('SCHOOL_ELEM', 'Public Elementary School'),
-        ('SCHOOL_MIDDLE', 'Public Middle School'),
-        ('SCHOOL_HIGH', 'Public High School'),
-        ('SCHOOL_PRIVATE', 'Private School'),
-        ('SHOPPING', 'Shopping Area'),
-        ('NEIGHBORHOOD', 'Neighborhood'),
-        ('ENTERTAINMENT', 'Entertainment Area'),
-    )
-
-    name = models.CharField(max_length=50, unique=True)
-    type = models.CharField(max_length=15, choices=NEARBY_ATTRACTION_TYPES)
-
-
 class Listing(models.Model):
     """
     A listing of a house
@@ -113,6 +95,26 @@ class Property(models.Model):
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
     square_footage = models.IntegerField(validators=[MinValueValidator(0)])
     type = models.CharField(max_length=12, choices=PROPERTY_TYPES)
+
+
+class NearbyAttraction(models.Model):
+    """
+    A superclass for all the things near a property
+    """
+    NEARBY_ATTRACTION_TYPES = (
+        ('SCHOOL_ELEM', 'Public Elementary School'),
+        ('SCHOOL_MIDDLE', 'Public Middle School'),
+        ('SCHOOL_HIGH', 'Public High School'),
+        ('SCHOOL_PRIVATE', 'Private School'),
+        ('SHOPPING', 'Shopping Area'),
+        ('NEIGHBORHOOD', 'Neighborhood'),
+        ('ENTERTAINMENT', 'Entertainment Area'),
+    )
+
+    properties = models.ManyToManyField(Property,  blank=True, related_name='nearby_attractions',
+                                        through="NearbyAttractionPropertyConnector")
+    name = models.CharField(max_length=50, unique=True)
+    type = models.CharField(max_length=15, choices=NEARBY_ATTRACTION_TYPES)
 
 
 class NearbyAttractionPropertyConnector(models.Model):
@@ -159,7 +161,7 @@ class Room(models.Model):
 
     description = models.TextField(null=True, blank=True)
     name = models.CharField(max_length=25)
-    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    property = models.ForeignKey(Property, related_name='rooms', on_delete=models.CASCADE)
     type = models.CharField(max_length=15, choices=ROOM_TYPES)
 
     class Meta:
