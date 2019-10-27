@@ -46,7 +46,7 @@ default:
       file:
         level: DEBUG
         class: logging.FileHandler
-        filename: "./log.txt"
+        filename: "./django.log"
       console:
         class: logging.StreamHandler
     loggers:
