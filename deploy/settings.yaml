@@ -89,6 +89,7 @@ default:
     - djoser
     - rest_framework.authtoken
     - drf_yasg
+    - rest_framework_filters
     - phonenumber_field
     - address
     - multiselectfield
