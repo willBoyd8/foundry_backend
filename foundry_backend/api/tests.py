@@ -428,24 +428,6 @@ def test_realtor_cannot_change_non_owned_listing(realtor_b, listing_a, setup):
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-# def test_realtor_can_change_owned_property(realtor_c, listing_a, setup):
-#     client = APIClient()
-#
-#     data = serializers.PropertySerializer(listing_a.property).data
-#     data['square_footage'] = 3000
-#
-#     response = perform_api_action(client.put, data, '/api/v1/listings/{}/property/{}/'.format(listing_a.id,
-#                                                                                               listing_a.property.id),
-#                                   realtor_c[3])
-#
-#     listing_a.refresh_from_db()
-#
-#     assert response.status_code == status.HTTP_200_OK
-#     assert response.json() == {'id': listing_a.property.id, 'square_footage': 3000,
-#                                'address': listing_a.property.address.to_dict(), 'listing': listing_a.id,
-#                                'type': listing_a.property.type}
-
-
 def test_realtor_cannot_change_non_owned_property(realtor_b, listing_a, setup):
     client = APIClient()
 
