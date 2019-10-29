@@ -505,3 +505,116 @@ def test_admin_can_create_access_policies(policy, setup, admin_user):
     response: Response = perform_api_action(client.post, policy_data, '/api/v1/iam_policies/', admin_user[1])
 
     assert response.status_code == status.HTTP_201_CREATED
+
+
+def test_filtering_property_by_min_asking_price(client, listing_a, listing_b, listing_c, listing_d, setup):
+    response = client.get('/api/v1/listings/', {'asking_price_min': 600500})
+
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert len(response_data) == 2
+
+    response_ids = [r.get('id') for r in response_data]
+
+    assert listing_a.id not in response_ids
+    assert listing_b.id not in response_ids
+    assert listing_c.id in response_ids
+    assert listing_d.id in response_ids
+
+
+def test_filtering_property_by_max_asking_price(client, listing_a, listing_b, listing_c, listing_d, setup):
+    response = client.get('/api/v1/listings/', {'asking_price_max': 600500})
+
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert len(response_data) == 2
+
+    response_ids = [r.get('id') for r in response_data]
+
+    assert listing_a.id in response_ids
+    assert listing_b.id in response_ids
+    assert listing_c.id not in response_ids
+    assert listing_d.id not in response_ids
+
+
+def test_filtering_property_by_min_and_max_asking_price(client, listing_a, listing_b, listing_c, listing_d, setup):
+    response = client.get('/api/v1/listings/', {'asking_price_min': 500500, 'asking_price_max': 700500})
+
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert len(response_data) == 2
+
+    response_ids = [r.get('id') for r in response_data]
+
+    assert listing_a.id not in response_ids
+    assert listing_b.id in response_ids
+    assert listing_c.id in response_ids
+    assert listing_d.id not in response_ids
+
+
+def test_filtering_property_by_min_square_footage(client, listing_a, listing_b, listing_c, listing_d, setup):
+    response = client.get('/api/v1/listings/', {'square_footage_min': 3050})
+
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert len(response_data) == 2
+
+    response_ids = [r.get('id') for r in response_data]
+
+    assert listing_a.id not in response_ids
+    assert listing_b.id not in response_ids
+    assert listing_c.id in response_ids
+    assert listing_d.id in response_ids
+
+
+def test_filtering_property_by_max_square_footage(client, listing_a, listing_b, listing_c, listing_d, setup):
+    response = client.get('/api/v1/listings/', {'square_footage_max': 3050})
+
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert len(response_data) == 2
+
+    response_ids = [r.get('id') for r in response_data]
+
+    assert listing_a.id in response_ids
+    assert listing_b.id in response_ids
+    assert listing_c.id not in response_ids
+    assert listing_d.id not in response_ids
+
+
+def test_filtering_property_by_min_and_max_square_footage(client, listing_a, listing_b, listing_c, listing_d, setup):
+    response = client.get('/api/v1/listings/', {'square_footage_min': 2750, 'square_footage_max': 4050})
+
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert len(response_data) == 3
+
+    response_ids = [r.get('id') for r in response_data]
+
+    assert listing_a.id in response_ids
+    assert listing_b.id in response_ids
+    assert listing_c.id in response_ids
+    assert listing_d.id not in response_ids
+
+
+def test_filtering_property_by_zip_code(client, listing_a, listing_b, listing_c, listing_d, setup):
+    response = client.get('/api/v1/listings/', {'zip_code': '35801'})
+
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert len(response_data) == 1
+
+    response_ids = [r.get('id') for r in response_data]
+
+    assert listing_a.id in response_ids
+    assert listing_b.id not in response_ids
+    assert listing_c.id not in response_ids
+    assert listing_d.id not in response_ids
+

@@ -31,7 +31,7 @@ class ListingFilterSet(django_filters.FilterSet):
     asking_price = django_filters.NumberFilter(field_name='asking_price', lookup_expr='exact')
     asking_price_max = django_filters.NumberFilter(field_name='asking_price', lookup_expr='lte')
 
-    zip_code = django_filters.NumericRangeFilter(field_name='property__address__postal_code')
+    zip_code = django_filters.CharFilter(field_name='property__address__postal_code', lookup_expr='exact')
 
     class Meta:
         model = models.Listing
