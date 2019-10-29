@@ -50,6 +50,9 @@ default:
       console:
         class: logging.StreamHandler
     loggers:
+      django.server:
+        handlers:
+          - console
       django:
         handlers:
           - file
