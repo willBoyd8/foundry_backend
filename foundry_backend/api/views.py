@@ -1,8 +1,9 @@
+import django_filters
 from rest_framework.exceptions import ValidationError
 from foundry_backend.api import models
+from foundry_backend.api.filters import ListingFilterSet
 from foundry_backend.database import models as db_models
 from rest_framework import viewsets
-
 from foundry_backend.database.models import MLSNumber, Listing, Room, NearbyAttraction
 from . import serializers
 from .access import make_access_policy
@@ -13,6 +14,8 @@ class AgencyViewSet(viewsets.ModelViewSet):
     API Endpoint for Foundry Agencies
     """
     permission_classes = (make_access_policy('Agency', 'agency-access-policy'),)
+
+    filterset_fields = ['name', 'address', 'phone']
 
     @property
     def access_policy(self):
@@ -138,11 +141,7 @@ class ListingViewSet(viewsets.ModelViewSet):
     def access_policy(self):
         return self.permission_classes[0]
 
-    # def get_queryset(self):
-    #     if self.kwargs.get('listing_pk') is not None:
-    #         return db_models.Listing.objects.filter(listing=self.kwargs['listing_pk'])
-    #     else:
-    #         return Listing.objects.all()
+    filterset_class = ListingFilterSet
 
     queryset = db_models.Listing.objects.all()
     serializer_class = serializers.ListingSerializer
@@ -280,4 +279,3 @@ class IAMPolicyStatementConditionViewSet(viewsets.ModelViewSet):
             serializer.save()
         else:
             raise ValidationError(serializer.errors)
-

@@ -122,6 +122,69 @@ def listing_a(realtor_a):
 
 
 @pytest.fixture
+def listing_b(realtor_a):
+    address = models.Address.objects.create(street_number='1234',
+                                            street='Someplace Drive',
+                                            postal_code='35802',
+                                            locality='Huntsville',
+                                            state_code='AL',
+                                            state='Alabama')
+
+    listing = models.Listing.objects.create(asking_price=600000, agent=realtor_a[2],
+                                            description='It\'s nice and spacious...')
+
+    prop = models.Property.objects.create(address=address, type='HOUSE', square_footage='3000', listing=listing)
+
+    address.save()
+    prop.save()
+    listing.save()
+
+    return listing
+
+
+@pytest.fixture
+def listing_c(realtor_a):
+    address = models.Address.objects.create(street_number='2345',
+                                            street='Someplace Drive',
+                                            postal_code='35802',
+                                            locality='Huntsville',
+                                            state_code='AL',
+                                            state='Alabama')
+
+    listing = models.Listing.objects.create(asking_price=700000, agent=realtor_a[2],
+                                            description='It\'s nice and spacious...')
+
+    prop = models.Property.objects.create(address=address, type='HOUSE', square_footage='4000', listing=listing)
+
+    address.save()
+    prop.save()
+    listing.save()
+
+    return listing
+
+
+@pytest.fixture
+def listing_d(realtor_a):
+    address = models.Address.objects.create(street_number='3456',
+                                            street='Someplace Drive',
+                                            postal_code='35802',
+                                            locality='Huntsville',
+                                            state_code='AL',
+                                            state='Alabama')
+
+    listing = models.Listing.objects.create(asking_price=800000, agent=realtor_a[2],
+                                            description='It\'s nice and spacious...')
+
+    prop = models.Property.objects.create(address=address, type='HOUSE', square_footage='5000', listing=listing)
+
+    address.save()
+    prop.save()
+    listing.save()
+
+    return listing
+
+
+@pytest.fixture
 def policy(db):
     policy = IAMPolicy.objects.create(name='an-example-policy', notes='Does some stuff')
     statement = IAMPolicyStatement.objects.create(notes='A policy', policy=policy,
