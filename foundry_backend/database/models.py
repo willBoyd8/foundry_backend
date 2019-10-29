@@ -91,7 +91,7 @@ class Property(models.Model):
         ('HOUSE', 'Standalone House')
     )
 
-    listing = models.OneToOneField(Listing, on_delete=models.CASCADE)
+    listing = models.OneToOneField(Listing, related_name='property', on_delete=models.CASCADE)
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
     square_footage = models.IntegerField(validators=[MinValueValidator(0)])
     type = models.CharField(max_length=12, choices=PROPERTY_TYPES)

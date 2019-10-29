@@ -86,10 +86,10 @@ default:
     - foundry_backend.database
     - foundry_backend.api
     - rest_framework
+    - django_filters
     - djoser
     - rest_framework.authtoken
     - drf_yasg
-    - rest_framework_filters
     - phonenumber_field
     - address
     - multiselectfield
@@ -121,6 +121,8 @@ default:
     DEFAULT_AUTHENTICATION_CLASSES:
         - rest_framework.authentication.TokenAuthentication
     TEST_REQUEST_DEFAULT_FORMAT: 'json'
+    DEFAULT_FILTER_BACKENDS:
+        - django_filters.rest_framework.DjangoFilterBackend
 
   DRF_ACCESS_POLICY:
     reusable_conditions: foundry_backend.api.access.global_conditions
