@@ -3,7 +3,6 @@ from django.core.validators import MinValueValidator, MinLengthValidator, MaxLen
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 import uuid
-from rest_framework.exceptions import ValidationError
 
 
 class Address(models.Model):
@@ -126,23 +125,6 @@ class NearbyAttractionPropertyConnector(models.Model):
 
     class Meta:
         unique_together = (('attraction', 'property'),)
-
-    def save(self, *args, **kwargs):
-        errors = []
-
-        if len(self.property.nearbyattractionpropertyconnector_set.filter(type='SCHOOL_ELEM').all()):
-            errors.append('The property already has a Public Elementary School listed')
-
-        if len(self.property.nearbyattractionpropertyconnector_set.filter(type='SCHOOL_MIDDLE').all()):
-            errors.append('The property already has a Public Middle School listed')
-
-        if len(self.property.nearbyattractionpropertyconnector_set.filter(type='SCHOOL_HIGH').all()):
-            errors.append('The property already has a Public High School listed')
-
-        if len(errors) is not 0:
-            raise ValidationError({'property': errors})
-
-        super().save(*args, **kwargs)
 
 
 class Room(models.Model):
