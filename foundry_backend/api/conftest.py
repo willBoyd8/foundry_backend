@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 from django.contrib.auth.models import User, Group
 from rest_framework.authtoken.models import Token
@@ -11,6 +13,11 @@ from foundry_backend.database.models import MLSNumber, Agency
 @pytest.fixture
 def setup(db):
     run()
+
+
+@pytest.fixture
+def format_string():
+    return '%Y-%m-%d %H:%M'
 
 
 @pytest.fixture
@@ -119,6 +126,21 @@ def listing_a(realtor_a):
     listing.save()
 
     return listing
+
+
+@pytest.fixture
+def showing_a_1(listing_a, realtor_a):
+    start_time = datetime.datetime(year=2019, month=1, day=1, hour=11, minute=30)
+    end_time = datetime.datetime(year=2019, month=1, day=1, hour=12, minute=00)
+
+    _, _, realtor, _ = realtor_a
+
+    showing = models.Showing.objects.create(start_time=start_time,
+                                            end_time=end_time,
+                                            listing=listing_a,
+                                            agent=realtor)
+
+    return showing
 
 
 @pytest.fixture

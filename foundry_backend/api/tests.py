@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 
 import pytest
@@ -618,3 +619,97 @@ def test_filtering_property_by_zip_code(client, listing_a, listing_b, listing_c,
     assert listing_c.id not in response_ids
     assert listing_d.id not in response_ids
 
+
+def test_showing_can_precede(listing_a, showing_a_1, format_string, realtor_a, setup):
+    client = APIClient()
+
+    realtor, _, _, token = realtor_a
+
+    start_time = datetime.datetime(year=2019, month=1, day=1, hour=11)
+    end_time = datetime.datetime(year=2019, month=1, day=1, hour=11, minute=30)
+
+    data = {
+        'agent': realtor.id,
+        'start_time': start_time.strftime(format_string),
+        'end_time': end_time.strftime(format_string)
+    }
+
+    response = perform_api_action(client.post, data, '/api/v1/listings/{}/showings/'.format(listing_a.id), token)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+def test_showing_can_follow(listing_a, showing_a_1, format_string, realtor_b, setup):
+    client = APIClient()
+
+    realtor, _, _, token = realtor_b
+
+    start_time = datetime.datetime(year=2019, month=1, day=1, hour=12)
+    end_time = datetime.datetime(year=2019, month=1, day=1, hour=12, minute=30)
+
+    data = {
+        'agent': realtor.id,
+        'start_time': start_time.strftime(format_string),
+        'end_time': end_time.strftime(format_string)
+    }
+
+    response = perform_api_action(client.post, data, '/api/v1/listings/{}/showings/'.format(listing_a.id), token)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+def test_showing_cannot_overlap_early(listing_a, showing_a_1, format_string, realtor_b, setup):
+    client = APIClient()
+
+    realtor, _, _, token = realtor_b
+
+    start_time = datetime.datetime(year=2019, month=1, day=1, hour=11, minute=15)
+    end_time = datetime.datetime(year=2019, month=1, day=1, hour=11, minute=45)
+
+    data = {
+        'agent': realtor.id,
+        'start_time': start_time.strftime(format_string),
+        'end_time': end_time.strftime(format_string)
+    }
+
+    response = perform_api_action(client.post, data, '/api/v1/listings/{}/showings/'.format(listing_a.id), token)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+def test_showing_cannot_overlap_late(listing_a, showing_a_1, format_string, realtor_a, setup):
+    client = APIClient()
+
+    realtor, _, _, token = realtor_a
+
+    start_time = datetime.datetime(year=2019, month=1, day=1, hour=11, minute=45)
+    end_time = datetime.datetime(year=2019, month=1, day=1, hour=12, minute=15)
+
+    data = {
+        'agent': realtor.id,
+        'start_time': start_time.strftime(format_string),
+        'end_time': end_time.strftime(format_string)
+    }
+
+    response = perform_api_action(client.post, data, '/api/v1/listings/{}/showings/'.format(listing_a.id), token)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+def test_showing_cannot_overlap_exact(listing_a, showing_a_1, format_string, realtor_a, setup):
+    client = APIClient()
+
+    realtor, _, _, token = realtor_a
+
+    start_time = datetime.datetime(year=2019, month=1, day=1, hour=11, minute=30)
+    end_time = datetime.datetime(year=2019, month=1, day=1, hour=12)
+
+    data = {
+        'agent': realtor.id,
+        'start_time': start_time.strftime(format_string),
+        'end_time': end_time.strftime(format_string)
+    }
+
+    response = perform_api_action(client.post, data, '/api/v1/listings/{}/showings/'.format(listing_a.id), token)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST

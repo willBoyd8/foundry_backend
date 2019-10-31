@@ -245,6 +245,46 @@
     ]
   },
   {
+    "name": "showing-access-policy",
+    "notes": "allow any realtor or admin to make a showing, or delete their own",
+    "statements": [
+      {
+        "notes": "Allow anyone to list showings",
+        "actions": ["list", "retrieve"],
+        "effect": "allow",
+        "principals": [{"value": "*"}],
+        "conditions": []
+      },
+      {
+        "notes": "Allow admins to do anything",
+        "actions": ["all"],
+        "effect": "allow",
+        "principals": [{"value":  "group:admin"}],
+        "conditions": []
+      },
+      {
+        "notes": "Allow realtors to create showings",
+        "actions": [
+          "create"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "group:realtor"
+          }
+        ],
+        "conditions": []
+      },
+      {
+        "notes": "Allow realtors to modify showings for their own agency",
+        "actions": ["update", "partial_update", "delete"],
+        "effect": "allow",
+        "principals": [{"value": "group:realtor"}],
+        "conditions": [{"value": "can_modify_showing"}]
+      }
+    ]
+  },
+  {
     "name": "realtor-admin-access-policy",
     "notes": "Allow admins and realtors to perform administrative tasks",
     "statements": [
