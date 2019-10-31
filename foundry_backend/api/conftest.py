@@ -23,7 +23,7 @@ def format_string():
 @pytest.fixture
 def admin_user(db):
     # make the user and group, with a token
-    user = User.objects.create_user(username='admin', email='admin@email.com', password='password')
+    user, _ = User.objects.get_or_create(username='admin', email='admin@email.com', password='password')
     token = Token.objects.create(user=user)
 
     user.is_staff = True
