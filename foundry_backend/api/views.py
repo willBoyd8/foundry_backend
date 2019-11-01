@@ -1,9 +1,8 @@
-import django_filters
 from rest_framework.exceptions import ValidationError
 from foundry_backend.api import models
 from foundry_backend.api.filters import ListingFilterSet
 from foundry_backend.database import models as db_models
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from foundry_backend.database.models import MLSNumber, Listing, Room, NearbyAttraction
 from . import serializers
 from .access import make_access_policy
@@ -167,9 +166,20 @@ class RoomViewSet(viewsets.ModelViewSet):
             raise ValidationError(serializer.errors)
 
 
-class HomeAlarmViewSet(viewsets.ModelViewSet):
+class HomeAlarmViewSet(mixins.CreateModelMixin,
+                       mixins.RetrieveModelMixin,
+                       mixins.UpdateModelMixin,
+                       mixins.ListModelMixin,
+                       viewsets.GenericViewSet):
     """
-    API Endpoint for home alarms
+    retrieve:
+        Returns the property's home alarm
+
+    partial_update:
+        Partially update the property's alarm listing
+
+    update:
+        Update the property's alarm listing
     """
     permission_classes = (make_access_policy('HomeAlarm', 'home-alarm-access-policy'),)
 
@@ -177,8 +187,17 @@ class HomeAlarmViewSet(viewsets.ModelViewSet):
     def access_policy(self):
         return self.permission_classes[0]
 
-    queryset = db_models.Listing.objects.all()
+    queryset = db_models.HomeAlarm.objects.all()
     serializer_class = serializers.HomeAlarmSerializer
+
+    def perform_create(self, serializer: serializers.HomeAlarmSerializer):
+        serializer = serializers.FullHomeAlarmSerializer(data={**serializer.data,
+                                                               'property': self.kwargs['property_pk']})
+
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            raise ValidationError(serializer.errors)
 
 
 class ShowingViewSet(viewsets.ModelViewSet):

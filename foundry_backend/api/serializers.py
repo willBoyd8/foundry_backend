@@ -1,5 +1,4 @@
-from drf_extra_fields.fields import DateTimeRangeField
-from drf_writable_nested import WritableNestedModelSerializer, NestedUpdateMixin
+from drf_writable_nested import WritableNestedModelSerializer
 from rest_framework.fields import MultipleChoiceField
 from foundry_backend.api import models
 from foundry_backend.database import models as db_models
@@ -58,24 +57,41 @@ class RoomSerializer(serializers.ModelSerializer):
         fields = ['id', 'description', 'name', 'type']
 
 
+class FullHomeAlarmSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.HomeAlarm
+        fields = '__all__'
+
+
+class HomeAlarmSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.HomeAlarm
+        fields = ['id', 'arm_code', 'disarm_code', 'password', 'notes']
+
+
 class FullPropertySerializer(WritableNestedModelSerializer):
     address = AddressSerializer()
     rooms = RoomSerializer(many=True)
     nearby_attractions = NearbyAttractionSerializer(many=True)
+    home_alarm = HomeAlarmSerializer(write_only=True)
 
     class Meta:
         model = db_models.Property
-        fields = ['id', 'property', 'address', 'square_footage', 'type', 'rooms', 'nearby_attractions']
+        fields = ['id', 'property', 'address', 'square_footage', 'type', 'rooms', 'nearby_attractions', 'home_alarm']
 
 
 class PropertySerializer(WritableNestedModelSerializer):
     address = AddressSerializer()
     rooms = RoomSerializer(many=True)
     nearby_attractions = NearbyAttractionSerializer(many=True)
+    home_alarm = HomeAlarmSerializer(write_only=True)
 
     class Meta:
         model = db_models.Property
-        fields = ['id', 'address', 'square_footage', 'type', 'rooms', 'nearby_attractions']
+        fields = ['id', 'address', 'square_footage', 'type', 'rooms', 'nearby_attractions', 'home_alarm']
+        extra_kwargs = {
+            'home_alarm': {'write_only': True}
+        }
 
 
 class NearbyAttractionPropertyConnectorSerializer(serializers.ModelSerializer):
@@ -89,12 +105,6 @@ class ListingSerializer(WritableNestedModelSerializer):
 
     class Meta:
         model = db_models.Listing
-        fields = '__all__'
-
-
-class HomeAlarmSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = db_models.HomeAlarm
         fields = '__all__'
 
 

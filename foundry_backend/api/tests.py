@@ -388,7 +388,13 @@ def test_realtor_can_create_listing(realtor_a, setup):
             'square_footage': 2750,
             'type': 'HOUSE',
             'rooms': [],
-            'nearby_attractions': []
+            'nearby_attractions': [],
+            'home_alarm': {
+                'arm_code': '1234',
+                'disarm_code': '2345',
+                'password': 'password',
+                'notes': 'Don\'t push the red button...'
+            }
         }
     }
 

@@ -155,7 +155,7 @@ class HomeAlarm(models.Model):
     """
     Info for the homeowner's alarm and security info
     """
-    property = models.OneToOneField(Property, on_delete=models.CASCADE)
+    property = models.OneToOneField(Property, related_name='home_alarm', on_delete=models.CASCADE)
     arm_code = models.CharField(max_length=50)
     disarm_code = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
