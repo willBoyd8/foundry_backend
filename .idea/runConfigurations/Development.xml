@@ -6,6 +6,14 @@
         <option name="containerName" value="" />
         <option name="entrypoint" value="" />
         <option name="imageTag" value="foundry/backend:prod" />
+        <option name="portBindings">
+          <list>
+            <DockerPortBindingImpl>
+              <option name="containerPort" value="8000" />
+              <option name="hostPort" value="8000" />
+            </DockerPortBindingImpl>
+          </list>
+        </option>
         <option name="commandLineOptions" value="" />
       </settings>
     </deployment>

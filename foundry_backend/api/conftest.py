@@ -1,5 +1,4 @@
 import datetime
-
 import pytest
 from django.contrib.auth.models import User, Group
 from rest_framework.authtoken.models import Token
@@ -21,22 +20,13 @@ def format_string():
 
 
 @pytest.fixture
-def admin_user(db):
+def admin_user(db, setup):
     # make the user and group, with a token
-    user, _ = User.objects.get_or_create(username='admin', email='admin@email.com', password='password')
+    user = User.objects.filter(username='admin').first()
     token = Token.objects.create(user=user)
 
-    user.is_staff = True
-    user.is_superuser = True
-    
     user.save()
     token.save()
-
-    admin_group = Group.objects.get_or_create(name='admin')[0]
-    admin_group.save()
-
-    admin_group.user_set.add(user)
-    admin_group.save()
 
     return user, token
 

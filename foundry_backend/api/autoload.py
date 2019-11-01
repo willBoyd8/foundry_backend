@@ -5,10 +5,11 @@
 # This module defines the commands that should run on startup of
 # the foundry_backend.
 import json
+import logging
 import os
 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.db import connection
 
 from foundry_backend.api.models import IAMPolicy
@@ -44,14 +45,23 @@ def load_wild_west_access_policies():
 
 
 def create_default_admin():
-    if not User.objects.filter(username='admin').exists():
-        print('Could not find \'admin\' user. Creating now...')
+    if not User.objects.filter(username=settings.ADMIN_USERNAME).exists():
+        print('Could not find admin user \'{}\' user. Creating now...'.format(settings.ADMIN_USERNAME))
         admin = User.objects.create_user(username=settings.ADMIN_USERNAME,
                                          password=settings.ADMIN_PASSWORD,
                                          email=settings.ADMIN_EMAIL)
 
         admin.is_staff = True
         admin.is_superuser = True
+
+        admin_group = Group.objects.get_or_create(name='admin')[0]
+        admin_group.save()
+
+        admin_group.user_set.add(admin)
+        admin_group.save()
+
+        print('\'{} \' password is \'{}\''.format(settings.ADMIN_USERNAME, settings.ADMIN_PASSWORD))
+        print('⚠️⚠️⚠️ THIS SHOULD BE CHANGED IMMEDIATELY ⚠️⚠️⚠️')
 
     else:
         print('Found \'admin\' user.')
