@@ -1,16 +1,8 @@
 from django.conf.urls import url
 from django.urls import include, path
 from rest_framework_nested import routers
-
 from foundry_backend.api import views
 from .endpoints import permissions_functions
-
-# router = routers.DefaultRouter()
-# router.register(r'nearby_attractions', views.NearbyAttractionViewSet)
-# router.register(r'nearby_property_attraction_connectors', views.NearbyAttractionPropertyConnectorViewSet)
-# router.register(r'rooms', views.RoomViewSet)
-# router.register(r'home_alarms', views.HomeAlarmViewSet)
-# router.register(r'showings', views.HomeAlarmViewSet)
 
 base_router = routers.SimpleRouter()
 
@@ -40,6 +32,7 @@ listings_router.register(r'showings', views.ShowingViewSet)
 property_router = routers.NestedSimpleRouter(listings_router, r'property', lookup='property')
 property_router.register(r'rooms', views.RoomViewSet)
 property_router.register(r'nearby_attractions', views.NearbyAttractionViewSet)
+property_router.register(r'home_alarms', views.HomeAlarmViewSet)
 
 # register nearby attractions
 base_router.register(r'nearby_attractions', views.AllNearbyAttractionsViewSet)
@@ -56,8 +49,3 @@ urlpatterns = [
     url(r'^auth/', include('djoser.urls.authtoken')),
     url(r'^auth/permissions/', include(permissions_functions))
 ]
-
-# # Create the groups
-# _, created = Group.objects.get_or_create(name='admins')
-# if created:
-#     print('Created Admin Group')
