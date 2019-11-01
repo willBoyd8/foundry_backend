@@ -34,6 +34,20 @@ def property_belongs_to_agency(request, view, _) -> bool:
         return prop.listing.agent.agency.mls_numbers.filter(user_id=request.user.id).exists()
     elif True in [isinstance(view.get_object(), obj) for obj in [models.HomeAlarm, models.Room]]:
         obj = view.get_object()
-        return obj.property.listing.agent.agency.mlsnumber_set.filter(user_id=request.user.id).exists()
+        return obj.property.listing.agent.agency.mls_numbers.filter(user_id=request.user.id).exists()
+    elif isinstance(view.get_object(), models.Showing):
+        showing: models.Showing = view.get_object()
+        return showing.listing.agent.agency.mls_numbers.filter(user_id=request.user.id).exists()
 
     return True
+
+
+def can_modify_showing(request, view, _) -> bool:
+    logger = logging.getLogger('access')
+
+    logger.debug('Using \'can_modify_showing\'')
+
+    showing: models.Showing = view.get_object()
+
+    return showing.listing.agent.agency.mls_numbers.filter(user_id=request.user.id).exists() or \
+        showing.agent.agency.mls_numbers.filter(user_id=request.user.id).exists()

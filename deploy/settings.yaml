@@ -14,6 +14,12 @@ default:
   # NEVER USE THIS VALUE IN PRODUCTION. SEE https://www.miniwebtool.com/django-secret-key-generator/
   SECRET_KEY: 1234
 
+  # The default username and password for the 'admin' user on the API
+  # NEVER USE THIS VALUE IN PRODUCTION
+  ADMIN_USERNAME: admin
+  ADMIN_PASSWORD: password
+  ADMIN_EMAIL: admin@email.com
+
   # The URL to host static content from
   STATIC_URL: /static/
 

@@ -1,3 +1,4 @@
+from drf_extra_fields.fields import DateTimeRangeField
 from drf_writable_nested import WritableNestedModelSerializer, NestedUpdateMixin
 from rest_framework.fields import MultipleChoiceField
 from foundry_backend.api import models
@@ -97,10 +98,16 @@ class HomeAlarmSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ShowingSerializer(serializers.ModelSerializer):
+class FullShowingSerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Showing
         fields = '__all__'
+
+
+class ShowingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.Showing
+        fields = ['id', 'agent', 'end_time', 'start_time']
 
 
 class EnableRealtorSerializer(serializers.Serializer):

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "foundry_backend"
-version = "3.2.0"
+version = "3.3.0"
 description = "The backend component of Foundry MLS"
 authors = ["The Foundry MLS Team <foundry@abwlabs.com>"]
 
@@ -25,6 +25,7 @@ django-multiselectfield = "^0.1.9"
 drf-writable-nested = "^0.5.1"
 drf-nested-routers = "^0.91.0"
 django_filter = "^2.2"
+django-extra-fields = "^2.0"
 
 [tool.poetry.scripts]
 django_manage = 'manage:main'

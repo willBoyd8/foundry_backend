@@ -191,8 +191,16 @@ class ShowingViewSet(viewsets.ModelViewSet):
     def access_policy(self):
         return self.permission_classes[0]
 
-    queryset = db_models.Listing.objects.all()
-    serializer_class = serializers.HomeAlarmSerializer
+    queryset = db_models.Showing.objects.all()
+    serializer_class = serializers.ShowingSerializer
+
+    def perform_create(self, serializer: serializers.ShowingSerializer):
+        serializer = serializers.FullShowingSerializer(data={**serializer.data, 'listing': self.kwargs['listing_pk']})
+
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            raise ValidationError(serializer.errors)
 
 
 class IAMPolicyViewSet(viewsets.ModelViewSet):

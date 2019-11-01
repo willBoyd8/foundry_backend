@@ -127,23 +127,6 @@ class NearbyAttractionPropertyConnector(models.Model):
     class Meta:
         unique_together = (('attraction', 'property'),)
 
-    def save(self, *args, **kwargs):
-        errors = []
-
-        if len(self.property.nearbyattractionpropertyconnector_set.filter(type='SCHOOL_ELEM').all()):
-            errors.append('The property already has a Public Elementary School listed')
-
-        if len(self.property.nearbyattractionpropertyconnector_set.filter(type='SCHOOL_MIDDLE').all()):
-            errors.append('The property already has a Public Middle School listed')
-
-        if len(self.property.nearbyattractionpropertyconnector_set.filter(type='SCHOOL_HIGH').all()):
-            errors.append('The property already has a Public High School listed')
-
-        if len(errors) is not 0:
-            raise ValidationError({'property': errors})
-
-        super().save(*args, **kwargs)
-
 
 class Room(models.Model):
     """
@@ -184,6 +167,31 @@ class Showing(models.Model):
     A showing of a property
     """
     start_time = models.DateTimeField()
-    duration = models.DurationField()
+    end_time = models.DateTimeField()
     agent = models.ForeignKey(MLSNumber, on_delete=models.CASCADE)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+
+        if self.start_time > self.end_time:
+            raise ValidationError({'start_time': "\'start_time\' cannot be less than \'end_time\'.",
+                                   'end_time': "\'start_time\' cannot be greater than \'end_time\'."})
+
+        if self.start_time == self.end_time:
+            raise ValidationError("\'start_time\' cannot equal \'end_time\'.")
+
+        query = Showing.objects.exclude(id=self.id).filter(listing=self.listing).filter(
+                # Preceding overlap
+                models.Q(start_time__gte=self.start_time, start_time__lt=self.end_time, end_time__gte=self.end_time) |
+                # Following overlap
+                models.Q(end_time__gt=self.start_time, start_time__lte=self.start_time)
+        )
+
+        if query.exists():
+            conflicting_listing = query.get()
+            raise ValidationError("The time range conflicts with a showing from {} to {}".format(
+                conflicting_listing.start_time, conflicting_listing.end_time)
+            )
+
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)

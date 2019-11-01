@@ -35,6 +35,7 @@ base_router.register(r'listings', views.ListingViewSet)
 
 listings_router = routers.NestedSimpleRouter(base_router, r'listings', lookup='listing')
 listings_router.register(r'property', views.PropertyViewSet)
+listings_router.register(r'showings', views.ShowingViewSet)
 
 property_router = routers.NestedSimpleRouter(listings_router, r'property', lookup='property')
 property_router.register(r'rooms', views.RoomViewSet)

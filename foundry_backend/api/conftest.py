@@ -1,3 +1,4 @@
+import datetime
 import pytest
 from django.contrib.auth.models import User, Group
 from rest_framework.authtoken.models import Token
@@ -14,22 +15,18 @@ def setup(db):
 
 
 @pytest.fixture
-def admin_user(db):
+def format_string():
+    return '%Y-%m-%d %H:%M'
+
+
+@pytest.fixture
+def admin_user(db, setup):
     # make the user and group, with a token
-    user = User.objects.create_user(username='admin', email='admin@email.com', password='password')
+    user = User.objects.filter(username='admin').first()
     token = Token.objects.create(user=user)
 
-    user.is_staff = True
-    user.is_superuser = True
-    
     user.save()
     token.save()
-
-    admin_group = Group.objects.get_or_create(name='admin')[0]
-    admin_group.save()
-
-    admin_group.user_set.add(user)
-    admin_group.save()
 
     return user, token
 
@@ -119,6 +116,21 @@ def listing_a(realtor_a):
     listing.save()
 
     return listing
+
+
+@pytest.fixture
+def showing_a_1(listing_a, realtor_a):
+    start_time = datetime.datetime(year=2019, month=1, day=1, hour=11, minute=30)
+    end_time = datetime.datetime(year=2019, month=1, day=1, hour=12, minute=00)
+
+    _, _, realtor, _ = realtor_a
+
+    showing = models.Showing.objects.create(start_time=start_time,
+                                            end_time=end_time,
+                                            listing=listing_a,
+                                            agent=realtor)
+
+    return showing
 
 
 @pytest.fixture

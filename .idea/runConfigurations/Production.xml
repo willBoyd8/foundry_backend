@@ -1,27 +1,22 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Production" type="Python.DjangoServer" factoryName="Django server">
-    <module name="foundry_backend" />
-    <option name="INTERPRETER_OPTIONS" value="" />
-    <option name="PARENT_ENVS" value="true" />
-    <envs>
-      <env name="PYTHONUNBUFFERED" value="1" />
-      <env name="DJANGO_SETTINGS_MODULE" value="foundry_backend.settings" />
-      <env name="FOUNDRY_ENV" value="production" />
-    </envs>
-    <option name="SDK_HOME" value="$PROJECT_DIR$/venv/bin/python" />
-    <option name="WORKING_DIRECTORY" value="" />
-    <option name="IS_MODULE_SDK" value="false" />
-    <option name="ADD_CONTENT_ROOTS" value="true" />
-    <option name="ADD_SOURCE_ROOTS" value="true" />
-    <option name="launchJavascriptDebuger" value="false" />
-    <option name="port" value="8000" />
-    <option name="host" value="127.0.0.1" />
-    <option name="additionalOptions" value="" />
-    <option name="browserUrl" value="" />
-    <option name="runTestServer" value="false" />
-    <option name="runNoReload" value="false" />
-    <option name="useCustomRunCommand" value="false" />
-    <option name="customRunCommand" value="" />
+  <configuration default="false" name="Production" type="docker-deploy" factoryName="docker-image" server-name="Docker">
+    <deployment type="docker-image">
+      <settings>
+        <option name="command" value="" />
+        <option name="containerName" value="" />
+        <option name="entrypoint" value="" />
+        <option name="imageTag" value="foundry/backend:prod" />
+        <option name="portBindings">
+          <list>
+            <DockerPortBindingImpl>
+              <option name="containerPort" value="8000" />
+              <option name="hostPort" value="8000" />
+            </DockerPortBindingImpl>
+          </list>
+        </option>
+        <option name="commandLineOptions" value="" />
+      </settings>
+    </deployment>
     <method v="2" />
   </configuration>
 </component>
