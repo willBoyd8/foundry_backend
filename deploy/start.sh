@@ -3,6 +3,7 @@
 
 # Set a suitably random secret key
 FOUNDRY_SECRET_KEY=$(openssl rand -base64 100)
+FOUNDRY_ADMIN_PASSWORD=$(openssl rand -base64 32)
 
 export DJANGO_SETTINGS_MODULE=foundry_backend.settings
 
