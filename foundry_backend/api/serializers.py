@@ -114,6 +114,12 @@ class FullShowingSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class FullShowingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.Showing
+        fields = ['id', 'agent', 'end_time', 'start_time']
+
+
 class ShowingSerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Showing
