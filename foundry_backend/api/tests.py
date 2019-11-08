@@ -458,8 +458,6 @@ def test_realtor_can_create_listing(realtor_a, setup):
 
     response = perform_api_action(client.post, data, '/api/v1/listings/', realtor_a[3])
 
-    assert response.json() == {}
-
     assert response.status_code == status.HTTP_201_CREATED
 
     listing = Listing.objects.get(property__address__street='Big Cove Road')

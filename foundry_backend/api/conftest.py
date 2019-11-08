@@ -33,7 +33,7 @@ def admin_user(db, setup):
 
 @pytest.fixture
 def realtor_a(db):
-    address = Address(street_number='1516', street='Big Cove Road', postal_code='35801', locality='Huntsville',
+    address = Address(street_number='1234', street='Someplace Drive Road', postal_code='35801', locality='Huntsville',
                       state_code='AL', state='Alabama')
     address.save()
     agency = Agency.objects.create(name='Alpha Agency', phone='+18626405799',
@@ -59,7 +59,7 @@ def realtor_a(db):
 
 @pytest.fixture
 def realtor_b(db):
-    address = Address(street_number='1517', street='Big Cove Road', postal_code='35801', locality='Huntsville',
+    address = Address(street_number='5678', street='Someplace Drive Road', postal_code='35801', locality='Huntsville',
                       state_code='AL', state='Alabama')
     address.save()
     agency = Agency.objects.create(name='Beta Agency', phone='+12025550143',
