@@ -37,6 +37,13 @@ default:
   ALLOWED_HOSTS:
     - '*'
 
+  CORS_ORIGIN_ALLOW_ALL: true
+
+#    # This should probably be used in production
+#    CORS_ORIGIN_WHITELIST:
+#      - 'https://...'
+
+
   # Database
   # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
   DATABASES:
@@ -79,7 +86,6 @@ default:
         handlers:
           - console
           - file
-        formatter: verbose
         level: INFO
       access:
         handlers:
@@ -116,6 +122,7 @@ default:
     - django_filters
     - djoser
     - rest_framework.authtoken
+    - corsheaders
     - drf_yasg
     - phonenumber_field
     - address
@@ -123,9 +130,10 @@ default:
 
   # Valid django middleware. Don't change unless you know what you're doing
   MIDDLEWARE:
+    - django.middleware.common.CommonMiddleware
     - django.middleware.security.SecurityMiddleware
     - django.contrib.sessions.middleware.SessionMiddleware
-    - django.middleware.common.CommonMiddleware
+    - corsheaders.middleware.CorsMiddleware
     - django.middleware.csrf.CsrfViewMiddleware
     - django.contrib.auth.middleware.AuthenticationMiddleware
     - django.contrib.messages.middleware.MessageMiddleware
