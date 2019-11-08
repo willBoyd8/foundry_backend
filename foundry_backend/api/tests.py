@@ -219,7 +219,19 @@ def test_anyone_can_get_mls_number(client, realtor_a, setup):
 
     response: Response = client.get('/api/v1/agencies/{}/mls_numbers/'.format(agency.id))
     assert response.status_code == 200
-    assert response.json() == [{'id': mls.id, 'number': str(mls.number), 'user': realtor.id}]
+    assert response.json() == [
+        {
+            'id': mls.id,
+            'number': str(mls.number),
+            'user': realtor.id,
+            'user_info': {
+                'email': realtor.email,
+                'first_name': realtor.first_name,
+                'last_name': realtor.last_name,
+                'username': realtor.username
+            }
+        }
+    ]
 
 
 @pytest.mark.django_db
@@ -239,7 +251,8 @@ def test_anyone_cannot_create_mls_number(client, setup):
 @pytest.mark.django_db
 def test_admin_can_create_mls_number(client, admin_user, setup):
     agency = Agency.objects.create(name='Alpha Agency', address='Someplace Drive', phone='+18626405799')
-    realtor = User.objects.create_user(username='realtor_a', email='realtor_a@email.com', password='password')
+    realtor = User.objects.create_user(username='realtor_a', email='realtor_a@email.com', password='password',
+                                       first_name='Alpha', last_name='Realtor')
 
     agency.save()
     realtor.save()
@@ -252,7 +265,13 @@ def test_admin_can_create_mls_number(client, admin_user, setup):
 
     mls = MLSNumber.objects.filter(user=realtor).get()
 
-    assert response.json() == {'user': realtor.id}
+    assert response.json() == {'user': realtor.id,
+                               'user_info': {'email': realtor.email,
+                                             'first_name': realtor.first_name,
+                                             'last_name': realtor.last_name,
+                                             'username': realtor.username
+                                             }
+                               }
 
 
 @pytest.mark.django_db
@@ -275,7 +294,17 @@ def test_admin_can_put_mls_number(admin_user, setup):
                                   admin_user[1])
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {'id': mls.id, 'user': realtor.id, 'number': str(mls.number)}
+    assert response.json() == {
+        'id': mls.id,
+        'user': realtor.id,
+        'number': str(mls.number),
+        'user_info': {
+            'email': realtor.email,
+            'first_name': realtor.first_name,
+            'last_name': realtor.last_name,
+            'username': realtor.username
+        }
+    }
 
 
 @pytest.mark.django_db
@@ -298,7 +327,17 @@ def test_admin_can_patch_mls_number(admin_user, setup):
                                   admin_user[1])
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {'id': mls.id, 'user': realtor.id, 'number': str(mls.number)}
+    assert response.json() == {
+        'id': mls.id,
+        'user': realtor.id,
+        'number': str(mls.number),
+        'user_info': {
+            'email': realtor.email,
+            'first_name': realtor.first_name,
+            'last_name': realtor.last_name,
+            'username': realtor.username
+        }
+    }
 
 
 @pytest.mark.django_db

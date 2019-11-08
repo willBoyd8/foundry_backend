@@ -34,7 +34,8 @@ def admin_user(db, setup):
 @pytest.fixture
 def realtor_a(db):
     agency = Agency.objects.create(name='Alpha Agency', address='Someplace Drive', phone='+18626405799')
-    realtor = User.objects.create_user(username='realtor_a', email='realtor_a@email.com', password='password')
+    realtor = User.objects.create_user(username='realtor_a', first_name='Realtor', last_name='A',
+                                       email='realtor_a@email.com', password='password')
     mls = MLSNumber.objects.create(user=realtor, agency=agency)
     token = Token.objects.create(user=realtor)
 

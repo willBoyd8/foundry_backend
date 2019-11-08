@@ -47,27 +47,45 @@ default:
   # logging
   LOGGING:
     version: 1
-    disable_existing_loggers: false
-    handlers:
+    disable_existing_loggers: true
+    formatters:
       file:
-        level: DEBUG
-        class: logging.FileHandler
-        filename: "./django.log"
+        format: '{levelname} (Exception: {exc_info}) {asctime} {name} {process:d} {thread:d} {message}'
+        style: '{'
+      console:
+        format: '{levelname} (Exception: {exc_info}) {asctime} {name} {message}'
+        style: '{'
+    handlers:
       console:
         class: logging.StreamHandler
+        formatter: console
+      file:
+        class: logging.handlers.TimedRotatingFileHandler
+        formatter: file
+        when: midnight
+        backupCount: 1
+        filename: 'django.log'
     loggers:
-      django.server:
-        handlers:
-          - console
       django:
         handlers:
           - file
-        level: DEBUG
-        propagate: true
+        propogate: true
+      django.server:
+        handlers:
+          - console
+          - file
+        level: INFO
+      django.request:
+        handlers:
+          - console
+          - file
+        formatter: verbose
+        level: INFO
       access:
         handlers:
           - console
         level: DEBUG
+        formatter: verbose
 
   # Valid Accept-Language HTTP Header
   LANGUAGE_CODE: en-us
@@ -117,6 +135,11 @@ default:
   # For django-guardian
   AUTHENTICATION_BACKENDS:
     - django.contrib.auth.backends.ModelBackend
+
+  # for Djoser (authentication)
+  DJOSER:
+    SERIALIZERS:
+      user_create: 'foundry_backend.api.serializers.UserRegistrationSerializer'
 
   SWAGGER_SETTINGS:
     DOC_EXPANSION: 'None'

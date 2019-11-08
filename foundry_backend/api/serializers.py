@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+from djoser.serializers import UserCreateSerializer
 from drf_writable_nested import WritableNestedModelSerializer
 from rest_framework.fields import MultipleChoiceField
 from foundry_backend.api import models
@@ -18,10 +20,23 @@ class FullMLSNumberSerializer(serializers.ModelSerializer):
         read_only_fields = ('number',)
 
 
+class UserInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name']
+
+
+class UserRegistrationSerializer(UserCreateSerializer):
+    class Meta(UserCreateSerializer.Meta):
+        fields = ('url', 'id', 'email', 'username', 'first_name', 'last_name', 'password',)
+
+
 class MLSNumberSerializer(serializers.ModelSerializer):
+    user_info = UserInfoSerializer(many=False, read_only=True, source='user')
+
     class Meta:
         model = db_models.MLSNumber
-        fields = ['id', 'number', 'user']
+        fields = ['id', 'number', 'user', 'user_info']
         read_only_fields = ('number',)
 
 
