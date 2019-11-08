@@ -41,6 +41,7 @@ class MLSNumberSerializer(serializers.ModelSerializer):
 
 
 class AgencySerializer(WritableNestedModelSerializer):
+    address = AddressSerializer()
     mls_numbers = MLSNumberSerializer(many=True)
 
     class Meta:

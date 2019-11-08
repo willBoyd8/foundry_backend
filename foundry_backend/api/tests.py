@@ -10,7 +10,7 @@ from rest_framework.test import APIClient
 from rest_framework.utils import json
 from foundry_backend.api import views, serializers
 from foundry_backend.api.models import IAMPolicy
-from foundry_backend.database.models import Agency, MLSNumber, Listing
+from foundry_backend.database.models import Agency, MLSNumber, Listing, Address
 
 
 def check_list_equal(first: List, second: List):
@@ -56,7 +56,17 @@ def test_unauthenticated_cannot_create_agency(client, setup):
 def test_admin_can_create_agency(admin_user, setup):
     client = APIClient()
 
-    data = {'name': 'Agency', 'phone': '+14035555319', 'address': 'Someplace Drive', 'mls_numbers': []}
+    data = {
+        'name': 'Agency',
+        'phone': '+14035555319',
+        'mls_numbers': [],
+        'address': dict(street_number='1516',
+                        street='Big Cove Road',
+                        postal_code='35801',
+                        locality='Huntsville',
+                        state_code='AL',
+                        state='Alabama')
+    }
 
     response = perform_api_action(client.post, data, '/api/v1/agencies/', admin_user[1])
 
@@ -64,19 +74,23 @@ def test_admin_can_create_agency(admin_user, setup):
     assert json.loads(response.render().content) == {**data, 'id': 1}
 
 
-def test_admin_can_put_agency(realtor_a, admin_user, setup):
+def test_admin_can_patch_agency(realtor_a, admin_user, setup):
     client = APIClient()
     _, agency, _, _ = realtor_a
 
-    data = {'name': 'Agency Alpha', 'phone': str(agency.phone), 'address': agency.address, 'mls_numbers': []}
+    data = {
+        'name': 'Agency Alpha',
+        'phone': str(agency.phone),
+        'mls_numbers': []
+    }
 
-    response = perform_api_action(client.put, data, '/api/v1/agencies/{}/'.format(agency.id), admin_user[1])
+    response = perform_api_action(client.patch, data, '/api/v1/agencies/{}/'.format(agency.id), admin_user[1])
 
     assert response.status_code == status.HTTP_200_OK
 
     assert json.loads(response.render().content) == {'name': 'Agency Alpha',
-                                                     'address': agency.address,
                                                      'mls_numbers': [],
+                                                     'address': agency.address.to_dict(),
                                                      'phone': str(agency.phone),
                                                      'id': agency.id}
 
@@ -88,25 +102,25 @@ def test_admin_can_put_agency(realtor_a, admin_user, setup):
     assert agency.address == agency.address
 
 
-def test_admin_can_patch_agency(realtor_a, admin_user, setup):
-    client = APIClient()
-    _, agency, _, _ = realtor_a
-    _, token = admin_user
-
-    path = '/api/v1/agencies/{}/'.format(agency.id)
-    data = {'name': 'Different, Inc.'}
-    action = client.patch
-
-    response = perform_api_action(action, data, path, token)
-
-    agency.refresh_from_db()
-
-    assert response.status_code == status.HTTP_200_OK
-
-    assert agency.name == 'Different, Inc.'
-    assert agency.id == agency.id
-    assert agency.phone == agency.phone
-    assert agency.address == agency.address
+# def test_admin_can_patch_agency(realtor_a, admin_user, setup):
+#     client = APIClient()
+#     _, agency, _, _ = realtor_a
+#     _, token = admin_user
+#
+#     path = '/api/v1/agencies/{}/'.format(agency.id)
+#     data = {'name': 'Different, Inc.'}
+#     action = client.patch
+#
+#     response = perform_api_action(action, data, path, token)
+#
+#     agency.refresh_from_db()
+#
+#     assert response.status_code == status.HTTP_200_OK
+#
+#     assert agency.name == 'Different, Inc.'
+#     assert agency.id == agency.id
+#     assert agency.phone == agency.phone
+#     assert agency.address == agency.address
 
 
 def test_admin_can_delete_agency(realtor_a, admin_user, setup):
@@ -136,18 +150,18 @@ def test_realtor_cannot_create_agency(realtor_a, setup):
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_realtor_can_put_own_agency(realtor_a, setup):
+def test_realtor_can_patch_own_agency(realtor_a, setup):
     client = APIClient()
     _, agency, _, token = realtor_a
 
-    data = {'name': 'Agency Alpha', 'phone': str(agency.phone), 'address': agency.address, 'mls_numbers': []}
+    data = {'name': 'Agency Alpha', 'phone': str(agency.phone), 'mls_numbers': []}
 
-    response = perform_api_action(client.put, data, '/api/v1/agencies/{}/'.format(agency.id), token)
+    response = perform_api_action(client.patch, data, '/api/v1/agencies/{}/'.format(agency.id), token)
 
     assert response.status_code == status.HTTP_200_OK
 
     assert json.loads(response.render().content) == {'name': 'Agency Alpha',
-                                                     'address': agency.address,
+                                                     'address': agency.address.to_dict(),
                                                      'phone': str(agency.phone),
                                                      'mls_numbers': [],
                                                      'id': agency.id}
@@ -173,39 +187,18 @@ def test_realtor_cannot_delete_agency(realtor_a, setup):
     assert Agency.objects.filter(id=agency.id).exists()
 
 
-def test_realtor_cannot_put_different_agency(realtor_a, realtor_b, setup):
-    client = APIClient()
-    _, agency, _, _ = realtor_a
-    _, _, _, token = realtor_b
-
-    data = {'name': 'Agency Alpha', 'phone': str(agency.phone), 'address': agency.address}
-
-    response = perform_api_action(client.put, data, '/api/v1/agencies/{}/'.format(agency.id), token)
-
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-
-    agency.refresh_from_db()
-
-    assert agency.name == agency.name
-    assert agency.id == agency.id
-    assert agency.phone == agency.phone
-    assert agency.address == agency.address
-
-
 def test_realtor_cannot_patch_different_agency(realtor_a, realtor_b, setup):
     client = APIClient()
     _, agency, _, _ = realtor_a
     _, _, _, token = realtor_b
 
-    path = '/api/v1/agencies/{}/'.format(agency.id)
-    data = {'name': 'Different, Inc.'}
-    action = client.patch
+    data = {'name': 'Agency Alpha', 'phone': str(agency.phone)}
 
-    response = perform_api_action(action, data, path, token)
-
-    agency.refresh_from_db()
+    response = perform_api_action(client.patch, data, '/api/v1/agencies/{}/'.format(agency.id), token)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    agency.refresh_from_db()
 
     assert agency.name == agency.name
     assert agency.id == agency.id
@@ -236,7 +229,10 @@ def test_anyone_can_get_mls_number(client, realtor_a, setup):
 
 @pytest.mark.django_db
 def test_anyone_cannot_create_mls_number(client, setup):
-    agency = Agency.objects.create(name='Alpha Agency', address='Someplace Drive', phone='+18626405799')
+    address = Address(street_number='1518', street='Big Cove Road', postal_code='35801', locality='Huntsville',
+                      state_code='AL', state='Alabama')
+    address.save()
+    agency = Agency.objects.create(name='Alpha Agency', address=address, phone='+18626405799')
     realtor = User.objects.create_user(username='realtor_a', email='realtor_a@email.com', password='password')
     token = Token.objects.create(user=realtor)
 
@@ -250,7 +246,10 @@ def test_anyone_cannot_create_mls_number(client, setup):
 
 @pytest.mark.django_db
 def test_admin_can_create_mls_number(client, admin_user, setup):
-    agency = Agency.objects.create(name='Alpha Agency', address='Someplace Drive', phone='+18626405799')
+    address = Address(street_number='1518', street='Big Cove Road', postal_code='35801', locality='Huntsville',
+                      state_code='AL', state='Alabama')
+    address.save()
+    agency = Agency.objects.create(name='Alpha Agency', address=address, phone='+18626405799')
     realtor = User.objects.create_user(username='realtor_a', email='realtor_a@email.com', password='password',
                                        first_name='Alpha', last_name='Realtor')
 
@@ -278,7 +277,11 @@ def test_admin_can_create_mls_number(client, admin_user, setup):
 def test_admin_can_put_mls_number(admin_user, setup):
     client = APIClient()
 
-    agency = Agency.objects.create(name='Alpha Agency', address='Someplace Drive', phone='+18626405799')
+    address = Address(street_number='1518', street='Big Cove Road', postal_code='35801', locality='Huntsville',
+                      state_code='AL', state='Alabama')
+    address.save()
+
+    agency = Agency.objects.create(name='Alpha Agency', address=address, phone='+18626405799')
     realtor = User.objects.create_user(username='realtor_a', email='realtor_a@email.com', password='password')
     mls = MLSNumber.objects.create(agency=agency, user=realtor)
 
@@ -286,7 +289,11 @@ def test_admin_can_put_mls_number(admin_user, setup):
     realtor.save()
     mls.save()
 
-    new_agency = Agency.objects.create(name='Beta Agency', address='Someplace Road', phone='+18626405799')
+    address_beta = Address(street_number='1519', street='Big Cove Road', postal_code='35801', locality='Huntsville',
+                           state_code='AL', state='Alabama')
+    address_beta.save()
+
+    new_agency = Agency.objects.create(name='Beta Agency', address=address_beta, phone='+18626405799')
     new_agency.save()
 
     data = {'agency': new_agency.id, 'user': realtor.id}
@@ -311,7 +318,11 @@ def test_admin_can_put_mls_number(admin_user, setup):
 def test_admin_can_patch_mls_number(admin_user, setup):
     client = APIClient()
 
-    agency = Agency.objects.create(name='Alpha Agency', address='Someplace Drive', phone='+18626405799')
+    address = Address(street_number='1518', street='Big Cove Road', postal_code='35801', locality='Huntsville',
+                      state_code='AL', state='Alabama')
+    address.save()
+
+    agency = Agency.objects.create(name='Alpha Agency', address=address, phone='+18626405799')
     realtor = User.objects.create_user(username='realtor_a', email='realtor_a@email.com', password='password')
     mls = MLSNumber.objects.create(agency=agency, user=realtor)
 
@@ -319,7 +330,11 @@ def test_admin_can_patch_mls_number(admin_user, setup):
     realtor.save()
     mls.save()
 
-    new_agency = Agency.objects.create(name='Beta Agency', address='Someplace Road', phone='+18626405799')
+    address_beta = Address(street_number='1519', street='Big Cove Road', postal_code='35801', locality='Huntsville',
+                           state_code='AL', state='Alabama')
+    address_beta.save()
+
+    new_agency = Agency.objects.create(name='Beta Agency', address=address_beta, phone='+18626405799')
     new_agency.save()
 
     data = {'agency': new_agency.id}
@@ -344,7 +359,11 @@ def test_admin_can_patch_mls_number(admin_user, setup):
 def test_admin_can_delete_mls_number(admin_user, setup):
     client = APIClient()
 
-    agency = Agency.objects.create(name='Alpha Agency', address='Someplace Drive', phone='+18626405799')
+    address = Address(street_number='1518', street='Big Cove Road', postal_code='35801', locality='Huntsville',
+                      state_code='AL', state='Alabama')
+    address.save()
+
+    agency = Agency.objects.create(name='Alpha Agency', address=address, phone='+18626405799')
     realtor = User.objects.create_user(username='realtor_a', email='realtor_a@email.com', password='password')
     mls = MLSNumber.objects.create(agency=agency, user=realtor)
 

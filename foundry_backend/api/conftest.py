@@ -6,7 +6,7 @@ from foundry_backend.api.autoload import run
 from foundry_backend.api.models import IAMPolicy, IAMPolicyStatement, IAMPolicyStatementPrincipal, \
     IAMPolicyStatementCondition
 from foundry_backend.database import models
-from foundry_backend.database.models import MLSNumber, Agency
+from foundry_backend.database.models import MLSNumber, Agency, Address
 
 
 @pytest.fixture
@@ -33,7 +33,11 @@ def admin_user(db, setup):
 
 @pytest.fixture
 def realtor_a(db):
-    agency = Agency.objects.create(name='Alpha Agency', address='Someplace Drive', phone='+18626405799')
+    address = Address(street_number='1234', street='Someplace Drive Road', postal_code='35801', locality='Huntsville',
+                      state_code='AL', state='Alabama')
+    address.save()
+    agency = Agency.objects.create(name='Alpha Agency', phone='+18626405799',
+                                   address=address)
     realtor = User.objects.create_user(username='realtor_a', first_name='Realtor', last_name='A',
                                        email='realtor_a@email.com', password='password')
     mls = MLSNumber.objects.create(user=realtor, agency=agency)
@@ -55,7 +59,11 @@ def realtor_a(db):
 
 @pytest.fixture
 def realtor_b(db):
-    agency = Agency.objects.create(name='Beta Agency', address='Someplace Road', phone='+12025550143')
+    address = Address(street_number='5678', street='Someplace Drive Road', postal_code='35801', locality='Huntsville',
+                      state_code='AL', state='Alabama')
+    address.save()
+    agency = Agency.objects.create(name='Beta Agency', phone='+12025550143',
+                                   address=address)
     realtor = User.objects.create_user(username='realtor_b', email='realtor_b@email.com', password='password')
     mls = MLSNumber.objects.create(user=realtor, agency=agency)
     token = Token.objects.create(user=realtor)
