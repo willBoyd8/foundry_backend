@@ -36,7 +36,7 @@ class Agency(models.Model):
     Represents a real estate agency
     """
     name = models.CharField(max_length=50, unique=True)
-    address = models.TextField(unique=True)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
     phone = PhoneNumberField()
 
 
