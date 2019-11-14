@@ -3,25 +3,6 @@ import django_filters
 from foundry_backend.database import models
 
 
-# class AddressFilterSet(django_filters.FilterSet):
-#     class Meta:
-#         model = models.Address
-#         fields = {
-#             'postal_code': ['exact']
-#         }
-#
-#
-# class PropertyFilterSet(django_filters.FilterSet):
-#     address_filter = AddressFilterSet()
-#
-#     class Meta:
-#         model = models.Property
-#         fields = {
-#             'postal_code': ['exact'],
-#             'square_footage': ['gte', 'lte', 'exact']
-#         }
-
-
 class ListingFilterSet(django_filters.FilterSet):
     square_footage_min = django_filters.NumberFilter(field_name='property__square_footage', lookup_expr='gte')
     square_footage = django_filters.NumberFilter(field_name='property__square_footage', lookup_expr='exact')
@@ -38,3 +19,14 @@ class ListingFilterSet(django_filters.FilterSet):
         fields = ['asking_price_min', 'asking_price', 'asking_price_max',
                   'square_footage_min', 'square_footage', 'square_footage_max',
                   'zip_code']
+
+
+class AgencyFilterSet(django_filters.FilterSet):
+    city = django_filters.CharFilter(field_name='address__locality', lookup_expr='iexact')
+    state = django_filters.CharFilter(field_name='address__state_code', lookup_expr='iexact')
+    name = django_filters.CharFilter(field_name='name', lookup_expr='iexact')
+    phone = django_filters.CharFilter(field_name='phone', lookup_expr='iexact')
+
+    class Meta:
+        model = models.Agency
+        fields = ['city', 'state', 'name', 'phone']
