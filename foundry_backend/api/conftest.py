@@ -59,8 +59,8 @@ def realtor_a(db):
 
 @pytest.fixture
 def realtor_b(db):
-    address = Address(street_number='5678', street='Someplace Drive Road', postal_code='35801', locality='Huntsville',
-                      state_code='AL', state='Alabama')
+    address = Address(street_number='5678', street='Someplace Drive Road', postal_code='35801', locality='Madison',
+                      state_code='TX', state='Texas')
     address.save()
     agency = Agency.objects.create(name='Beta Agency', phone='+12025550143',
                                    address=address)

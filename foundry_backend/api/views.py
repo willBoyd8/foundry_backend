@@ -1,6 +1,6 @@
 from rest_framework.exceptions import ValidationError
 from foundry_backend.api import models
-from foundry_backend.api.filters import ListingFilterSet
+from foundry_backend.api.filters import ListingFilterSet, AgencyFilterSet
 from foundry_backend.database import models as db_models
 from rest_framework import viewsets, mixins
 from foundry_backend.database.models import MLSNumber, Listing, Room, NearbyAttraction
@@ -14,11 +14,11 @@ class AgencyViewSet(viewsets.ModelViewSet):
     """
     permission_classes = (make_access_policy('Agency', 'agency-access-policy'),)
 
-    filterset_fields = ['name', 'address', 'phone']
-
     @property
     def access_policy(self):
         return self.permission_classes[0]
+
+    filterset_class = AgencyFilterSet
 
     queryset = db_models.Agency.objects.all()
     serializer_class = serializers.AgencySerializer

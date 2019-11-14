@@ -572,6 +572,108 @@ def test_admin_can_create_access_policies(policy, setup, admin_user):
     assert response.status_code == status.HTTP_201_CREATED
 
 
+def test_filtering_agency_by_state_with_response(client, realtor_a, realtor_b, setup):
+    _, agency_a, _, _ = realtor_a
+    _, agency_b, _, _ = realtor_b
+
+    response = client.get('/api/v1/agencies/', {'state': 'AL'})
+
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert len(response_data) == 1
+
+    response_ids = [r.get('id') for r in response_data]
+
+    assert agency_a.id in response_ids
+    assert agency_b.id not in response_ids
+
+
+def test_filtering_agency_by_state_with_empty_response(client, realtor_a, realtor_b, setup):
+    _, agency_a, _, _ = realtor_a
+    _, agency_b, _, _ = realtor_b
+
+    response = client.get('/api/v1/agencies/', {'state': 'tn'})
+
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert len(response_data) == 0
+
+    response_ids = [r.get('id') for r in response_data]
+
+    assert agency_a.id not in response_ids
+    assert agency_b.id not in response_ids
+
+
+def test_filtering_agency_by_city_with_response(client, realtor_a, realtor_b, setup):
+    _, agency_a, _, _ = realtor_a
+    _, agency_b, _, _ = realtor_b
+
+    response = client.get('/api/v1/agencies/', {'city': 'huntsville'})
+
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert len(response_data) == 1
+
+    response_ids = [r.get('id') for r in response_data]
+
+    assert agency_a.id in response_ids
+    assert agency_b.id not in response_ids
+
+
+def test_filtering_agency_by_city_with_empty_response(client, realtor_a, realtor_b, setup):
+    _, agency_a, _, _ = realtor_a
+    _, agency_b, _, _ = realtor_b
+
+    response = client.get('/api/v1/agencies/', {'city': 'pintlala'})
+
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert len(response_data) == 0
+
+    response_ids = [r.get('id') for r in response_data]
+
+    assert agency_a.id not in response_ids
+    assert agency_b.id not in response_ids
+
+
+def test_filtering_agency_by_city_and_state_with_response(client, realtor_a, realtor_b, setup):
+    _, agency_a, _, _ = realtor_a
+    _, agency_b, _, _ = realtor_b
+
+    response = client.get('/api/v1/agencies/', {'city': 'huntsville', 'state': 'al'})
+
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert len(response_data) == 1
+
+    response_ids = [r.get('id') for r in response_data]
+
+    assert agency_a.id in response_ids
+    assert agency_b.id not in response_ids
+
+
+def test_filtering_agency_by_city_and_state_with_empty_response(client, realtor_a, realtor_b, setup):
+    _, agency_a, _, _ = realtor_a
+    _, agency_b, _, _ = realtor_b
+
+    response = client.get('/api/v1/agencies/', {'city': 'madison', 'state': 'al'})
+
+    response_data = response.json()
+
+    assert response.status_code == 200
+    assert len(response_data) == 0
+
+    response_ids = [r.get('id') for r in response_data]
+
+    assert agency_a.id not in response_ids
+    assert agency_b.id not in response_ids
+
+
 def test_filtering_property_by_min_asking_price(client, listing_a, listing_b, listing_c, listing_d, setup):
     response = client.get('/api/v1/listings/', {'asking_price_min': 600500})
 
