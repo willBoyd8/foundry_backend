@@ -6,6 +6,7 @@
     <envs>
       <env name="PYTHONUNBUFFERED" value="1" />
       <env name="FOUNDRY_ENV" value="development" />
+      <env name="DJANGO_SETTINGS_MODULE" value="foundry_backend.settings" />
     </envs>
     <option name="SDK_HOME" value="$PROJECT_DIR$/venv/bin/python" />
     <option name="WORKING_DIRECTORY" value="" />
