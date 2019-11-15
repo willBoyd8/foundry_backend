@@ -11,11 +11,8 @@ WORKDIR /source
 # Build the source
 RUN poetry build
 
-# Move to the actual base
-# It seems that the phusion/baseimage within dockerhub is
-# old, and kaniko doesn't like that. We have to pull it from
-# another repository to ensure it is accepted
-FROM docker.abwlabs.com/phusion/baseimage
+# Build the actual runtime
+FROM phusion/baseimage
 
 # Copy the package, start script, and config to the new filesystem
 COPY --from=python /source/deploy/start.sh /etc/service/foundry_backend/run
@@ -36,4 +33,4 @@ RUN add-apt-repository --yes ppa:deadsnakes/ppa \
  && rm -rf /foundry.tar.gz \
  && chmod +x /etc/service/foundry_backend/run
 
-RUN mkdir -p /opt/foundry/static
+RUN mkdir -p /opt/foundry/static && mkdir -p /opt/foundry/persistent
