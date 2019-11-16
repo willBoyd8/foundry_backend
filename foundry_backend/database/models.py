@@ -135,10 +135,15 @@ class Room(models.Model):
     ROOM_TYPES = (
         ('BEDROOM', 'Bedroom'),
         ('BATHROOM', 'Bathroom'),
+        ('HALF_BATHROOM', '1/2 bathroom'),
         ('KITCHEN', 'Kitchen'),
-        ('DINING_ROOM', 'Dining Room'),
+        ('DINING', 'Dining Room'),
         ('OFFICE', 'Office'),
         ('DEN', 'Den'),
+        ('LIVING', 'Living Room'),
+        ('FAMILY', 'Family Room'),
+        ('GARAGE', 'Garage'),
+        ('CAR_PORT', 'Car Port'),
         ('RECREATION', 'Recreational Room')
     )
 
