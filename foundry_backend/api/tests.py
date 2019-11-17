@@ -444,6 +444,7 @@ def test_realtor_can_create_listing(realtor_a, setup):
                 'state_code': 'AL'
             },
             'square_footage': 2750,
+            'acreage': 1.25,
             'type': 'HOUSE',
             'rooms': [],
             'nearby_attractions': [],

@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator, MinLengthValidator, MaxLengthValidator
+from django.core.validators import MinValueValidator, MinLengthValidator, MaxLengthValidator, MaxValueValidator
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 import uuid
@@ -94,6 +94,8 @@ class Property(models.Model):
     listing = models.OneToOneField(Listing, related_name='property', on_delete=models.CASCADE)
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
     square_footage = models.IntegerField(validators=[MinValueValidator(0)])
+    acreage = models.DecimalField(validators=[MinValueValidator(0), MaxValueValidator(999.99)],
+                                  decimal_places=2, max_digits=5)
     type = models.CharField(max_length=12, choices=PROPERTY_TYPES)
 
 
