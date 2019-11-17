@@ -93,7 +93,17 @@ class FullPropertySerializer(WritableNestedModelSerializer):
 
     class Meta:
         model = db_models.Property
-        fields = ['id', 'property', 'address', 'square_footage', 'type', 'rooms', 'nearby_attractions', 'home_alarm']
+        fields = [
+            'id',
+            'property',
+            'address',
+            'square_footage',
+            'acreage',
+            'type',
+            'rooms',
+            'nearby_attractions',
+            'home_alarm'
+        ]
 
 
 class PropertySerializer(WritableNestedModelSerializer):
@@ -104,7 +114,17 @@ class PropertySerializer(WritableNestedModelSerializer):
 
     class Meta:
         model = db_models.Property
-        fields = ['id', 'address', 'square_footage', 'type', 'rooms', 'nearby_attractions', 'home_alarm']
+        fields = [
+            'id',
+            'address',
+            'square_footage',
+            'acreage',
+            'type',
+            'rooms',
+            'nearby_attractions',
+            'home_alarm'
+        ]
+        
         extra_kwargs = {
             'home_alarm': {'write_only': True}
         }

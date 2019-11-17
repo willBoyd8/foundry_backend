@@ -118,7 +118,8 @@ def listing_a(realtor_a):
                                                         'open to a rear flagstone patio. Formerly owned by Dr. Wernher '
                                                         'von Braun.')
 
-    prop = models.Property.objects.create(address=address, type='HOUSE', square_footage='2750', listing=listing)
+    prop = models.Property.objects.create(address=address, type='HOUSE', square_footage='2750', acreage=1.25,
+                                          listing=listing)
 
     address.save()
     prop.save()
@@ -154,7 +155,8 @@ def listing_b(realtor_a):
     listing = models.Listing.objects.create(asking_price=600000, agent=realtor_a[2],
                                             description='It\'s nice and spacious...')
 
-    prop = models.Property.objects.create(address=address, type='HOUSE', square_footage='3000', listing=listing)
+    prop = models.Property.objects.create(address=address, type='HOUSE', square_footage='3000', acreage=999.99,
+                                          listing=listing)
 
     address.save()
     prop.save()
@@ -175,7 +177,8 @@ def listing_c(realtor_a):
     listing = models.Listing.objects.create(asking_price=700000, agent=realtor_a[2],
                                             description='It\'s nice and spacious...')
 
-    prop = models.Property.objects.create(address=address, type='HOUSE', square_footage='4000', listing=listing)
+    prop = models.Property.objects.create(address=address, type='APARTMENT', square_footage='4000', acreage=0,
+                                          listing=listing)
 
     address.save()
     prop.save()
@@ -196,7 +199,8 @@ def listing_d(realtor_a):
     listing = models.Listing.objects.create(asking_price=800000, agent=realtor_a[2],
                                             description='It\'s nice and spacious...')
 
-    prop = models.Property.objects.create(address=address, type='HOUSE', square_footage='5000', listing=listing)
+    prop = models.Property.objects.create(address=address, type='HOUSE', square_footage='5000', acreage=0.25,
+                                          listing=listing)
 
     address.save()
     prop.save()
