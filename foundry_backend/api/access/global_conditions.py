@@ -3,6 +3,11 @@ import logging
 from foundry_backend.database import models
 
 
+def is_owner_of_avatar(request, view, _) -> bool:
+    avatar: models.Avatar = view.get_object()
+    return avatar.user.id == request.user.id
+
+
 def is_agent_in_agency(request, view, _) -> bool:
     agency: models.Agency = view.get_object()
     return agency.mls_numbers.filter(user_id=request.user.id).exists()

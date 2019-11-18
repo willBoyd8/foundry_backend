@@ -52,6 +52,53 @@
     ]
   },
   {
+    "name": "avatar-access-policy",
+    "notes": "Access Policy for Avatar Objects",
+    "statements": [
+      {
+        "notes": "Allow anyone to see avatars",
+        "actions": [
+          "list", "retrieve"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "*"
+          }
+        ],
+        "conditions": []
+      },
+      {
+        "notes": "Allow a user to modify their own avatar",
+        "actions": [
+          "update",
+          "partial_update",
+          "delete"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "*"
+          }
+        ],
+        "conditions": [{"value": "is_owner_of_avatar"}]
+      },
+      {
+        "notes": "Allow admins to do anything",
+        "actions": [
+          "all"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "group:admin"
+          }
+        ],
+        "conditions": []
+      }
+    ]
+  },
+  {
     "name": "agency-access-policy",
     "notes": "Allows agents to manipulate their own agencies",
     "statements": [

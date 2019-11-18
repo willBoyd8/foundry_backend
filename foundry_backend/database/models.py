@@ -6,11 +6,19 @@ import uuid
 from rest_framework.exceptions import ValidationError
 
 
+def file_path_generator(base: str):
+    def uploaded_file_path_generator(_, filename):
+        extension = filename.split(".")[-1]
+        return "{}/{}.{}".format(base, uuid.uuid4(), extension)
+
+    return uploaded_file_path_generator
+
+
 class Avatar(models.Model):
     """
     A user avatar
     """
-    avatar = models.ImageField(upload_to='avatars/')
+    avatar = models.ImageField(upload_to=file_path_generator('avatar'))
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 
