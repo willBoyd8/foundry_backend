@@ -255,8 +255,10 @@ class HomeAlarmViewSet(mixins.CreateModelMixin,
     serializer_class = serializers.HomeAlarmSerializer
 
     def perform_create(self, serializer: serializers.HomeAlarmSerializer):
-        serializer = serializers.FullHomeAlarmSerializer(data={**serializer.data,
-                                                               'property': self.kwargs['property_pk']})
+        serializer = serializers.FullHomeAlarmSerializer(data={
+            **serializer.data,
+            'property': self.kwargs['property_pk']
+        })
 
         if serializer.is_valid():
             serializer.save()

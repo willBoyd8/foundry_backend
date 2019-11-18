@@ -1,11 +1,8 @@
-from django.conf import settings
 from django.conf.urls import url
-from django.conf.urls.static import static
 from django.urls import include, path
 from rest_framework_nested import routers
 from foundry_backend.api import views
 from .endpoints import permissions_functions
-from django.views.static import serve
 base_router = routers.SimpleRouter()
 
 # register Avatars
@@ -13,6 +10,7 @@ base_router.register(r'avatars', views.AvatarViewSet)
 base_router.register(r'listing_images', views.ListingImageViewSet)
 base_router.register(r'mls_numbers', views.AllMLSNumbersViewSet)
 base_router.register(r'messages', views.UserMessageViewSet)
+base_router.register(r'home_alarms', views.HomeAlarmViewSet)
 
 # register IAM policies
 base_router.register(r'iam_policies', views.IAMPolicyViewSet)
