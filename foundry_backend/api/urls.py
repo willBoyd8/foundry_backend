@@ -11,6 +11,7 @@ base_router.register(r'listing_images', views.ListingImageViewSet)
 base_router.register(r'mls_numbers', views.AllMLSNumbersViewSet)
 base_router.register(r'messages', views.UserMessageViewSet)
 base_router.register(r'home_alarms', views.HomeAlarmViewSet)
+base_router.register(r'listings_hits', views.ListingsHitViewSet)
 
 # register IAM policies
 base_router.register(r'iam_policies', views.IAMPolicyViewSet)

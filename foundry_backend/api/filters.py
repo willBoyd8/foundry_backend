@@ -21,6 +21,12 @@ class ListingFilterSet(django_filters.FilterSet):
                   'zip_code']
 
 
+class ListingsHitFilterSet(django_filters.FilterSet):
+    class Meta:
+        model = models.ListingsHit
+        fields = ['listing', 'access_time']
+
+
 class ListingImageFilterSet(django_filters.FilterSet):
     class Meta:
         model = models.ListingImage

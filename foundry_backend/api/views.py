@@ -1,8 +1,10 @@
 from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.viewsets import GenericViewSet
 
 from foundry_backend.api import models
-from foundry_backend.api.filters import ListingFilterSet, AgencyFilterSet, ListingImageFilterSet, MLSNumberFilterSet
+from foundry_backend.api.filters import ListingFilterSet, AgencyFilterSet, ListingImageFilterSet, MLSNumberFilterSet, \
+    ListingsHitFilterSet
 from foundry_backend.database import models as db_models
 from rest_framework import viewsets, mixins
 from foundry_backend.database.models import MLSNumber, Listing, Room, NearbyAttraction
@@ -191,6 +193,22 @@ class ListingViewSet(viewsets.ModelViewSet):
 
     queryset = db_models.Listing.objects.all()
     serializer_class = serializers.ListingSerializer
+
+
+class ListingsHitViewSet(mixins.CreateModelMixin, GenericViewSet):
+    """
+        API Endpoint for listings
+        """
+    permission_classes = (make_access_policy('ListingsHit', 'listings-hit-access-policy'),)
+
+    @property
+    def access_policy(self):
+        return self.permission_classes[0]
+
+    filterset_class = ListingsHitFilterSet
+
+    queryset = db_models.ListingsHit.objects.all()
+    serializer_class = serializers.ListingsHitSerializer
 
 
 class ListingImageViewSet(viewsets.ModelViewSet):

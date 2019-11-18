@@ -156,6 +156,13 @@ class ListingSerializer(WritableNestedModelSerializer):
         fields = '__all__'
 
 
+class ListingsHitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.ListingsHit
+        fields = '__all__'
+        read_only_fields = ['access_time']
+
+
 class ListingImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.ListingImage

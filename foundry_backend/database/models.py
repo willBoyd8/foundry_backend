@@ -108,6 +108,14 @@ class Listing(models.Model):
     agent = models.ForeignKey(MLSNumber, on_delete=models.CASCADE)
 
 
+class ListingsHit(models.Model):
+    """
+    Stores a hit for a model
+    """
+    listing = models.ForeignKey(Listing, related_name='hits', on_delete=models.CASCADE)
+    access_time = models.DateTimeField(auto_now_add=True)
+
+
 def listing_path_generator(_, filename):
     extension = filename.split(".")[-1]
     return "listings/{}.{}".format(uuid.uuid4(), extension)
