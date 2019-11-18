@@ -36,3 +36,13 @@ class AgencyFilterSet(django_filters.FilterSet):
     class Meta:
         model = models.Agency
         fields = ['city', 'state', 'name', 'phone']
+
+
+class MLSNumberFilterSet(django_filters.FilterSet):
+    city = django_filters.CharFilter(field_name='agency__address__locality', lookup_expr='iexact')
+    agency = django_filters.CharFilter(field_name='agency__name', lookup_expr='iexact')
+    mls_number = django_filters.CharFilter(field_name='number', lookup_expr='iexact')
+
+    class Meta:
+        model = models.MLSNumber
+        fields = ['city', 'agency', 'mls_number']

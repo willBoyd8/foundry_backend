@@ -2,7 +2,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser, FormParser
 
 from foundry_backend.api import models
-from foundry_backend.api.filters import ListingFilterSet, AgencyFilterSet, ListingImageFilterSet
+from foundry_backend.api.filters import ListingFilterSet, AgencyFilterSet, ListingImageFilterSet, MLSNumberFilterSet
 from foundry_backend.database import models as db_models
 from rest_framework import viewsets, mixins
 from foundry_backend.database.models import MLSNumber, Listing, Room, NearbyAttraction
@@ -65,6 +65,22 @@ class MLSNumberViewSet(viewsets.ModelViewSet):
 
     queryset = db_models.MLSNumber.objects.all()
     serializer_class = serializers.MLSNumberSerializer
+
+
+class AllMLSNumbersViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+    """
+    API Endpoint for searching all the realtors
+    """
+    permission_classes = (make_access_policy('MLSNumber', 'mls-number-access-policy'),)
+
+    @property
+    def access_policy(self):
+        return self.permission_classes[0]
+
+    queryset = db_models.MLSNumber.objects.all()
+    serializer_class = serializers.FullMLSNumberSerializer
+
+    filterset_class = MLSNumberFilterSet
 
 
 class AllNearbyAttractionsViewSet(viewsets.ModelViewSet):
