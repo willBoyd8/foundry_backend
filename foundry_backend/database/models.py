@@ -6,6 +6,14 @@ import uuid
 from rest_framework.exceptions import ValidationError
 
 
+class Avatar(models.Model):
+    """
+    A user avatar
+    """
+    avatar = models.ImageField(upload_to='avatars/')
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+
 class Address(models.Model):
     """
     An address entry

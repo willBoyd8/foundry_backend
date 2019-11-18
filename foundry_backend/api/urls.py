@@ -1,10 +1,15 @@
+from django.conf import settings
 from django.conf.urls import url
+from django.conf.urls.static import static
 from django.urls import include, path
 from rest_framework_nested import routers
 from foundry_backend.api import views
 from .endpoints import permissions_functions
-
+from django.views.static import serve
 base_router = routers.SimpleRouter()
+
+# register Avatars
+base_router.register(r'avatars', views.AvatarViewSet)
 
 # register IAM policies
 base_router.register(r'iam_policies', views.IAMPolicyViewSet)
@@ -47,5 +52,5 @@ urlpatterns = [
     path(r'', include(property_router.urls)),
     url(r'^auth/', include('djoser.urls')),
     url(r'^auth/', include('djoser.urls.authtoken')),
-    url(r'^auth/permissions/', include(permissions_functions))
+    url(r'^auth/permissions/', include(permissions_functions)),
 ]
