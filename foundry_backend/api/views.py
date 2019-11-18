@@ -2,7 +2,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser, FormParser
 
 from foundry_backend.api import models
-from foundry_backend.api.filters import ListingFilterSet, AgencyFilterSet
+from foundry_backend.api.filters import ListingFilterSet, AgencyFilterSet, ListingImageFilterSet
 from foundry_backend.database import models as db_models
 from rest_framework import viewsets, mixins
 from foundry_backend.database.models import MLSNumber, Listing, Room, NearbyAttraction
@@ -161,6 +161,23 @@ class ListingViewSet(viewsets.ModelViewSet):
 
     queryset = db_models.Listing.objects.all()
     serializer_class = serializers.ListingSerializer
+
+
+class ListingImageViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for listing images
+    """
+    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = (make_access_policy('InterAgencyListing', 'inter-agency-listing-access-policy'),)
+
+    @property
+    def access_policy(self):
+        return self.permission_classes[0]
+
+    filterset_class = ListingImageFilterSet
+
+    serializer_class = serializers.ListingImageSerializer
+    queryset = db_models.ListingImage.objects.all()
 
 
 class RoomViewSet(viewsets.ModelViewSet):

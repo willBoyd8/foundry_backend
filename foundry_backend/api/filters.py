@@ -21,6 +21,12 @@ class ListingFilterSet(django_filters.FilterSet):
                   'zip_code']
 
 
+class ListingImageFilterSet(django_filters.FilterSet):
+    class Meta:
+        model = models.ListingImage
+        fields = ['listing']
+
+
 class AgencyFilterSet(django_filters.FilterSet):
     city = django_filters.CharFilter(field_name='address__locality', lookup_expr='iexact')
     state = django_filters.CharFilter(field_name='address__state_code', lookup_expr='iexact')

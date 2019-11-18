@@ -93,6 +93,20 @@ class Listing(models.Model):
     agent = models.ForeignKey(MLSNumber, on_delete=models.CASCADE)
 
 
+def listing_path_generator(_, filename):
+    extension = filename.split(".")[-1]
+    return "listings/{}.{}".format(uuid.uuid4(), extension)
+
+
+class ListingImage(models.Model):
+    """
+    An image of a listing
+    """
+    listing = models.ForeignKey(Listing, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=listing_path_generator)
+    description = models.TextField(null=True, blank=True)
+
+
 class Property(models.Model):
     """
     A property model

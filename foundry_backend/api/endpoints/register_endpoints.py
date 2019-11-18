@@ -35,17 +35,23 @@ class EnableRealtorView(views.APIView):
                 errors['mls_number'] = []
             errors['mls_number'].append('The mls number given was not found')
 
-        # check if we have a realtor already using this number
-        if models.Realtor.objects.filter(mls__number=request.data['mls_number']).exists():
-            if not errors.get('mls_number'):
-                errors['mls_number'] = []
-            errors['mls_number'].append('The mls number given is already registered')
-
         # check if we have a real user
         if not models.User.objects.filter(pk=request.data['user']).exists():
             if not errors.get('user'):
                 errors['user'] = []
             errors['user'].append('no such user for pk "{}"'.format(request.data['user']))
+
+        # check if we have a realtor already using this number
+        if models.User.objects.filter(mls_number__number=request.data['mls_number']).exists():
+            if not errors.get('mls_number'):
+                errors['mls_number'] = []
+            errors['mls_number'].append('The mls number given is already registered')
+
+        # check if this user already has an mls number
+        if models.MLSNumber.objects.filter(user_id=request.data['user']).exists():
+            if not errors.get('user'):
+                errors['user'] = []
+            errors['user'].append('the user "{}" is already registered as a realtor'.format(request.data['user']))
 
         # If we have any errors, throw them now
         if len(errors) is not 0:

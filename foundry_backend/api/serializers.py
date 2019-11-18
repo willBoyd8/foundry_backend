@@ -150,6 +150,12 @@ class ListingSerializer(WritableNestedModelSerializer):
         fields = '__all__'
 
 
+class ListingImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.ListingImage
+        fields = '__all__'
+
+
 class FullShowingSerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Showing
