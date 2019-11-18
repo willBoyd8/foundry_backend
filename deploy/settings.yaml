@@ -91,7 +91,13 @@ default:
           - console
         level: DEBUG
         formatter: verbose
-      daily_views:
+      ScheduleBatchTasksMiddleware:
+        handlers:
+          - console
+          - file
+        level: INFO
+        formatter: verbose
+      AccessPolicyMiddleware:
         handlers:
           - console
           - file
@@ -150,6 +156,8 @@ default:
     - django.contrib.messages.middleware.MessageMiddleware
     - django.middleware.clickjacking.XFrameOptionsMiddleware
     - whitenoise.middleware.WhiteNoiseMiddleware
+    - foundry_backend.middleware.tasks.ScheduleBatchTasksMiddleware
+    - foundry_backend.middleware.access_policies.AccessPolicyMiddleware
 
   # For django-guardian
   AUTHENTICATION_BACKENDS:
