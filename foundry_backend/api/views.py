@@ -1,4 +1,6 @@
 from rest_framework.exceptions import ValidationError
+from rest_framework.parsers import MultiPartParser, FormParser
+
 from foundry_backend.api import models
 from foundry_backend.api.filters import ListingFilterSet, AgencyFilterSet
 from foundry_backend.database import models as db_models
@@ -6,6 +8,21 @@ from rest_framework import viewsets, mixins
 from foundry_backend.database.models import MLSNumber, Listing, Room, NearbyAttraction
 from . import serializers
 from .access import make_access_policy
+
+
+class AvatarViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for Avatars
+    """
+    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = (make_access_policy('Avatar', 'avatar-access-policy'),)
+
+    @property
+    def access_policy(self):
+        return self.permission_classes[0]
+
+    queryset = db_models.Avatar.objects.all()
+    serializer_class = serializers.AvatarSerializer
 
 
 class AgencyViewSet(viewsets.ModelViewSet):

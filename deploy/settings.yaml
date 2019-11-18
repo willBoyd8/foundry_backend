@@ -20,12 +20,6 @@ default:
   ADMIN_PASSWORD: password
   ADMIN_EMAIL: admin@email.com
 
-  # The URL to host static content from
-  STATIC_URL: /static/
-
-  STATICFILES_DIRS:
-    - '/opt/foundry/static'
-
   # Whether to run the server in debug mode.
   # https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-DEBUG
   DEBUG: false
@@ -42,7 +36,6 @@ default:
 #    # This should probably be used in production
 #    CORS_ORIGIN_WHITELIST:
 #      - 'https://...'
-
 
   # Database
   # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
@@ -175,6 +168,15 @@ default:
 
   # WhiteNoise config
   STATICFILES_STORAGE: whitenoise.storage.CompressedManifestStaticFilesStorage
+
+  STATICFILES_DIRS:
+    - '/opt/foundry/static'
+
+  # The URL to host static content from
+  STATIC_URL: /static/
+
+  MEDIA_ROOT: media
+  MEDIA_URL: /media/
 
   # The Django Template Config. Don't change unless you know what you're doing
   TEMPLATES:
