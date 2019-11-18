@@ -197,22 +197,10 @@
     "notes": "Allow privileged realtors to view sensitive home alarm info",
     "statements": [
       {
-        "notes": "Allow realtors to list or retrieve home alarm info",
-        "actions": [
-          "list",
-          "retrieve"
-        ],
-        "effect": "allow",
-        "principals": [
-          {
-            "value": "group:realtor"
-          }
-        ],
-        "conditions": []
-      },
-      {
         "notes": "Allow realtors to create, update, and delete if they are member to this agency",
         "actions": [
+          "list",
+          "retrieve",
           "create",
           "update",
           "delete"

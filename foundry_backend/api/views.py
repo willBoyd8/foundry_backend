@@ -233,7 +233,6 @@ class RoomViewSet(viewsets.ModelViewSet):
 class HomeAlarmViewSet(mixins.CreateModelMixin,
                        mixins.RetrieveModelMixin,
                        mixins.UpdateModelMixin,
-                       mixins.ListModelMixin,
                        viewsets.GenericViewSet):
     """
     retrieve:
