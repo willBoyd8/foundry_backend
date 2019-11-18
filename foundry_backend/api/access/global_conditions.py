@@ -3,6 +3,11 @@ import logging
 from foundry_backend.database import models
 
 
+def is_owner_of_user_message(request, view, _) -> bool:
+    message: models.UserMessage = view.get_object()
+    return message.user.id == request.user.id
+
+
 def is_owner_of_avatar(request, view, _) -> bool:
     avatar: models.Avatar = view.get_object()
     return avatar.user.id == request.user.id

@@ -12,6 +12,7 @@ base_router = routers.SimpleRouter()
 base_router.register(r'avatars', views.AvatarViewSet)
 base_router.register(r'listing_images', views.ListingImageViewSet)
 base_router.register(r'mls_numbers', views.AllMLSNumbersViewSet)
+base_router.register(r'messages', views.UserMessageViewSet)
 
 # register IAM policies
 base_router.register(r'iam_policies', views.IAMPolicyViewSet)

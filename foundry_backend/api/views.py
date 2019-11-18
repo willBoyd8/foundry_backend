@@ -10,6 +10,20 @@ from . import serializers
 from .access import make_access_policy
 
 
+class UserMessageViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for user messages
+    """
+    permission_classes = (make_access_policy('UserMessage', 'user-message-access-policy'),)
+
+    @property
+    def access_policy(self):
+        return self.permission_classes[0]
+
+    queryset = db_models.UserMessage.objects.all()
+    serializer_class = serializers.UserMessageSerializer
+
+
 class AvatarViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Avatars

@@ -6,6 +6,21 @@ import uuid
 from rest_framework.exceptions import ValidationError
 
 
+class UserMessage(models.Model):
+    """
+    Stores a message to a user
+    """
+    MESSAGE_TYPES = (
+        ('HITS', 'Hit Count on a listing'),
+        ('SHOWING', 'Request for a showing'),
+        ('MISC', 'Misc.')
+    )
+
+    user = models.ForeignKey(User, related_name='messages', on_delete=models.CASCADE)
+    message = models.TextField()
+    type = models.CharField(max_length=10, choices=MESSAGE_TYPES)
+
+
 def avatar_path_generator(_, filename):
     extension = filename.split(".")[-1]
     return "avatars/{}.{}".format(uuid.uuid4(), extension)

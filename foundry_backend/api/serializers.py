@@ -7,6 +7,12 @@ from foundry_backend.database import models as db_models
 from rest_framework import serializers
 
 
+class UserMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.UserMessage
+        fields = '__all__'
+
+
 class AvatarSerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Avatar

@@ -52,6 +52,49 @@
     ]
   },
   {
+    "name": "user-message-access-policy",
+    "notes": "Access Policy for User Message Objects",
+    "statements": [
+      {
+        "notes": "Allow anyone to post messages",
+        "actions": [
+          "create"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "*"
+          }
+        ],
+        "conditions": []
+      },
+      {
+        "notes": "Allow a user manage their own messages",
+        "actions": ["all"],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "*"
+          }
+        ],
+        "conditions": [{"value": "is_owner_of_user_message"}]
+      },
+      {
+        "notes": "Allow admins to do anything",
+        "actions": [
+          "all"
+        ],
+        "effect": "allow",
+        "principals": [
+          {
+            "value": "group:admin"
+          }
+        ],
+        "conditions": []
+      }
+    ]
+  },
+  {
     "name": "avatar-access-policy",
     "notes": "Access Policy for Avatar Objects",
     "statements": [
