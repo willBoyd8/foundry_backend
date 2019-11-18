@@ -19,6 +19,7 @@ class UserMessage(models.Model):
     user = models.ForeignKey(User, related_name='messages', on_delete=models.CASCADE)
     message = models.TextField()
     type = models.CharField(max_length=10, choices=MESSAGE_TYPES)
+    read = models.BooleanField(default=False, blank=True)
 
 
 def avatar_path_generator(_, filename):
