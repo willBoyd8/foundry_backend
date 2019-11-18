@@ -8,12 +8,10 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/
 """
 
 import os
+from foundry_backend.api import autoload
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'foundry_backend.settings')
-
-# from foundry_backend import autoload
-# autoload.run()
+autoload.run()
 
 from django.core.wsgi import get_wsgi_application
-
 application = get_wsgi_application()

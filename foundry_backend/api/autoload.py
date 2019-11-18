@@ -5,13 +5,12 @@
 # This module defines the commands that should run on startup of
 # the foundry_backend.
 import json
-import logging
 import os
-
+from apscheduler.schedulers.background import BackgroundScheduler
 from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.db import connection
-
+from foundry_backend.api import tasks
 from foundry_backend.api.models import IAMPolicy
 from foundry_backend.api.serializers import IAMPolicySerializer
 
@@ -82,3 +81,13 @@ def run():
             load_default_access_policies()
 
         create_default_admin()
+
+    print('Starting task: \'gather_daily_views\'')
+    scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
+
+    scheduler.add_job(tasks.daily_messages.gather_daily_views,
+                      'cron',
+                      hour=settings.DAILY_MESSAGE_TIME['HOUR'],
+                      minute=settings.DAILY_MESSAGE_TIME['MINUTE'],
+                      second=settings.DAILY_MESSAGE_TIME['SECOND'])
+    scheduler.start()

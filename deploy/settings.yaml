@@ -65,6 +65,12 @@ default:
         when: midnight
         backupCount: 1
         filename: 'django.log'
+      daily_tasks:
+        class: logging.handlers.TimedRotatingFileHandler
+        formatter: file
+        when: midnight
+        backupCount: 1
+        filename: 'daily_tasks.log'
     loggers:
       django:
         handlers:
@@ -85,12 +91,24 @@ default:
           - console
         level: DEBUG
         formatter: verbose
+      daily_views:
+        handlers:
+          - console
+          - file
+        level: INFO
+        formatter: verbose
 
   # Valid Accept-Language HTTP Header
   LANGUAGE_CODE: en-us
 
   # A Valid UTC Time Zone Code
-  TIME_ZONE: UTC
+  TIME_ZONE: America/Chicago
+
+  # What time to perform nightly messages
+  DAILY_MESSAGE_TIME:
+    HOUR: 23
+    MINUTE: 55
+    SECOND: 00
 
   # Use django's translation framework
   USE_I18N: true
@@ -240,3 +258,4 @@ testing:
 
 production:
   ENV_NAME: production
+  DEBUG: false
