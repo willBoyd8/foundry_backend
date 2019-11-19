@@ -3,6 +3,8 @@ import logging
 import os
 
 from django.conf import settings
+from django.core.exceptions import MiddlewareNotUsed
+
 from foundry_backend.api.models import IAMPolicy
 from foundry_backend.api.serializers import IAMPolicySerializer
 from django.contrib.auth.models import User, Group
@@ -79,6 +81,8 @@ class AccessPolicyMiddleware:
             self._load_default_access_policies()
 
         self._create_default_admin()
+
+        raise MiddlewareNotUsed('Done initializing AccessPolicyMiddleware')
 
     def __call__(self, request):
         return self.get_response(request)

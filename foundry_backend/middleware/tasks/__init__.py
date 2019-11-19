@@ -1,3 +1,5 @@
+from django.core.exceptions import MiddlewareNotUsed
+
 from . import daily_messages
 
 import logging
@@ -23,6 +25,8 @@ class ScheduleBatchTasksMiddleware:
         scheduler.start()
 
         self.logger.info('Done!')
+
+        raise MiddlewareNotUsed('Done initializing ScheduleBatchTasksMiddleware')
 
     def __call__(self, request):
         return self.get_response(request)
