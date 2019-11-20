@@ -166,7 +166,7 @@ class NearbyAttraction(models.Model):
 
     properties = models.ManyToManyField(Property,  blank=True, related_name='nearby_attractions',
                                         through="NearbyAttractionPropertyConnector")
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50)
     type = models.CharField(max_length=15, choices=NEARBY_ATTRACTION_TYPES)
 
 
