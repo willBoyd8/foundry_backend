@@ -22,6 +22,12 @@ class UserMessageViewSet(viewsets.ModelViewSet):
     def access_policy(self):
         return self.permission_classes[0]
 
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return self.request.user.messages.all()
+        else:
+            return []
+
     queryset = db_models.UserMessage.objects.all()
     serializer_class = serializers.UserMessageSerializer
 

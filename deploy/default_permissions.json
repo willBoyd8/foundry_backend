@@ -58,7 +58,7 @@
       {
         "notes": "Allow anyone to post messages",
         "actions": [
-          "create"
+          "create", "list", "retrieve"
         ],
         "effect": "allow",
         "principals": [
@@ -70,7 +70,7 @@
       },
       {
         "notes": "Allow a user manage their own messages",
-        "actions": ["all"],
+        "actions": ["update", "partial_update", "delete"],
         "effect": "allow",
         "principals": [
           {
