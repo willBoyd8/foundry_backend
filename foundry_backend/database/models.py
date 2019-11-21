@@ -253,3 +253,34 @@ class Showing(models.Model):
             )
 
         super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+
+class ShowingReview(models.Model):
+    """
+    Review a showing
+    """
+    CUSTOMER_INTEREST = (
+        ('LOW', 'Low Interest'),
+        ('MEDIUM', 'Medium Interest'),
+        ('HIGH', 'High Interest')
+    )
+
+    OVERALL_EXPERIENCE = (
+        ('VERYPOOR', 'Very Poor Experience'),
+        ('POOR', 'Poor Experience'),
+        ('NEUTRAL', 'Neutral Experience'),
+        ('GOOD', 'Good experience'),
+        ('VERYGOOD', 'Very Good Experience')
+    )
+
+    PRICE_OPINION = (
+        ('LOW', 'Price is too low'),
+        ('FAIR', 'Price is fair'),
+        ('HIGH', 'Price is too high')
+    )
+
+    agent = models.ForeignKey(MLSNumber, related_name='showing_reviews', on_delete=models.CASCADE)
+    showing = models.ForeignKey(MLSNumber, related_name='reviews', on_delete=models.CASCADE)
+    customer_interest = models.CharField(max_length=10, choices=CUSTOMER_INTEREST)
+    overall_experience = models.CharField(max_length=10, choices=OVERALL_EXPERIENCE)
+    price_opinion = models.CharField(max_length=10, choices=PRICE_OPINION)

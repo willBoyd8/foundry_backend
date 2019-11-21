@@ -4,7 +4,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from foundry_backend.api import models
 from foundry_backend.api.filters import ListingFilterSet, AgencyFilterSet, ListingImageFilterSet, MLSNumberFilterSet, \
-    ListingsHitFilterSet
+    ListingsHitFilterSet, ShowingReviewFilterSet
 from foundry_backend.database import models as db_models
 from rest_framework import viewsets, mixins
 from foundry_backend.database.models import MLSNumber, Listing, Room, NearbyAttraction
@@ -309,6 +309,22 @@ class ShowingViewSet(viewsets.ModelViewSet):
             serializer.save()
         else:
             raise ValidationError(serializer.errors)
+
+
+class ShowingReviewViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint for Showing Surveys
+    """
+    permission_classes = (make_access_policy('ShowingReview', 'showing-review-access-policy'),)
+
+    @property
+    def access_policy(self):
+        return self.permission_classes[0]
+
+    filterset_class = ShowingReviewFilterSet
+
+    queryset = db_models.ShowingReview.objects.all()
+    serializer_class = serializers.ShowingReviewSerializer
 
 
 class IAMPolicyViewSet(viewsets.ModelViewSet):

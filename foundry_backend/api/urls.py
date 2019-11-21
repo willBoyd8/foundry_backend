@@ -45,6 +45,9 @@ property_router.register(r'home_alarms', views.HomeAlarmViewSet)
 # register nearby attractions
 base_router.register(r'nearby_attractions', views.AllNearbyAttractionsViewSet)
 
+# register showing reviews
+base_router.register(r'showing_reviews', views.ShowingReviewViewSet)
+
 urlpatterns = [
     # path('', include(router.urls)),
     path(r'', include(base_router.urls)),
@@ -56,4 +59,5 @@ urlpatterns = [
     url(r'^auth/', include('djoser.urls')),
     url(r'^auth/', include('djoser.urls.authtoken')),
     url(r'^auth/permissions/', include(permissions_functions)),
+    url(r'^legal/', include(legal_functions)),
 ]

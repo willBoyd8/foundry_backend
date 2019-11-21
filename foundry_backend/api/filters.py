@@ -52,3 +52,14 @@ class MLSNumberFilterSet(django_filters.FilterSet):
     class Meta:
         model = models.MLSNumber
         fields = ['city', 'agency', 'mls_number']
+
+
+class ShowingReviewFilterSet(django_filters.FilterSet):
+    agent = django_filters.NumberFilter(field_name='agent', lookup_expr='exact',
+                                        help_text='Show only surveys for the given agent')
+    showing = django_filters.NumberFilter(field_name='showing', lookup_expr='exact',
+                                          help_text='Show only surveys for the given showing')
+
+    class Meta:
+        model = models.ShowingReview
+        fields = ['agent', 'showing']

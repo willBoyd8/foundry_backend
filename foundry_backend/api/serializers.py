@@ -181,6 +181,12 @@ class ShowingSerializer(serializers.ModelSerializer):
         fields = ['id', 'agent', 'end_time', 'start_time']
 
 
+class ShowingReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = db_models.ShowingReview
+        fields = '__all__'
+
+
 class SalesContractSerializer(serializers.Serializer):
     address = serializers.CharField()
     seller = serializers.CharField()
