@@ -30,6 +30,7 @@ django-cors-headers = "^3.1"
 pillow = "^6.2"
 apscheduler = "^3.6"
 weasyprint = "^50.0"
+cffi = "^1.13"
 
 [tool.poetry.scripts]
 django_manage = 'manage:main'

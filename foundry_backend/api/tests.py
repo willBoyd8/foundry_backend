@@ -27,7 +27,7 @@ def perform_creation(token, client, data, path):
 
 
 @pytest.mark.django_db
-def test_agency_redirect(client, setup):
+def test_agency_redirect(client):
     response = client.get('/api/v1/agencies')
     assert response.status_code == 301
 
@@ -37,14 +37,14 @@ def test_agency_permission(setup):
 
 
 @pytest.mark.django_db
-def test_anyone_can_get_agencies(client, setup):
+def test_anyone_can_get_agencies(client):
     response: Response = client.get('/api/v1/agencies/')
     assert response.status_code == 200
     assert response.json() == []
 
 
 @pytest.mark.django_db
-def test_unauthenticated_cannot_create_agency(client, setup):
+def test_unauthenticated_cannot_create_agency(client):
     data = {'name': 'Agency', 'phone': '+14035555319', 'address': 'Someplace Drive'}
 
     response: Response = client.post('/api/v1/agencies/', data)
@@ -53,7 +53,7 @@ def test_unauthenticated_cannot_create_agency(client, setup):
 
 
 @pytest.mark.django_db
-def test_admin_can_create_agency(admin_user, setup):
+def test_admin_can_create_agency(admin_user):
     client = APIClient()
 
     data = {
@@ -74,7 +74,7 @@ def test_admin_can_create_agency(admin_user, setup):
     assert json.loads(response.render().content) == {**data, 'id': 1}
 
 
-def test_admin_can_patch_agency(realtor_a, admin_user, setup):
+def test_admin_can_patch_agency(realtor_a, admin_user):
     client = APIClient()
     _, agency, _, _ = realtor_a
 
@@ -102,7 +102,7 @@ def test_admin_can_patch_agency(realtor_a, admin_user, setup):
     assert agency.address == agency.address
 
 
-# def test_admin_can_patch_agency(realtor_a, admin_user, setup):
+# def test_admin_can_patch_agency(realtor_a, admin_user):
 #     client = APIClient()
 #     _, agency, _, _ = realtor_a
 #     _, token = admin_user
@@ -123,7 +123,7 @@ def test_admin_can_patch_agency(realtor_a, admin_user, setup):
 #     assert agency.address == agency.address
 
 
-def test_admin_can_delete_agency(realtor_a, admin_user, setup):
+def test_admin_can_delete_agency(realtor_a, admin_user):
     client = APIClient()
     _, agency, _, _ = realtor_a
     _, token = admin_user
@@ -138,7 +138,7 @@ def test_admin_can_delete_agency(realtor_a, admin_user, setup):
 
 
 @pytest.mark.django_db
-def test_realtor_cannot_create_agency(realtor_a, setup):
+def test_realtor_cannot_create_agency(realtor_a):
     client = APIClient()
 
     data = {'name': 'Agency', 'phone': '+14035555319', 'address': 'Someplace Drive'}
@@ -150,7 +150,7 @@ def test_realtor_cannot_create_agency(realtor_a, setup):
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_realtor_can_patch_own_agency(realtor_a, setup):
+def test_realtor_can_patch_own_agency(realtor_a):
     client = APIClient()
     _, agency, _, token = realtor_a
 
@@ -174,7 +174,7 @@ def test_realtor_can_patch_own_agency(realtor_a, setup):
     assert agency.address == agency.address
 
 
-def test_realtor_cannot_delete_agency(realtor_a, setup):
+def test_realtor_cannot_delete_agency(realtor_a):
     client = APIClient()
     _, agency, _, token = realtor_a
 
@@ -187,7 +187,7 @@ def test_realtor_cannot_delete_agency(realtor_a, setup):
     assert Agency.objects.filter(id=agency.id).exists()
 
 
-def test_realtor_cannot_patch_different_agency(realtor_a, realtor_b, setup):
+def test_realtor_cannot_patch_different_agency(realtor_a, realtor_b):
     client = APIClient()
     _, agency, _, _ = realtor_a
     _, _, _, token = realtor_b
@@ -207,7 +207,7 @@ def test_realtor_cannot_patch_different_agency(realtor_a, realtor_b, setup):
 
 
 @pytest.mark.django_db
-def test_anyone_can_get_mls_number(client, realtor_a, setup):
+def test_anyone_can_get_mls_number(client, realtor_a):
     realtor, agency, mls, token = realtor_a
 
     response: Response = client.get('/api/v1/agencies/{}/mls_numbers/'.format(agency.id))
@@ -228,7 +228,7 @@ def test_anyone_can_get_mls_number(client, realtor_a, setup):
 
 
 @pytest.mark.django_db
-def test_anyone_cannot_create_mls_number(client, setup):
+def test_anyone_cannot_create_mls_number(client):
     address = Address(street_number='1518', street='Big Cove Road', postal_code='35801', locality='Huntsville',
                       state_code='AL', state='Alabama')
     address.save()
@@ -245,7 +245,7 @@ def test_anyone_cannot_create_mls_number(client, setup):
 
 
 @pytest.mark.django_db
-def test_admin_can_create_mls_number(client, admin_user, setup):
+def test_admin_can_create_mls_number(client, admin_user):
     address = Address(street_number='1518', street='Big Cove Road', postal_code='35801', locality='Huntsville',
                       state_code='AL', state='Alabama')
     address.save()
@@ -274,7 +274,7 @@ def test_admin_can_create_mls_number(client, admin_user, setup):
 
 
 @pytest.mark.django_db
-def test_admin_can_put_mls_number(admin_user, setup):
+def test_admin_can_put_mls_number(admin_user):
     client = APIClient()
 
     address = Address(street_number='1518', street='Big Cove Road', postal_code='35801', locality='Huntsville',
@@ -315,7 +315,7 @@ def test_admin_can_put_mls_number(admin_user, setup):
 
 
 @pytest.mark.django_db
-def test_admin_can_patch_mls_number(admin_user, setup):
+def test_admin_can_patch_mls_number(admin_user):
     client = APIClient()
 
     address = Address(street_number='1518', street='Big Cove Road', postal_code='35801', locality='Huntsville',
@@ -356,7 +356,7 @@ def test_admin_can_patch_mls_number(admin_user, setup):
 
 
 @pytest.mark.django_db
-def test_admin_can_delete_mls_number(admin_user, setup):
+def test_admin_can_delete_mls_number(admin_user):
     client = APIClient()
 
     address = Address(street_number='1518', street='Big Cove Road', postal_code='35801', locality='Huntsville',
@@ -379,14 +379,14 @@ def test_admin_can_delete_mls_number(admin_user, setup):
 
 
 @pytest.mark.django_db
-def test_anyone_can_get_nearby_attractions(client, setup):
+def test_anyone_can_get_nearby_attractions(client):
     response: Response = client.get('/api/v1/nearby_attractions/')
     assert response.status_code == 200
     assert response.json() == []
 
 
 @pytest.mark.django_db
-def test_unauthenticated_cannot_create_nearby_attraction(client, setup):
+def test_unauthenticated_cannot_create_nearby_attraction(client):
     data = {'name': 'Movie Theater', 'type': 'ENTERTAINMENT'}
 
     response: Response = client.post('/api/v1/nearby_attractions/', data)
@@ -395,7 +395,7 @@ def test_unauthenticated_cannot_create_nearby_attraction(client, setup):
 
 
 @pytest.mark.django_db
-def test_admin_can_create_nearby_attractions(admin_user, setup):
+def test_admin_can_create_nearby_attractions(admin_user):
     client = APIClient()
 
     data = {'name': 'Movie Theater', 'type': 'ENTERTAINMENT'}
@@ -410,7 +410,7 @@ def test_admin_can_create_nearby_attractions(admin_user, setup):
 
 
 @pytest.mark.django_db
-def test_realtor_can_create_nearby_attractions(realtor_a, setup):
+def test_realtor_can_create_nearby_attractions(realtor_a):
     client = APIClient()
 
     data = {'name': 'Movie Theater', 'type': 'ENTERTAINMENT'}
@@ -424,7 +424,7 @@ def test_realtor_can_create_nearby_attractions(realtor_a, setup):
     assert json.loads(response.render().content) == {**data, 'id': 1}
 
 
-def test_realtor_can_create_listing(realtor_a, setup):
+def test_realtor_can_create_listing(realtor_a):
     client = APIClient()
 
     data = {
@@ -469,7 +469,7 @@ def test_realtor_can_create_listing(realtor_a, setup):
     assert listing.id == listing_data['id']
 
 
-def test_realtor_can_change_owned_listing(realtor_c, listing_a, setup):
+def test_realtor_can_change_owned_listing(realtor_c, listing_a):
     client = APIClient()
 
     data = {'agent': realtor_c[0].id}
@@ -483,7 +483,7 @@ def test_realtor_can_change_owned_listing(realtor_c, listing_a, setup):
     assert response.json() == listing_data
 
 
-def test_realtor_cannot_change_non_owned_listing(realtor_b, listing_a, setup):
+def test_realtor_cannot_change_non_owned_listing(realtor_b, listing_a):
     client = APIClient()
 
     data = {'agent': realtor_b[2].id}
@@ -494,7 +494,7 @@ def test_realtor_cannot_change_non_owned_listing(realtor_b, listing_a, setup):
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_realtor_cannot_change_non_owned_property(realtor_b, listing_a, setup):
+def test_realtor_cannot_change_non_owned_property(realtor_b, listing_a):
     client = APIClient()
 
     data = {'square_footage': 3000}
@@ -507,7 +507,7 @@ def test_realtor_cannot_change_non_owned_property(realtor_b, listing_a, setup):
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_anyone_can_access_policies(policy, setup, client):
+def test_anyone_can_access_policies(policy, client):
     policy_obj: IAMPolicy = policy[0]
 
     response: Response = client.get('/api/v1/iam_policies/{}/'.format(policy_obj.id))
@@ -551,7 +551,7 @@ def test_anyone_can_access_policies(policy, setup, client):
     assert first_condition_data.get('value') == first_condition_obj.value
 
 
-def test_anyone_cannot_create_access_policies(policy, setup, client):
+def test_anyone_cannot_create_access_policies(policy, client):
     policy_obj: IAMPolicy = policy[0]
     policy_data: dict = policy[1]
     policy_obj.delete()
@@ -561,7 +561,7 @@ def test_anyone_cannot_create_access_policies(policy, setup, client):
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_admin_can_create_access_policies(policy, setup, admin_user):
+def test_admin_can_create_access_policies(policy, admin_user):
     client = APIClient()
 
     policy_obj: IAMPolicy = policy[0]
@@ -573,7 +573,7 @@ def test_admin_can_create_access_policies(policy, setup, admin_user):
     assert response.status_code == status.HTTP_201_CREATED
 
 
-def test_filtering_agency_by_state_with_response(client, realtor_a, realtor_b, setup):
+def test_filtering_agency_by_state_with_response(client, realtor_a, realtor_b):
     _, agency_a, _, _ = realtor_a
     _, agency_b, _, _ = realtor_b
 
@@ -590,7 +590,7 @@ def test_filtering_agency_by_state_with_response(client, realtor_a, realtor_b, s
     assert agency_b.id not in response_ids
 
 
-def test_filtering_agency_by_state_with_empty_response(client, realtor_a, realtor_b, setup):
+def test_filtering_agency_by_state_with_empty_response(client, realtor_a, realtor_b):
     _, agency_a, _, _ = realtor_a
     _, agency_b, _, _ = realtor_b
 
@@ -607,7 +607,7 @@ def test_filtering_agency_by_state_with_empty_response(client, realtor_a, realto
     assert agency_b.id not in response_ids
 
 
-def test_filtering_agency_by_city_with_response(client, realtor_a, realtor_b, setup):
+def test_filtering_agency_by_city_with_response(client, realtor_a, realtor_b):
     _, agency_a, _, _ = realtor_a
     _, agency_b, _, _ = realtor_b
 
@@ -624,7 +624,7 @@ def test_filtering_agency_by_city_with_response(client, realtor_a, realtor_b, se
     assert agency_b.id not in response_ids
 
 
-def test_filtering_agency_by_city_with_empty_response(client, realtor_a, realtor_b, setup):
+def test_filtering_agency_by_city_with_empty_response(client, realtor_a, realtor_b):
     _, agency_a, _, _ = realtor_a
     _, agency_b, _, _ = realtor_b
 
@@ -641,7 +641,7 @@ def test_filtering_agency_by_city_with_empty_response(client, realtor_a, realtor
     assert agency_b.id not in response_ids
 
 
-def test_filtering_agency_by_city_and_state_with_response(client, realtor_a, realtor_b, setup):
+def test_filtering_agency_by_city_and_state_with_response(client, realtor_a, realtor_b):
     _, agency_a, _, _ = realtor_a
     _, agency_b, _, _ = realtor_b
 
@@ -658,7 +658,7 @@ def test_filtering_agency_by_city_and_state_with_response(client, realtor_a, rea
     assert agency_b.id not in response_ids
 
 
-def test_filtering_agency_by_city_and_state_with_empty_response(client, realtor_a, realtor_b, setup):
+def test_filtering_agency_by_city_and_state_with_empty_response(client, realtor_a, realtor_b):
     _, agency_a, _, _ = realtor_a
     _, agency_b, _, _ = realtor_b
 
@@ -675,7 +675,7 @@ def test_filtering_agency_by_city_and_state_with_empty_response(client, realtor_
     assert agency_b.id not in response_ids
 
 
-def test_filtering_property_by_min_asking_price(client, listing_a, listing_b, listing_c, listing_d, setup):
+def test_filtering_property_by_min_asking_price(client, listing_a, listing_b, listing_c, listing_d):
     response = client.get('/api/v1/listings/', {'asking_price_min': 600500})
 
     response_data = response.json()
@@ -691,7 +691,7 @@ def test_filtering_property_by_min_asking_price(client, listing_a, listing_b, li
     assert listing_d.id in response_ids
 
 
-def test_filtering_property_by_max_asking_price(client, listing_a, listing_b, listing_c, listing_d, setup):
+def test_filtering_property_by_max_asking_price(client, listing_a, listing_b, listing_c, listing_d):
     response = client.get('/api/v1/listings/', {'asking_price_max': 600500})
 
     response_data = response.json()
@@ -707,7 +707,7 @@ def test_filtering_property_by_max_asking_price(client, listing_a, listing_b, li
     assert listing_d.id not in response_ids
 
 
-def test_filtering_property_by_min_and_max_asking_price(client, listing_a, listing_b, listing_c, listing_d, setup):
+def test_filtering_property_by_min_and_max_asking_price(client, listing_a, listing_b, listing_c, listing_d):
     response = client.get('/api/v1/listings/', {'asking_price_min': 500500, 'asking_price_max': 700500})
 
     response_data = response.json()
@@ -723,7 +723,7 @@ def test_filtering_property_by_min_and_max_asking_price(client, listing_a, listi
     assert listing_d.id not in response_ids
 
 
-def test_filtering_property_by_min_square_footage(client, listing_a, listing_b, listing_c, listing_d, setup):
+def test_filtering_property_by_min_square_footage(client, listing_a, listing_b, listing_c, listing_d):
     response = client.get('/api/v1/listings/', {'square_footage_min': 3050})
 
     response_data = response.json()
@@ -739,7 +739,7 @@ def test_filtering_property_by_min_square_footage(client, listing_a, listing_b, 
     assert listing_d.id in response_ids
 
 
-def test_filtering_property_by_max_square_footage(client, listing_a, listing_b, listing_c, listing_d, setup):
+def test_filtering_property_by_max_square_footage(client, listing_a, listing_b, listing_c, listing_d):
     response = client.get('/api/v1/listings/', {'square_footage_max': 3050})
 
     response_data = response.json()
@@ -755,7 +755,7 @@ def test_filtering_property_by_max_square_footage(client, listing_a, listing_b, 
     assert listing_d.id not in response_ids
 
 
-def test_filtering_property_by_min_and_max_square_footage(client, listing_a, listing_b, listing_c, listing_d, setup):
+def test_filtering_property_by_min_and_max_square_footage(client, listing_a, listing_b, listing_c, listing_d):
     response = client.get('/api/v1/listings/', {'square_footage_min': 2750, 'square_footage_max': 4050})
 
     response_data = response.json()
@@ -771,7 +771,7 @@ def test_filtering_property_by_min_and_max_square_footage(client, listing_a, lis
     assert listing_d.id not in response_ids
 
 
-def test_filtering_property_by_zip_code(client, listing_a, listing_b, listing_c, listing_d, setup):
+def test_filtering_property_by_zip_code(client, listing_a, listing_b, listing_c, listing_d):
     response = client.get('/api/v1/listings/', {'zip_code': '35801'})
 
     response_data = response.json()
@@ -787,7 +787,7 @@ def test_filtering_property_by_zip_code(client, listing_a, listing_b, listing_c,
     assert listing_d.id not in response_ids
 
 
-def test_showing_can_precede(listing_a, showing_a_1, format_string, realtor_a, setup):
+def test_showing_can_precede(listing_a, showing_a_1, format_string, realtor_a):
     client = APIClient()
 
     realtor, _, _, token = realtor_a
@@ -806,7 +806,7 @@ def test_showing_can_precede(listing_a, showing_a_1, format_string, realtor_a, s
     assert response.status_code == status.HTTP_201_CREATED
 
 
-def test_showing_can_follow(listing_a, showing_a_1, format_string, realtor_b, setup):
+def test_showing_can_follow(listing_a, showing_a_1, format_string, realtor_b):
     client = APIClient()
 
     realtor, _, _, token = realtor_b
@@ -825,7 +825,7 @@ def test_showing_can_follow(listing_a, showing_a_1, format_string, realtor_b, se
     assert response.status_code == status.HTTP_201_CREATED
 
 
-def test_showing_cannot_overlap_early(listing_a, showing_a_1, format_string, realtor_b, setup):
+def test_showing_cannot_overlap_early(listing_a, showing_a_1, format_string, realtor_b):
     client = APIClient()
 
     realtor, _, _, token = realtor_b
@@ -844,7 +844,7 @@ def test_showing_cannot_overlap_early(listing_a, showing_a_1, format_string, rea
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-def test_showing_cannot_overlap_late(listing_a, showing_a_1, format_string, realtor_a, setup):
+def test_showing_cannot_overlap_late(listing_a, showing_a_1, format_string, realtor_a):
     client = APIClient()
 
     realtor, _, _, token = realtor_a
@@ -863,7 +863,7 @@ def test_showing_cannot_overlap_late(listing_a, showing_a_1, format_string, real
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-def test_showing_cannot_overlap_exact(listing_a, showing_a_1, format_string, realtor_a, setup):
+def test_showing_cannot_overlap_exact(listing_a, showing_a_1, format_string, realtor_a):
     client = APIClient()
 
     realtor, _, _, token = realtor_a

@@ -9,5 +9,7 @@ permissions_functions = [
 ]
 
 legal_functions = [
-    path(r'sales_contract/', generate_contracts.GenerateSalesContract.as_view(), name='generate_sales_contract'),
+    path(r'sales_contract/', generate_contracts.GenerateSalesContractView.as_view(), name='sales_contract'),
+    path(r'request_for_repairs/', generate_contracts.GenerateRequestForRepairsView.as_view(),
+         name='request_for_repairs'),
 ]

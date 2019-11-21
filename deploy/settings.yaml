@@ -44,6 +44,9 @@ default:
       ENGINE: django.db.backends.sqlite3
       NAME: db.sqlite3
 
+  # Templates for legal documents
+  LEGAL_TEMPLATES_DIRECTORY: deploy/templates/
+
   # logging
   LOGGING:
     version: 1
