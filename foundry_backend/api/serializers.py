@@ -181,6 +181,16 @@ class ShowingSerializer(serializers.ModelSerializer):
         fields = ['id', 'agent', 'end_time', 'start_time']
 
 
+class SalesContractSerializer(serializers.Serializer):
+    address = serializers.CharField()
+    seller = serializers.CharField()
+    buyer = serializers.CharField()
+    buyer_name = serializers.CharField()
+    price = serializers.CharField()
+    deposit = serializers.CharField()
+    closing_date = serializers.CharField()
+
+
 class EnableRealtorSerializer(serializers.Serializer):
     mls_number = serializers.CharField(max_length=15, help_text="The MLS Number for the realtor being registered")
     user = serializers.IntegerField(help_text="The user to associate as a realtor")

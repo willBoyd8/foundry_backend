@@ -2,7 +2,8 @@ from django.conf.urls import url
 from django.urls import include, path
 from rest_framework_nested import routers
 from foundry_backend.api import views
-from .endpoints import permissions_functions
+from .endpoints import permissions_functions, legal_functions
+
 base_router = routers.SimpleRouter()
 
 # register Avatars

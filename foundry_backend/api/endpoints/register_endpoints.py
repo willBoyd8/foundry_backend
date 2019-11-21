@@ -1,5 +1,3 @@
-import coreapi
-import coreschema
 from django.contrib.auth.models import Group, User
 from drf_yasg import views
 from rest_framework.exceptions import ValidationError
