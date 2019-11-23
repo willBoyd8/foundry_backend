@@ -10,7 +10,7 @@ from rest_framework.test import APIClient
 from rest_framework.utils import json
 from foundry_backend.api import views, serializers
 from foundry_backend.api.models import IAMPolicy
-from foundry_backend.database.models import Agency, MLSNumber, Listing, Address
+from foundry_backend.database.models import Agency, MLSNumber, Listing, Address, UserMessage, NearbyAttraction
 
 
 def check_list_equal(first: List, second: List):
@@ -32,8 +32,64 @@ def test_agency_redirect(client):
     assert response.status_code == 301
 
 
-def test_agency_permission(setup):
+def test_agency_permission():
     assert type(views.AgencyViewSet().access_policy()).__name__ == 'AgencyAccessPolicy'
+
+
+def test_user_message_permission():
+    assert type(views.UserMessageViewSet().access_policy()).__name__ == 'UserMessageAccessPolicy'
+
+
+def test_avatar_permission():
+    assert type(views.AvatarViewSet().access_policy()).__name__ == 'AvatarAccessPolicy'
+
+
+def test_mls_number_permission():
+    assert type(views.MLSNumberViewSet().access_policy()).__name__ == 'MLSNumberAccessPolicy'
+
+
+def test_all_mls_number_permission():
+    assert type(views.AllMLSNumbersViewSet().access_policy()).__name__ == 'MLSNumberAccessPolicy'
+
+
+def test_nearby_attraction_permission():
+    assert type(views.NearbyAttractionViewSet().access_policy()).__name__ == 'RealtorAdminAccessPolicy'
+
+
+def test_property_permission():
+    assert type(views.PropertyViewSet().access_policy()).__name__ == 'InterAgencyListingAccessPolicy'
+
+
+def test_nearby_attraction_property_connector_permission():
+    assert type(views.NearbyAttractionPropertyConnectorViewSet().access_policy()).__name__ == 'RealtorAdminAccessPolicy'
+
+
+def test_listing_permission():
+    assert type(views.ListingViewSet().access_policy()).__name__ == 'InterAgencyListingAccessPolicy'
+
+
+def test_listings_hit_permission():
+    assert type(views.ListingsHitViewSet().access_policy()).__name__ == 'ListingsHitAccessPolicy'
+
+
+def test_listing_image_permission():
+    assert type(views.ListingImageViewSet().access_policy()).__name__ == 'InterAgencyListingAccessPolicy'
+
+
+def test_iam_policy_permission():
+    assert type(views.IAMPolicyViewSet().access_policy()).__name__ == 'IAMPolicyAccessPolicy'
+
+
+def test_iam_policy_statement_permission():
+    assert type(views.IAMPolicyStatementViewSet().access_policy()).__name__ == 'IAMPolicyAccessPolicy'
+    
+
+def test_iam_policy_statement_principal_permission():
+    assert type(views.IAMPolicyStatementPrincipalViewSet().access_policy()).__name__ == 'IAMPolicyAccessPolicy'
+
+
+def test_iam_policy_statement_condition_permission():
+    assert type(views.IAMPolicyStatementConditionViewSet().access_policy()).__name__ == 'IAMPolicyAccessPolicy'
 
 
 @pytest.mark.django_db
@@ -52,7 +108,7 @@ def test_unauthenticated_cannot_create_agency(client):
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-@pytest.mark.django_db
+
 def test_admin_can_create_agency(admin_user):
     client = APIClient()
 
@@ -274,6 +330,17 @@ def test_admin_can_create_mls_number(client, admin_user):
 
 
 @pytest.mark.django_db
+def test_admin_cannot_create_duplicate_mls_number(client, admin_user, realtor_a):
+    realtor, _, mls_number, _ = realtor_a
+
+    data = {'user': realtor.id}
+    response = perform_api_action(client.post, data, '/api/v1/agencies/{}/mls_numbers/'.format(mls_number.agency.id),
+                                  admin_user[1])
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
 def test_admin_can_put_mls_number(admin_user):
     client = APIClient()
 
@@ -422,6 +489,111 @@ def test_realtor_can_create_nearby_attractions(realtor_a):
 
     assert response.status_code == status.HTTP_201_CREATED
     assert json.loads(response.render().content) == {**data, 'id': 1}
+
+
+def test_listing_duplicate_rooms_caught(realtor_a):
+    client = APIClient()
+
+    data = {
+        'agent': realtor_a[0].id,
+        'asking_price': 500000,
+        'description': 'Custom built home with lots of light and a beautiful treed '
+                       'lot. Hardwoods in the formals plus a study & library that '
+                       'open to a rear flagstone patio. Formerly owned by Dr. Wernher '
+                       'von Braun.',
+        'property': {
+            'address': {
+                'street_number': '1516',
+                'street': 'Big Cove Road',
+                'locality': 'Huntsville',
+                'postal_code': '35801',
+                'state': 'Alabama',
+                'state_code': 'AL'
+            },
+            'square_footage': 2750,
+            'acreage': 1.25,
+            'type': 'HOUSE',
+            'rooms': [
+                {
+                    'name': 'Master Bedroom',
+                    'description': 'Nice room with view of backyard',
+                    'type': 'BEDROOM'
+                },
+                {
+                    'name': 'Master Bedroom',
+                    'type': 'BEDROOM'
+                }
+            ],
+            'nearby_attractions': [],
+            'home_alarm': {
+                'arm_code': '1234',
+                'disarm_code': '2345',
+                'password': 'password',
+                'notes': 'Don\'t push the red button...'
+            }
+        }
+    }
+
+    response = perform_api_action(client.post, data, '/api/v1/listings/', realtor_a[3])
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    assert response.json() == {'property': {'rooms': ['Room names must be unique']}}
+
+
+def test_listing_duplicate_attractions_caught(realtor_a):
+    client = APIClient()
+
+    data = {
+        'agent': realtor_a[0].id,
+        'asking_price': 500000,
+        'description': 'Custom built home with lots of light and a beautiful treed '
+                       'lot. Hardwoods in the formals plus a study & library that '
+                       'open to a rear flagstone patio. Formerly owned by Dr. Wernher '
+                       'von Braun.',
+        'property': {
+            'address': {
+                'street_number': '1516',
+                'street': 'Big Cove Road',
+                'locality': 'Huntsville',
+                'postal_code': '35801',
+                'state': 'Alabama',
+                'state_code': 'AL'
+            },
+            'square_footage': 2750,
+            'acreage': 1.25,
+            'type': 'HOUSE',
+            'rooms': [
+                {
+                    'name': 'Master Bedroom',
+                    'description': 'Nice room with view of backyard',
+                    'type': 'BEDROOM'
+                }
+            ],
+            'nearby_attractions': [
+                {
+                    'name': 'Some School',
+                    'type': 'SCHOOL_PRIVATE'
+                },
+                {
+                    'name': 'Some School',
+                    'type': 'SCHOOL_ELEM'
+                }
+            ],
+            'home_alarm': {
+                'arm_code': '1234',
+                'disarm_code': '2345',
+                'password': 'password',
+                'notes': 'Don\'t push the red button...'
+            }
+        }
+    }
+
+    response = perform_api_action(client.post, data, '/api/v1/listings/', realtor_a[3])
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    assert response.json() == {'property': {'nearby_attractions': ['Nearby Attraction names must be unique']}}
 
 
 def test_realtor_can_create_listing(realtor_a):
@@ -880,3 +1052,136 @@ def test_showing_cannot_overlap_exact(listing_a, showing_a_1, format_string, rea
     response = perform_api_action(client.post, data, '/api/v1/listings/{}/showings/'.format(listing_a.id), token)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+def test_user_can_retrieve_own_messages(realtor_a):
+    client = APIClient()
+
+    realtor, _, _, token = realtor_a
+
+    messages = UserMessage.objects.filter(user_id=realtor)
+
+    response = perform_api_action(client.get, {}, '/api/v1/messages/', token)
+
+    response_ids = [r.get('id') for r in response.json()]
+    message_ids = [m.id for m in messages]
+
+    assert response.status_code == status.HTTP_200_OK
+    assert message_ids == response_ids
+
+
+def test_user_can_retrieve_specific_message(realtor_a):
+    client = APIClient()
+
+    realtor, _, _, token = realtor_a
+
+    message = UserMessage.objects.filter(user_id=realtor).first()
+
+    response = perform_api_action(client.get, {}, '/api/v1/messages/{}/'.format(message.id), token)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json().get('id') == message.id
+
+
+def test_user_cannot_retrieve_other_messages(realtor_a, realtor_b):
+    client = APIClient()
+
+    realtor, _, _, token = realtor_b
+
+    messages = UserMessage.objects.filter(user_id=realtor)
+
+    response = perform_api_action(client.get, {}, '/api/v1/messages/', token)
+
+    response_ids = [r.get('id') for r in response.json()]
+    message_ids = [m.id for m in messages]
+
+    assert response.status_code == status.HTTP_200_OK
+    assert message_ids == response_ids
+
+
+def test_user_cannot_retrieve_other_specific_message(realtor_a, realtor_b):
+    client = APIClient()
+
+    realtor, _, _, _ = realtor_a
+    _, _, _, token = realtor_b
+
+    message = UserMessage.objects.filter(user_id=realtor).first()
+
+    response = perform_api_action(client.get, {}, '/api/v1/messages/{}/'.format(message.id), token)
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db
+def test_unauthenticated_user_has_no_messages(client):
+    response: Response = client.get('/api/v1/messages/')
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_realtor_can_add_nearby_attraction(realtor_a, listing_a):
+    client = APIClient()
+
+    realtor, _, _, token = realtor_a
+
+    data = {'name': 'Some Middle School', 'type': 'SCHOOL_MIDDLE'}
+
+    response = perform_api_action(
+        client.post,
+        data,
+        '/api/v1/listings/{}/property/{}/nearby_attractions/'.format(listing_a.id, listing_a.property.id),
+        token
+    )
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+    assert response.json() == {**data}
+
+
+def test_realtor_can_add_room(realtor_a, listing_a):
+    client = APIClient()
+
+    realtor, _, _, token = realtor_a
+
+    data = {'name': 'Guest Kitchen', 'type': 'KITCHEN', 'description': 'Recently Updated'}
+
+    response = perform_api_action(
+        client.post,
+        data,
+        '/api/v1/listings/{}/property/{}/rooms/'.format(listing_a.id, listing_a.property.id),
+        token
+    )
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+    assert response.json() == {**data}
+
+
+def test_invalid_room_type_caught(realtor_a, listing_a):
+    client = APIClient()
+
+    realtor, _, _, token = realtor_a
+
+    data = {
+        'name': 'Parlor',
+        'description': 'Who has these anymore?',
+        'type': 'PARLOR'
+    }
+
+    response = perform_api_action(
+        client.post,
+        data,
+        '/api/v1/listings/{}/property/{}/rooms/'.format(listing_a.id, listing_a.property.id),
+        token
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+def test_anyone_can_get_rooms(client, listing_a):
+    response: Response = client.get(
+        '/api/v1/listings/{}/property/{}/rooms/'.format(listing_a.id, listing_a.property.id)
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    assert [r.get('id') for r in response.json()] == [r.id for r in listing_a.property.rooms.all()]

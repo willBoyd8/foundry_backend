@@ -162,13 +162,13 @@ class PropertyViewSet(viewsets.ModelViewSet):
     queryset = db_models.Property.objects.all()
     serializer_class = serializers.PropertySerializer
 
-    def perform_create(self, serializer: serializers.PropertySerializer):
-        serializer = serializers.FullPropertySerializer(data={**serializer.data, 'listing': self.kwargs['listing_pk']})
-
-        if serializer.is_valid():
-            serializer.save()
-        else:
-            raise ValidationError(serializer.errors)
+    # def perform_create(self, serializer: serializers.PropertySerializer):
+    #     serializer = serializers.FullPropertySerializer(data={**serializer.data, 'listing': self.kwargs['listing_pk']})
+    #
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #     else:
+    #         raise ValidationError(serializer.errors)
 
 
 class NearbyAttractionPropertyConnectorViewSet(viewsets.ModelViewSet):
@@ -243,7 +243,7 @@ class RoomViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.kwargs.get('property_pk') is not None:
-            return Room.objects.filter(listing=self.kwargs['property_pk'])
+            return Room.objects.filter(property=self.kwargs['property_pk'])
 
     def perform_create(self, serializer: serializers.RoomSerializer):
         serializer = serializers.FullRoomSerializer(data={**serializer.data, 'property': self.kwargs['property_pk']})

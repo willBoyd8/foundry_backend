@@ -25,8 +25,7 @@
       {
         "notes": "Allow anyone to list or retrieve protected elements",
         "actions": [
-          "list",
-          "retrieve"
+          "safe"
         ],
         "effect": "allow",
         "principals": [
@@ -58,7 +57,8 @@
       {
         "notes": "Allow anyone to post messages",
         "actions": [
-          "create", "list", "retrieve"
+          "create",
+          "safe"
         ],
         "effect": "allow",
         "principals": [
@@ -70,14 +70,22 @@
       },
       {
         "notes": "Allow a user manage their own messages",
-        "actions": ["update", "partial_update", "delete"],
+        "actions": [
+          "update",
+          "partial_update",
+          "delete"
+        ],
         "effect": "allow",
         "principals": [
           {
             "value": "*"
           }
         ],
-        "conditions": [{"value": "is_owner_of_user_message"}]
+        "conditions": [
+          {
+            "value": "is_owner_of_user_message"
+          }
+        ]
       },
       {
         "notes": "Allow admins to do anything",
@@ -101,7 +109,7 @@
       {
         "notes": "Allow anyone to see avatars",
         "actions": [
-          "list", "retrieve"
+          "safe"
         ],
         "effect": "allow",
         "principals": [
@@ -124,7 +132,11 @@
             "value": "*"
           }
         ],
-        "conditions": [{"value": "is_owner_of_avatar"}]
+        "conditions": [
+          {
+            "value": "is_owner_of_avatar"
+          }
+        ]
       },
       {
         "notes": "Allow admins to do anything",
@@ -148,8 +160,7 @@
       {
         "notes": "Allow anyone to list or retrieve agencies",
         "actions": [
-          "list",
-          "retrieve"
+          "safe"
         ],
         "effect": "allow",
         "principals": [
@@ -199,8 +210,7 @@
       {
         "notes": "Allow realtors to create, update, and delete if they are member to this agency",
         "actions": [
-          "list",
-          "retrieve",
+          "safe",
           "create",
           "update",
           "delete"
@@ -239,8 +249,7 @@
       {
         "notes": "Allow anyone to list or retrieve listing elements",
         "actions": [
-          "list",
-          "retrieve"
+          "safe"
         ],
         "effect": "allow",
         "principals": [
@@ -258,8 +267,16 @@
           "delete"
         ],
         "effect": "allow",
-        "principals": [{"value": "group:realtor"}],
-        "conditions": [{"value": "property_belongs_to_agency"}]
+        "principals": [
+          {
+            "value": "group:realtor"
+          }
+        ],
+        "conditions": [
+          {
+            "value": "property_belongs_to_agency"
+          }
+        ]
       },
       {
         "notes": "Allow realtors to create listings",
@@ -296,8 +313,7 @@
       {
         "notes": "Allow anyone to list or retrieve MLS Numbers",
         "actions": [
-          "list",
-          "retrieve"
+          "safe"
         ],
         "effect": "allow",
         "principals": [
@@ -328,16 +344,28 @@
     "statements": [
       {
         "notes": "Allow anyone to list showings",
-        "actions": ["list", "retrieve"],
+        "actions": [
+          "safe"
+        ],
         "effect": "allow",
-        "principals": [{"value": "*"}],
+        "principals": [
+          {
+            "value": "*"
+          }
+        ],
         "conditions": []
       },
       {
         "notes": "Allow admins to do anything",
-        "actions": ["all"],
+        "actions": [
+          "all"
+        ],
         "effect": "allow",
-        "principals": [{"value":  "group:admin"}],
+        "principals": [
+          {
+            "value": "group:admin"
+          }
+        ],
         "conditions": []
       },
       {
@@ -355,10 +383,22 @@
       },
       {
         "notes": "Allow realtors to modify showings for their own agency",
-        "actions": ["update", "partial_update", "delete"],
+        "actions": [
+          "update",
+          "partial_update",
+          "delete"
+        ],
         "effect": "allow",
-        "principals": [{"value": "group:realtor"}],
-        "conditions": [{"value": "can_modify_showing"}]
+        "principals": [
+          {
+            "value": "group:realtor"
+          }
+        ],
+        "conditions": [
+          {
+            "value": "can_modify_showing"
+          }
+        ]
       }
     ]
   },
@@ -369,8 +409,7 @@
       {
         "notes": "Allow anyone to list or retrieve protected elements",
         "actions": [
-          "list",
-          "retrieve"
+          "safe"
         ],
         "effect": "allow",
         "principals": [

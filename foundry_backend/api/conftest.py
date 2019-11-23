@@ -5,12 +5,7 @@ from rest_framework.authtoken.models import Token
 from foundry_backend.api.models import IAMPolicy, IAMPolicyStatement, IAMPolicyStatementPrincipal, \
     IAMPolicyStatementCondition
 from foundry_backend.database import models
-from foundry_backend.database.models import MLSNumber, Agency, Address
-
-
-@pytest.fixture
-def setup(db):
-    pass
+from foundry_backend.database.models import MLSNumber, Agency, Address, UserMessage
 
 
 @pytest.fixture
@@ -53,6 +48,18 @@ def realtor_a(db):
     mls.save()
     token.save()
 
+    _ = UserMessage.objects.create(
+        user_id=realtor.id,
+        message='Someone wants to see \'1600 Pennsylvania Avenue\'!',
+        type='SHOWING'
+    )
+
+    _ = UserMessage.objects.create(
+        user_id=realtor.id,
+        message='On January 1st, 2020, 17 people viewed  \'1600 Pennsylvania Avenue\'!',
+        type='HITS'
+    )
+
     realtor_group = Group.objects.get_or_create(name='realtor')[0]
     realtor_group.save()
 
@@ -77,6 +84,12 @@ def realtor_b(db):
     realtor.save()
     mls.save()
     token.save()
+
+    _ = UserMessage.objects.create(
+        user_id=realtor.id,
+        message='Someone wants to see \'11 Wall Street\'!',
+        type='SHOWING'
+    )
 
     realtor_group = Group.objects.get_or_create(name='realtor')[0]
     realtor_group.save()
