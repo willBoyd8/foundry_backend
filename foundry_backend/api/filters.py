@@ -14,11 +14,16 @@ class ListingFilterSet(django_filters.FilterSet):
 
     zip_code = django_filters.CharFilter(field_name='property__address__postal_code', lookup_expr='exact')
 
+    open = django_filters.BooleanFilter(field_name='open', lookup_expr='exact')
+
     class Meta:
         model = models.Listing
-        fields = ['asking_price_min', 'asking_price', 'asking_price_max',
-                  'square_footage_min', 'square_footage', 'square_footage_max',
-                  'zip_code']
+        fields = [
+            'asking_price_min', 'asking_price', 'asking_price_max',
+            'square_footage_min', 'square_footage', 'square_footage_max',
+            'zip_code',
+            'open'
+        ]
 
 
 class ListingsHitFilterSet(django_filters.FilterSet):

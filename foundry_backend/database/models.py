@@ -107,6 +107,8 @@ class Listing(models.Model):
     asking_price = models.IntegerField(validators=[MinValueValidator(0)])
     description = models.TextField()
     agent = models.ForeignKey(MLSNumber, on_delete=models.CASCADE)
+    date_posted = models.DateTimeField(auto_now_add=True)
+    open = models.BooleanField(default=True)
 
 
 class ListingsHit(models.Model):
@@ -164,8 +166,7 @@ class NearbyAttraction(models.Model):
         ('ENTERTAINMENT', 'Entertainment Area'),
     )
 
-    properties = models.ManyToManyField(Property,  blank=True, related_name='nearby_attractions',
-                                        through="NearbyAttractionPropertyConnector")
+    property = models.ForeignKey(Property, related_name='nearby_attractions', on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     type = models.CharField(max_length=15, choices=NEARBY_ATTRACTION_TYPES)
 

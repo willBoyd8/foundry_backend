@@ -42,8 +42,8 @@ property_router.register(r'rooms', views.RoomViewSet)
 property_router.register(r'nearby_attractions', views.NearbyAttractionViewSet)
 property_router.register(r'home_alarms', views.HomeAlarmViewSet)
 
-# register nearby attractions
-base_router.register(r'nearby_attractions', views.AllNearbyAttractionsViewSet)
+# # register nearby attractions
+# base_router.register(r'nearby_attractions', views.AllNearbyAttractionsViewSet)
 
 # register showing reviews
 base_router.register(r'showing_reviews', views.ShowingReviewViewSet)

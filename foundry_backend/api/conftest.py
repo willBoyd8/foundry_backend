@@ -228,6 +228,32 @@ def listing_d(realtor_a):
 
 
 @pytest.fixture
+def listing_e(realtor_b):
+    address = models.Address.objects.create(street_number='256',
+                                            street='Someplace Drive',
+                                            postal_code='35802',
+                                            locality='Huntsville',
+                                            state_code='AL',
+                                            state='Alabama')
+
+    listing = models.Listing.objects.create(
+        asking_price=800000,
+        agent=realtor_b[2],
+        description='It\'s not for sale',
+        open=False
+    )
+
+    prop = models.Property.objects.create(address=address, type='HOUSE', square_footage='5000', acreage=0.25,
+                                          listing=listing)
+
+    address.save()
+    prop.save()
+    listing.save()
+
+    return listing
+
+
+@pytest.fixture
 def policy(db):
     policy = IAMPolicy.objects.create(name='an-example-policy', notes='Does some stuff')
     statement = IAMPolicyStatement.objects.create(notes='A policy', policy=policy,

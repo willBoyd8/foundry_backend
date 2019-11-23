@@ -82,8 +82,8 @@ class MLSNumberViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
             serializer.save()
-        else:
-            raise ValidationError(serializer.errors)
+
+        return serializer.errors
 
     queryset = db_models.MLSNumber.objects.all()
     serializer_class = serializers.MLSNumberSerializer
@@ -105,23 +105,6 @@ class AllMLSNumbersViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, vie
     filterset_class = MLSNumberFilterSet
 
 
-class AllNearbyAttractionsViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint for nearby attractions globally
-    """
-    permission_classes = (make_access_policy('RealtorAdmin', 'realtor-admin-access-policy'),)
-
-    @property
-    def access_policy(self):
-        return self.permission_classes[0]
-
-    def get_queryset(self):
-        return NearbyAttraction.objects.all()
-
-    queryset = db_models.NearbyAttraction.objects.all()
-    serializer_class = serializers.NearbyAttractionSerializer
-
-
 class NearbyAttractionViewSet(viewsets.ModelViewSet):
     """
     API Endpoint for Subdivisions
@@ -134,7 +117,8 @@ class NearbyAttractionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.kwargs.get('property_pk') is not None:
-            return Listing.objects.filter(listing=self.kwargs['property'])
+            # return Listing.objects.filter(property=self.kwargs['property_pk'])
+            return NearbyAttraction.objects.filter(property=self.kwargs['property_pk'])
 
     def perform_create(self, serializer: serializers.NearbyAttractionSerializer):
         serializer = serializers.FullNearbyAttractionSerializer(data={**serializer.data,
@@ -142,8 +126,8 @@ class NearbyAttractionViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
             serializer.save()
-        else:
-            raise ValidationError(serializer.errors)
+
+        return serializer.errors
 
     queryset = db_models.NearbyAttraction.objects.all()
     serializer_class = serializers.NearbyAttractionSerializer
@@ -197,7 +181,7 @@ class ListingViewSet(viewsets.ModelViewSet):
 
     filterset_class = ListingFilterSet
 
-    queryset = db_models.Listing.objects.all()
+    queryset = db_models.Listing.objects.filter()
     serializer_class = serializers.ListingSerializer
 
 
@@ -250,8 +234,8 @@ class RoomViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
             serializer.save()
-        else:
-            raise ValidationError(serializer.errors)
+
+        return serializer.errors
 
 
 class HomeAlarmViewSet(mixins.CreateModelMixin,
@@ -277,17 +261,6 @@ class HomeAlarmViewSet(mixins.CreateModelMixin,
     queryset = db_models.HomeAlarm.objects.all()
     serializer_class = serializers.HomeAlarmSerializer
 
-    def perform_create(self, serializer: serializers.HomeAlarmSerializer):
-        serializer = serializers.FullHomeAlarmSerializer(data={
-            **serializer.data,
-            'property': self.kwargs['property_pk']
-        })
-
-        if serializer.is_valid():
-            serializer.save()
-        else:
-            raise ValidationError(serializer.errors)
-
 
 class ShowingViewSet(viewsets.ModelViewSet):
     """
@@ -307,8 +280,8 @@ class ShowingViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
             serializer.save()
-        else:
-            raise ValidationError(serializer.errors)
+
+        return serializer.errors
 
 
 class ShowingReviewViewSet(viewsets.ModelViewSet):
@@ -361,8 +334,8 @@ class IAMPolicyStatementViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
             serializer.save()
-        else:
-            raise ValidationError(serializer.errors)
+
+        return serializer.errors
 
 
 class IAMPolicyStatementPrincipalViewSet(viewsets.ModelViewSet):
@@ -385,8 +358,8 @@ class IAMPolicyStatementPrincipalViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
             serializer.save()
-        else:
-            raise ValidationError(serializer.errors)
+
+        return serializer.errors
 
 
 class IAMPolicyStatementConditionViewSet(viewsets.ModelViewSet):
@@ -409,5 +382,5 @@ class IAMPolicyStatementConditionViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
             serializer.save()
-        else:
-            raise ValidationError(serializer.errors)
+
+        return serializer.errors

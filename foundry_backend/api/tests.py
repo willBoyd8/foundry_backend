@@ -92,6 +92,22 @@ def test_iam_policy_statement_condition_permission():
     assert type(views.IAMPolicyStatementConditionViewSet().access_policy()).__name__ == 'IAMPolicyAccessPolicy'
 
 
+def test_showing_permission():
+    assert type(views.ShowingViewSet().access_policy()).__name__ == 'ShowingAccessPolicy'
+
+
+def test_showing_review_permission():
+    assert type(views.ShowingReviewViewSet().access_policy()).__name__ == 'ShowingReviewAccessPolicy'
+
+
+# def test_all_nearby_attractions_permission():
+#     assert type(views.AllNearbyAttractionsViewSet().access_policy()).__name__ == 'RealtorAdminAccessPolicy'
+
+
+def test_home_alarm_permission():
+    assert type(views.HomeAlarmViewSet().access_policy()).__name__ == 'HomeAlarmAccessPolicy'
+
+
 @pytest.mark.django_db
 def test_anyone_can_get_agencies(client):
     response: Response = client.get('/api/v1/agencies/')
@@ -445,50 +461,75 @@ def test_admin_can_delete_mls_number(admin_user):
     assert not MLSNumber.objects.filter(id=mls.id).exists()
 
 
-@pytest.mark.django_db
-def test_anyone_can_get_nearby_attractions(client):
-    response: Response = client.get('/api/v1/nearby_attractions/')
-    assert response.status_code == 200
-    assert response.json() == []
+# @pytest.mark.django_db
+# def test_anyone_can_get_nearby_attractions(client):
+#     response: Response = client.get('/api/v1/nearby_attractions/')
+#     assert response.status_code == 200
+#     assert response.json() == []
 
 
+def test_anyone_can_get_listing_nearby_attractions(client, listing_a: Listing):
+    response: Response = client.get(
+        '/api/v1/listings/{}/property/{}/nearby_attractions/'.format(listing_a.id, listing_a.property.id)
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+
+    nearby_attraction_ids = [attraction.id for attraction in listing_a.property.nearby_attractions.all()]
+    response_ids = [attraction.get('id') for attraction in response.json()]
+
+    assert response_ids == nearby_attraction_ids
+
 @pytest.mark.django_db
-def test_unauthenticated_cannot_create_nearby_attraction(client):
+def test_unauthenticated_cannot_create_nearby_attraction(client, listing_a):
     data = {'name': 'Movie Theater', 'type': 'ENTERTAINMENT'}
 
-    response: Response = client.post('/api/v1/nearby_attractions/', data)
+    response: Response = client.post(
+        '/api/v1/listings/{}/property/{}/nearby_attractions/'.format(listing_a.id, listing_a.property.id),
+        data
+    )
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 @pytest.mark.django_db
-def test_admin_can_create_nearby_attractions(admin_user):
+def test_admin_can_create_nearby_attractions(admin_user, listing_a):
     client = APIClient()
 
     data = {'name': 'Movie Theater', 'type': 'ENTERTAINMENT'}
 
-    response = perform_creation(admin_user[1],
-                                client,
-                                data,
-                                '/api/v1/nearby_attractions/')
+    response = perform_creation(
+        admin_user[1],
+        client,
+        data,
+        '/api/v1/listings/{}/property/{}/nearby_attractions/'.format(
+            listing_a.id,
+            listing_a.property.id
+        )
+    )
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert json.loads(response.render().content) == {**data, 'id': 1}
+    assert json.loads(response.render().content) == {**data}
 
 
 @pytest.mark.django_db
-def test_realtor_can_create_nearby_attractions(realtor_a):
+def test_realtor_can_create_nearby_attractions(realtor_a, listing_a):
     client = APIClient()
 
     data = {'name': 'Movie Theater', 'type': 'ENTERTAINMENT'}
 
-    response = perform_creation(realtor_a[3],
-                                client,
-                                data,
-                                '/api/v1/nearby_attractions/')
+    response = perform_creation(
+        realtor_a[3],
+        client,
+        data,
+        '/api/v1/listings/{}/property/{}/nearby_attractions/'.format(
+            listing_a.id,
+            listing_a.property.id
+        )
+    )
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert json.loads(response.render().content) == {**data, 'id': 1}
+    assert json.loads(response.render().content) == {**data}
 
 
 def test_listing_duplicate_rooms_caught(realtor_a):
@@ -594,6 +635,45 @@ def test_listing_duplicate_attractions_caught(realtor_a):
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     assert response.json() == {'property': {'nearby_attractions': ['Nearby Attraction names must be unique']}}
+
+
+def test_anyone_can_get_listing(client, listing_a, listing_b, listing_c, listing_d, listing_e):
+    response: Response = client.get('/api/v1/listings/')
+
+    listing_ids = [r.get('id') for r in response.json()]
+
+    assert response.status_code == status.HTTP_200_OK
+    assert listing_a.id in listing_ids
+    assert listing_b.id in listing_ids
+    assert listing_c.id in listing_ids
+    assert listing_d.id in listing_ids
+    assert listing_e.id in listing_ids
+
+
+def test_filter_listing_by_open_state(client, listing_a, listing_b, listing_c, listing_d, listing_e):
+    response: Response = client.get('/api/v1/listings/', {'open': True})
+
+    listing_ids = [r.get('id') for r in response.json()]
+
+    assert response.status_code == status.HTTP_200_OK
+    assert listing_a.id in listing_ids
+    assert listing_b.id in listing_ids
+    assert listing_c.id in listing_ids
+    assert listing_d.id in listing_ids
+    assert listing_e.id not in listing_ids
+
+
+def test_filter_listing_by_closed_state(client, listing_a, listing_b, listing_c, listing_d, listing_e):
+    response: Response = client.get('/api/v1/listings/', {'open': False})
+
+    listing_ids = [r.get('id') for r in response.json()]
+
+    assert response.status_code == status.HTTP_200_OK
+    assert listing_a.id not in listing_ids
+    assert listing_b.id not in listing_ids
+    assert listing_c.id not in listing_ids
+    assert listing_d.id not in listing_ids
+    assert listing_e.id in listing_ids
 
 
 def test_realtor_can_create_listing(realtor_a):
