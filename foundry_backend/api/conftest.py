@@ -19,14 +19,20 @@ def format_string():
 
 
 @pytest.fixture
-def admin_user(db, setup):
+def admin_user(db):
     # make the user and group, with a token
-    user = User.objects.filter(username='admin').first()
+    user, _ = User.objects.get_or_create(username='admin', email='admin@email.com', password='password')
     token = Token.objects.create(user=user)
+
+    user.is_staff = True
+    user.is_superuser = True
 
     user.save()
     token.save()
-
+    admin_group = Group.objects.get_or_create(name='admin')[0]
+    admin_group.save()
+    admin_group.user_set.add(user)
+    admin_group.save()
     return user, token
 
 

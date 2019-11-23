@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from djoser.serializers import UserCreateSerializer
 from drf_writable_nested import WritableNestedModelSerializer
+from rest_framework.exceptions import ValidationError
 from rest_framework.fields import MultipleChoiceField
 from foundry_backend.api import models
 from foundry_backend.database import models as db_models
@@ -123,6 +124,24 @@ class PropertySerializer(WritableNestedModelSerializer):
     rooms = RoomSerializer(many=True)
     nearby_attractions = NearbyAttractionSerializer(many=True)
     home_alarm = HomeAlarmSerializer(write_only=True)
+
+    @staticmethod
+    def validate_rooms(value):
+        room_names = [v['name'] for v in value]
+
+        if len(room_names) is not len(set(room_names)):
+            raise ValidationError('Room names must be unique')
+
+        return value
+
+    @staticmethod
+    def validate_nearby_attractions(value):
+        attraction_names = [v['name'] for v in value]
+
+        if len(attraction_names) is not len(set(attraction_names)):
+            raise ValidationError('Nearby Attraction names must be unique')
+
+        return value
 
     class Meta:
         model = db_models.Property
