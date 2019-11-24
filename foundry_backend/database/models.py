@@ -22,9 +22,9 @@ class UserMessage(models.Model):
     read = models.BooleanField(default=False, blank=True)
 
 
-def avatar_path_generator(_, filename):
+def avatar_path_generator(_, filename, generator=uuid.uuid4):
     extension = filename.split(".")[-1]
-    return "avatars/{}.{}".format(uuid.uuid4(), extension)
+    return "avatars/{}.{}".format(generator(), extension)
 
 
 class Avatar(models.Model):
@@ -119,9 +119,9 @@ class ListingsHit(models.Model):
     access_time = models.DateTimeField(auto_now_add=True)
 
 
-def listing_path_generator(_, filename):
+def listing_path_generator(_, filename, generator=uuid.uuid4):
     extension = filename.split(".")[-1]
-    return "listings/{}.{}".format(uuid.uuid4(), extension)
+    return "listings/{}.{}".format(generator(), extension)
 
 
 class ListingImage(models.Model):

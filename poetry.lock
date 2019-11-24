@@ -187,6 +187,18 @@ setuptools = "*"
 
 [[package]]
 category = "main"
+description = "APScheduler for Django"
+name = "django-apscheduler"
+optional = false
+python-versions = "*"
+version = "0.3.0"
+
+[package.dependencies]
+apscheduler = ">=3.2.0"
+django = ">=1.11"
+
+[[package]]
+category = "main"
 description = "django-cors-headers is a Django application for handling the server headers required for Cross-Origin Resource Sharing (CORS)."
 name = "django-cors-headers"
 optional = false
@@ -195,6 +207,17 @@ version = "3.1.1"
 
 [package.dependencies]
 Django = ">=1.11"
+
+[[package]]
+category = "main"
+description = "Extensions for Django"
+name = "django-extensions"
+optional = false
+python-versions = "*"
+version = "2.2.5"
+
+[package.dependencies]
+six = ">=1.2"
 
 [[package]]
 category = "main"
@@ -765,7 +788,7 @@ version = "0.6.0"
 more-itertools = "*"
 
 [metadata]
-content-hash = "0880f6a6941ee853a0eca0dcd92a17be170ce183aad21831fd4389e969f335dd"
+content-hash = "edcb52a364df7a16c549e42aa21d075dafbc3f7eb2375db74f3d1186dd49bfe6"
 python-versions = "^3.5"
 
 [metadata.hashes]
@@ -787,7 +810,9 @@ cssselect2 = ["07e9c3b1b52d81dd08b177532bbd6b9ced650d87abfd641f4e4ec7de34b98807"
 defusedxml = ["6687150770438374ab581bb7a1b327a847dd9c5749e396102de3fad4e8a3ef93", "f684034d135af4c6cbb949b8a4d2ed61634515257a67299e5f940fbaa34377f5"]
 django = ["148a4a2d1a85b23883b0a4e99ab7718f518a83675e4485e44dc0c1d36988c5fa", "deb70aa038e59b58593673b15e9a711d1e5ccd941b5973b30750d5d026abfd56"]
 django-address = ["30d5a7c89ba40b0459020573d3d7335196bca9a22fbed208d5a21fbea25d1008"]
+django-apscheduler = ["a2530736793064c54b3d5a62fc3844cdc4b0535d8988cd9248375c71441d2152"]
 django-cors-headers = ["5762ec9c2d59f38c76828dc1d4308baca4bc0d3e1d6f217683e7a24a1c4611a3", "ee02f4b699e9b6645602a46d0adb430ee940a1bf8df64f77e516f8d7711fee60"]
+django-extensions = ["a9db7c56a556d244184f589f2437b4228de86ee45e5ebb837fb20c6d54e95ea5", "b58320d3fe3d6ae7d1d8e38959713fa92272f4921e662d689058d942a5b444f7"]
 django-extra-fields = ["dfc29182b99674a30c2516f275986b8b687dc3c533004d7e0d02e92568421a77"]
 django-filter = ["558c727bce3ffa89c4a7a0b13bc8976745d63e5fd576b3a9a851650ef11c401b", "c3deb57f0dd7ff94d7dce52a047516822013e2b441bed472b722a317658cfd14"]
 django-multiselectfield = ["439cea0af1c32ab141ce6499cf802a79677626798fe564d00e2dd67be146684e", "54fa3886884cbc5d9c2f523e0e4af2cc3b976bd077718b2b443a5be44eb481ec"]

@@ -1,4 +1,3 @@
-from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.viewsets import GenericViewSet
 
@@ -7,7 +6,7 @@ from foundry_backend.api.filters import ListingFilterSet, AgencyFilterSet, Listi
     ListingsHitFilterSet, ShowingReviewFilterSet
 from foundry_backend.database import models as db_models
 from rest_framework import viewsets, mixins
-from foundry_backend.database.models import MLSNumber, Listing, Room, NearbyAttraction
+from foundry_backend.database.models import MLSNumber, Room, NearbyAttraction
 from . import serializers
 from .access import make_access_policy
 
@@ -145,14 +144,6 @@ class PropertyViewSet(viewsets.ModelViewSet):
 
     queryset = db_models.Property.objects.all()
     serializer_class = serializers.PropertySerializer
-
-    # def perform_create(self, serializer: serializers.PropertySerializer):
-    #     serializer = serializers.FullPropertySerializer(data={**serializer.data, 'listing': self.kwargs['listing_pk']})
-    #
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #     else:
-    #         raise ValidationError(serializer.errors)
 
 
 class NearbyAttractionPropertyConnectorViewSet(viewsets.ModelViewSet):
@@ -349,12 +340,12 @@ class IAMPolicyStatementPrincipalViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.IAMPolicyStatementPrincipalSerializer
 
     def get_queryset(self):
-        if self.kwargs.get('rule_pk') is not None:
-            return models.IAMPolicyStatementPrincipal.objects.filter(statement=self.kwargs['rule_pk'])
+        if self.kwargs.get('statement_pk') is not None:
+            return models.IAMPolicyStatementPrincipal.objects.filter(statement=self.kwargs['statement_pk'])
 
     def perform_create(self, serializer: serializers.IAMPolicyStatementPrincipalSerializer):
         serializer = serializers.FullIAMPolicyStatementPrincipalSerializer(data={**serializer.data,
-                                                                                 'statement': self.kwargs['rule_pk']})
+                                                                                 'statement': self.kwargs['statement_pk']})
 
         if serializer.is_valid():
             serializer.save()
@@ -373,12 +364,16 @@ class IAMPolicyStatementConditionViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.IAMPolicyStatementConditionSerializer
 
     def get_queryset(self):
-        if self.kwargs.get('policy_pk') is not None:
-            return models.IAMPolicyStatementCondition.objects.filter(policy=self.kwargs['policy_pk'])
+        if self.kwargs.get('statement_pk') is not None:
+            return models.IAMPolicyStatementCondition.objects.filter(statement=self.kwargs['statement_pk'])
 
     def perform_create(self, serializer: serializers.IAMPolicyStatementConditionSerializer):
-        serializer = serializers.FullIAMPolicyStatementConditionSerializer(data={**serializer.data,
-                                                                                 'rule': self.kwargs['rule_pk']})
+        serializer = serializers.FullIAMPolicyStatementConditionSerializer(
+            data={
+                **serializer.data,
+                'statement': self.kwargs['statement_pk']
+            }
+        )
 
         if serializer.is_valid():
             serializer.save()

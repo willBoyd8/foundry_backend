@@ -94,13 +94,13 @@ default:
           - console
         level: DEBUG
         formatter: verbose
-      ScheduleBatchTasksMiddleware:
+      ScheduleBatchTasks:
         handlers:
           - console
           - file
         level: INFO
         formatter: verbose
-      AccessPolicyMiddleware:
+      AccessPolicyManager:
         handlers:
           - console
           - file
@@ -115,9 +115,18 @@ default:
 
   # What time to perform nightly messages
   DAILY_MESSAGE_TIME:
-    HOUR: 23
-    MINUTE: 55
-    SECOND: 00
+    HOUR: 15
+    MINUTE: 4
+    SECOND: 40
+
+  SCHEDULER_CONFIG:
+    apscheduler.jobstores.default:
+      class: "django_apscheduler.jobstores:DjangoJobStore"
+
+    apscheduler.executors.processpool:
+      type: "threadpool"
+
+  SCHEDULER_AUTOSTART: true
 
   # Use django's translation framework
   USE_I18N: true
@@ -138,6 +147,8 @@ default:
     - django.contrib.staticfiles
     - foundry_backend.database
     - foundry_backend.api
+#    - foundry_backend.ScheduleBatchTasksApp
+    - django_apscheduler
     - rest_framework
     - django_filters
     - djoser
@@ -147,6 +158,7 @@ default:
     - phonenumber_field
     - address
     - multiselectfield
+    - django_extensions
 
   # Valid django middleware. Don't change unless you know what you're doing
   MIDDLEWARE:
@@ -159,8 +171,8 @@ default:
     - django.contrib.auth.middleware.AuthenticationMiddleware
     - django.contrib.messages.middleware.MessageMiddleware
     - django.middleware.clickjacking.XFrameOptionsMiddleware
-    - foundry_backend.middleware.tasks.ScheduleBatchTasksMiddleware
-    - foundry_backend.middleware.access_policies.AccessPolicyMiddleware
+#    - foundry_backend.middleware.tasks.ScheduleBatchTasksMiddleware
+#    - foundry_backend.middleware.access_policies.AccessPolicyMiddleware
 
   # For django-guardian
   AUTHENTICATION_BACKENDS:

@@ -6,11 +6,11 @@ from django.conf import settings
 
 from foundry_backend.database import models
 
-daily_views_logger = logging.getLogger('daily_views')
 
+def gather_daily_views(logger: logging.Logger):
+    from foundry_backend.database import models
 
-def gather_daily_views():
-    daily_views_logger.info('Logging daily views...')
+    logger.info('Logging daily views...')
 
     local_timezone = pytz.timezone(settings.TIME_ZONE)
 
@@ -34,4 +34,4 @@ def gather_daily_views():
             message = models.UserMessage.objects.create(type='HITS', message=message_string, user_id=number.user.id)
             message.save()
 
-    daily_views_logger.info('Done!')
+    logger.info('Done!')

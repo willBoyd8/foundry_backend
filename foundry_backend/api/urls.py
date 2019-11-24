@@ -1,8 +1,19 @@
+import logging
+
 from django.conf.urls import url
 from django.urls import include, path
 from rest_framework_nested import routers
 from foundry_backend.api import views
 from .endpoints import permissions_functions, legal_functions
+from . import startup
+from django.db import connection
+
+tables = connection.introspection.table_names()
+if 'django_apscheduler_djangojob' in tables:
+    startup.start_nightly_tasks(logging.getLogger('ScheduleBatchTasks'))
+
+if 'api_iampolicy' in tables:
+    startup.load_iam_policies(logging.getLogger('AccessPolicyManager'))
 
 base_router = routers.SimpleRouter()
 
@@ -18,9 +29,9 @@ base_router.register(r'listings_hits', views.ListingsHitViewSet)
 base_router.register(r'iam_policies', views.IAMPolicyViewSet)
 
 policies_router = routers.NestedSimpleRouter(base_router, r'iam_policies', lookup='policy')
-policies_router.register(r'rules', views.IAMPolicyStatementViewSet, )
+policies_router.register(r'statements', views.IAMPolicyStatementViewSet)
 
-policies_statement_router = routers.NestedSimpleRouter(policies_router, r'rules', lookup='rule')
+policies_statement_router = routers.NestedSimpleRouter(policies_router, r'statements', lookup='statement')
 policies_statement_router.register(r'principals', views.IAMPolicyStatementPrincipalViewSet)
 policies_statement_router.register(r'conditions', views.IAMPolicyStatementConditionViewSet)
 

@@ -1,11 +1,20 @@
 import datetime
+import logging
+
 import pytest
 from django.contrib.auth.models import User, Group
 from rest_framework.authtoken.models import Token
+
+from foundry_backend.api import startup
 from foundry_backend.api.models import IAMPolicy, IAMPolicyStatement, IAMPolicyStatementPrincipal, \
     IAMPolicyStatementCondition
 from foundry_backend.database import models
 from foundry_backend.database.models import MLSNumber, Agency, Address, UserMessage
+
+
+@pytest.fixture
+def setup(db):
+    startup.load_iam_policies(logging.getLogger('AccessPolicyManager'))
 
 
 @pytest.fixture
