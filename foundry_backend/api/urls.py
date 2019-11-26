@@ -1,5 +1,4 @@
 import logging
-
 from django.conf.urls import url
 from django.urls import include, path
 from rest_framework_nested import routers

@@ -206,24 +206,6 @@ class ShowingReviewSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class SalesContractSerializer(serializers.Serializer):
-    address = serializers.CharField()
-    selling_agency = serializers.CharField()
-    selling_agent = serializers.CharField()
-    buyer_name = serializers.CharField()
-    price = serializers.CharField()
-    deposit = serializers.CharField()
-    closing_date = serializers.CharField()
-
-
-class RequestForRepairsSerializer(serializers.Serializer):
-    requester = serializers.CharField()
-    contact_number = serializers.CharField()
-    address = serializers.CharField()
-    facilitating_agent = serializers.CharField()
-    description = serializers.CharField()
-
-
 class EnableRealtorSerializer(serializers.Serializer):
     mls_number = serializers.CharField(max_length=15, help_text="The MLS Number for the realtor being registered")
     user = serializers.IntegerField(help_text="The user to associate as a realtor")
