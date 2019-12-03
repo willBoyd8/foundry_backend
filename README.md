@@ -1,10 +1,8 @@
 # foundry_backend
 ---
-[![Build Status](https://jenkins.abwlabs.com/job/GitHub/job/foundry_backend/job/master/badge/icon)](https://jenkins.abwlabs.com/job/GitHub/job/foundry_backend/job/master/)
-
 The backend component of Foundry MLS
 
-`foundry_backend` is a Django server that maintains the database for Foundry MLS, as well as the API to interract with
+`foundry_backend` is a Django server that maintains the database for Foundry MLS, as well as the API to interact with
 the database. It is packaged for deployment as a Docker Image, or for a more fine tuned deployment, as a pip package.
 
 ## Configuration
