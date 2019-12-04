@@ -12,3 +12,12 @@ jobs:
     - uses: actions/checkout@v1
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag foundry/backend:$(date +%s)
+  
+  publish:
+    - name: GitHub Docker Action
+      uses: matootie/github-docker@v1.0.1
+      with:
+        username: willBoyd8
+        personalAccessToken: ${{ secrets.PAT }}
+        repositoryName: foundry
+        imageName: backend
