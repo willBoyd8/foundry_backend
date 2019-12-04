@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "foundry_backend"
-version = "6.2.1"
+version = "6.2.2"
 description = "The backend component of Foundry MLS"
 authors = ["The Foundry MLS Team <foundry@abwlabs.com>"]
 
