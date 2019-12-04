@@ -15,9 +15,9 @@ jobs:
   
   publish:
     - name: GitHub Docker Action
-      uses: matootie/github-docker@v1.0.1
-      with:
-        username: willBoyd8
-        personalAccessToken: ${{ secrets.PAT }}
-        repositoryName: foundry
-        imageName: backend
+        uses: matootie/github-docker@v1.0.1
+        with:
+          username: willBoyd8
+          personalAccessToken: ${{ secrets.PAT }}
+          repositoryName: foundry
+          imageName: backend
