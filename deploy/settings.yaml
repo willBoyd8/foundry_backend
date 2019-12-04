@@ -33,6 +33,18 @@ default:
 
   CORS_ORIGIN_ALLOW_ALL: true
 
+  CORS_ALLOW_HEADERS:
+    - 'accept'
+    - 'accept-encoding'
+    - 'authorization'
+    - 'content-type'
+    - 'dnt'
+    - 'origin'
+    - 'user-agent'
+    - 'x-csrftoken'
+    - 'x-requested-with'
+    - 'access-control-allow-origin'
+
 #    # This should probably be used in production
 #    CORS_ORIGIN_WHITELIST:
 #      - 'https://...'
