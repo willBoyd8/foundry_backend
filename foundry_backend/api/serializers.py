@@ -83,7 +83,7 @@ class FullRoomSerializer(serializers.ModelSerializer):
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = db_models.Room
-        fields = ['id', 'description', 'name', 'type']
+        fields = ['id', 'description', 'name', 'type', 'square_footage']
 
 
 class FullHomeAlarmSerializer(serializers.ModelSerializer):

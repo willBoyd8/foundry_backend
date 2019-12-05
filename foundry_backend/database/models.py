@@ -205,6 +205,7 @@ class Room(models.Model):
     name = models.CharField(max_length=25)
     property = models.ForeignKey(Property, related_name='rooms', on_delete=models.CASCADE)
     type = models.CharField(max_length=15, choices=ROOM_TYPES)
+    square_footage = models.IntegerField(validators=[MinValueValidator(0)])
 
     class Meta:
         unique_together = (('name', 'property'),)

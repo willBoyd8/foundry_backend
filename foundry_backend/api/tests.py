@@ -561,11 +561,13 @@ def test_listing_duplicate_rooms_caught(realtor_a, setup):
                 {
                     'name': 'Master Bedroom',
                     'description': 'Nice room with view of backyard',
-                    'type': 'BEDROOM'
+                    'type': 'BEDROOM',
+                    'square_footage': 100
                 },
                 {
                     'name': 'Master Bedroom',
-                    'type': 'BEDROOM'
+                    'type': 'BEDROOM',
+                    'square_footage': 26
                 }
             ],
             'nearby_attractions': [],
@@ -611,7 +613,8 @@ def test_listing_duplicate_attractions_caught(realtor_a, setup):
                 {
                     'name': 'Master Bedroom',
                     'description': 'Nice room with view of backyard',
-                    'type': 'BEDROOM'
+                    'type': 'BEDROOM',
+                    'square_footage': 123
                 }
             ],
             'nearby_attractions': [
@@ -1264,7 +1267,12 @@ def test_realtor_can_add_room(realtor_a, listing_a):
 
     realtor, _, _, token = realtor_a
 
-    data = {'name': 'Guest Kitchen', 'type': 'KITCHEN', 'description': 'Recently Updated'}
+    data = {
+        'name': 'Guest Kitchen',
+        'type': 'KITCHEN',
+        'description': 'Recently Updated, but kinda small',
+        'square_footage': 12
+    }
 
     response = perform_api_action(
         client.post,
